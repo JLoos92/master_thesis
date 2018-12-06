@@ -1,0 +1,11 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\beamer@endinputifotherversion {3.33pt}
+\defcounter {refsection}{0}\relax 
+\beamer@sectionintoc {1}{Introduction}{2}{0}{1}
+\defcounter {refsection}{0}\relax 
+\beamer@subsectionintoc {1}{1}{Ice shelf instability}{3}{0}{1}
+\defcounter {refsection}{0}\relax 
+\beamer@subsectionintoc {1}{2}{Ice shelf channels}{4}{0}{1}
+\defcounter {refsection}{0}\relax 
+\beamer@sectionintoc {2}{Methods}{6}{0}{2}

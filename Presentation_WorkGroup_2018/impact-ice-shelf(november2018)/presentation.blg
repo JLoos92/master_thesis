@@ -1,0 +1,15 @@
+[0] Config.pm:318> INFO - This is Biber 1.8
+[0] Config.pm:321> INFO - Logfile is 'presentation.blg'
+[64] biber-darwin:275> INFO - === Tue Jul 24, 2018, 21:00:40
+[64] Biber.pm:333> INFO - Reading 'presentation.bcf'
+[124] Biber.pm:630> INFO - Found 3 citekeys in bib section 0
+[145] Biber.pm:3053> INFO - Processing section 0
+[163] Biber.pm:3190> INFO - Looking for bibtex format file 'example.bib' for section 0
+[165] bibtex.pm:812> INFO - Found BibTeX data source 'example.bib'
+[171] Utils.pm:169> WARN - Datamodel: Entry 'hannah' (example.bib): Invalid format '2013/06/05/online' of date field 'date' - ignoring
+[206] Biber.pm:2939> INFO - Overriding locale 'en_US.UTF-8' default tailoring 'variable = shifted' with 'variable = non-ignorable'
+[206] Biber.pm:2945> INFO - Sorting 'entry' list 'nty' keys
+[206] Biber.pm:2949> INFO - No sort tailoring available for locale 'en_US.UTF-8'
+[215] bbl.pm:482> INFO - Writing 'presentation.bbl' with encoding 'ascii'
+[216] bbl.pm:555> INFO - Output to presentation.bbl
+[216] Biber.pm:105> INFO - WARNINGS: 1

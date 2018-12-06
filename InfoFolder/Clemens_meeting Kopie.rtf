@@ -1,0 +1,46 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf600
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Geneva;}
+{\colortbl;\red255\green255\blue255;\red9\green80\blue208;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c41176\c85098;\cssrgb\c0\c0\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 ssh -l 
+\f1 \cf2 \expnd0\expndtw0\kerning0
+\ul \ulc2 zxmjf89@ilogin.hpc.uni-tuebingen.de   //zxmjf89@igogin.hpc.uni-tuebingen.de\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf3 \ulnone ssh -X\cf2 \ul \
+\cf3 \ulnone 1 node = 20 cpu\'92s\
+\
+pro cpu 1 file\
+esd1 node\
+makefile\
+make ini\
+.sif file \'97elmar\
+\
+ELMERSOLVER_STARTINFO \'97 extra file f\'fcr .sif (damit elmar-solver file findet)\
+\
+\ul Nach login:\ulnone \
+qsub skriptname.sh\
+\
+cat \'97 listet file \
+tail \'97 ende von file\
+| grep NS \'97 navierstokes solver \
+| grep Time: \'97 zeitschritte\
+| grep Est \'97 restzeit\
+\
+\ul Output:\
+\ulnone verzeichnis: Mesh \'97 ouputfiles\
+\
+\ul Files auf rechner \'fcbertragen:\ulnone \
+\
+scp -r zxmjf89@igogin.hpc.uni-tuebingen.de:/pfadvonoutput zielpfad\
+\
+beegfs/work/zxmjf89\
+\
+cp bashrc.bak $HOME\cf2 \ul \
+\cf3 \ulnone \
+\
+\
+\
+}
