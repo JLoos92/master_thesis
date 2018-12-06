@@ -30,17 +30,18 @@ x = Mismip2D(:,26);
 z = Mismip2D(:,27);
 
 %Get interpolated  2D DEM centered at GL and clipped to area of interest
-xv=(-LX/2:dx:LX/2)+GLx;yv=(-LY/2:dy:LY/2);
+xv=(-LX/2:dx:LX/2)+GLx;
+yv=(-LY/2:dy:LY/2);
 Bedi = interp1(x(indnonzeroBed),Bed,xv,'PCHIP');
 Zbi = interp1(x(indnonzeroZb),Zb,xv,'PCHIP');
 Zsi = interp1(x(indnonzeroZs),Zs,xv,'PCHIP');
 
 %Get interpolated velocities at back boundary
 x2=x;
-[val valindback] = min(abs(x2-min(xv)));
+[val, valindback] = min(abs(x2-min(xv)));
 backboundary1 = find(x2==x(valindback));
-x2(backboundary1)=NaN;
-[val2 valindback2] = min(abs(x2-min(xv)));
+x2(backboundary1) = NaN;
+[val2, valindback2] = min(abs(x2-min(xv)));
 backboundary2 = find(x2==x(valindback2));
 
 meanV1back = (val*V1(backboundary1)+val2*V1(backboundary2))/(val+val2);
@@ -77,12 +78,13 @@ plot(polyval(coeffV2,meanHeightback),meanHeightback,'ko')
 grid on
 
 %Extrusion
+
  [X,Y] = meshgrid(yv,xv);
  for k=1:length(yv)
     ZB(:,k) = Zbi;
     BED(:,k)= Bedi;
     ZS(:,k) = Zsi;
- end
+end
 %Write DEM Files to be read into Elmer
 ZBout =[Y(:), X(:), ZB(:)];
 ZSout =[Y(:), X(:), ZS(:)];
@@ -147,159 +149,96 @@ backboundary = find(x==x(valindback));
 frontboundary = find(x==x(valindfront));
 indbox = find(x>x(valindback) & x<x(valindfront));
 
-figure(1)
-subplot(1,3,1)
-plot(x(indnonzeroBed)/1000,Bed,'k--')
-hold on
-plot(xv/1000,Bedi,'kx')
-plot(x(indnonzeroZs)/1000,Zs,'b--')
-plot(xv/1000,Zsi,'bx')
-plot(x(indnonzeroZb)/1000,Zb,'y--')
-plot(xv/1000,Zbi,'yx')
-xlabel('distance (km)')
-ylabel('height (m)')
-subplot(1,3,2)
-scatter(x/1000,z,5,V1)
-colorbar;
-subplot(1,3,3)
-scatter(x/1000,z,5,V2)
-colorbar
+%figure(1)
+%subplot(1,3,1)
+%plot(x(indnonzeroBed)/1000,Bed,'k--')
+%hold on
+%plot(xv/1000,Bedi,'kx')
+%plot(x(indnonzeroZs)/1000,Zs,'b--')
+%plot(xv/1000,Zsi,'bx')
+%plot(x(indnonzeroZb)/1000,Zb,'y--')
+%plot(xv/1000,Zbi,'yx')
+%xlabel('distance (km)')
+%ylabel('height (m)')
+%subplot(1,3,2)
+%scatter(x/1000,z,5,V1)
+%colorbar;
+%subplot(1,3,3)
+%scatter(x/1000,z,5,V2)
+%colorbar
 
-
-
-
-
-
-figure(2)
-subplot(2,1,1)
-plot(x,z,'k.');hold on
-plot(x(indbox),z(indbox),'g.')
+%figure(2)
+%subplot(2,1,1)
+%plot(x,z,'k.');hold on
+%plot(x(indbox),z(indbox),'g.')
 
 %V1i=griddata(x(indbox),y(indbox),V1(indbox),xv,y(indbox)
 
-figure(3)
-imagesc(yv/1000,xv/1000,ZS);set(gca(),'YDir','normal')
+%figure(3)
+%imagesc(yv/1000,xv/1000,ZS);set(gca(),'YDir','normal')
+%hold on
+%plot(corners(1,1)/1000,corners(1,2)/1000,'kx')
+%plot(corners(2,1)/1000,corners(2,2)/1000,'rx')
+%plot(corners(3,1)/1000,corners(3,2)/1000,'yx')
+%plot(corners(4,1)/1000,corners(4,2)/1000,'mx')
+%figure(4)
+% Bump function with sigma and amplitude
+
+M = zeros(251,51)
+N = 1; % number of bumps
+sigma = 1000;% std (width) of Gauss 
+maxAmplitude = 350; % maximum height
+
+  % random location of bumps or xc, yc for grounding line position
+    xc = 0
+    yc = GLx
+
+
+sigma_x = 2000;
+sigma_y = 10000;
+
+theta = 2*pi
+    a = cos(theta)^2/(2*sigma_x^2) + sin(theta)^2/(2*sigma_y^2);
+    b = -sin(2*theta)/(4*sigma_x^2) + sin(2*theta)/(4*sigma_y^2);
+    c = sin(theta)^2/(2*sigma_x^2) + cos(theta)^2/(2*sigma_y^2);
+
+    Z_new = maxAmplitude*exp( - (a*(X-xc).^2 + 2*b*(X-xc).*(Y-yc) + c*(Y-yc).^2));
+ 
+    % Gauss function
+    exponent = ((X-xc).^2 + (Y-yc).^2)./(sigma^2);
+    amplitude = maxAmplitude; 
+    
+    % add Gauss to the matrix M
+    M = M + amplitude*exp(-exponent);
+
+
+% add Gauss to topography
+Zero = zeros(251,51)
+BED_B = BED + Z_new;
+ZB_B = ZB + [Z_new(1:125,:);Zero(126:251,:)];
+%ZB_B = [ZB_B, ZB_new(125:251,:)]
+
+%figure(5)
+%surf(BED_B)
+%shading interp
+
+% safe new bedrock topo for elmer
+BEDout_1 =[Y(:), X(:), BED_B(:)];
+ZBout_1 =[Y(:), X(:), ZB_B(:)];
+
+BED_bump600 = sortrows(BEDout_1,1);
+ZB_bump600 = sortrows(ZBout_1,1);
+
+save('BEDbump350_200010000_0.xyz','BED_bump600','-ASCII');
+save('ZBbump350_200010000_0.xyz','ZB_bump600','-ASCII');
+
+
+% figure for all
+
+figure(6)
+surf (ZB_B)
 hold on
-plot(corners(1,1)/1000,corners(1,2)/1000,'kx')
-plot(corners(2,1)/1000,corners(2,2)/1000,'rx')
-plot(corners(3,1)/1000,corners(3,2)/1000,'yx')
-plot(corners(4,1)/1000,corners(4,2)/1000,'mx')
+%surf (ZB)
+surf(BED_B)
+surf (ZS)
 
-
-
-
-
-
-
-
-% x =
-%
-%
-% ZsRep = [Zs; Zs; Zs];
-% ZsRep(202:402,6) = W(end)/2;
-% ZsRep(403:end,6) = W(end);
-%
-% ZbRep = [Zb; Zb; Zb];
-% ZbRep(202:402,6) = W(end)/2;
-% ZbRep(403:end,6) = W(end);
-% %
-% scatter3(ZsRep(:,4),ZsRep(:,6),ZsRep(:,5),[],ZsRep(:,2))
-% %
-% %
-% %
-% % Bedrock = griddata(Mismip2DRep(:,4),Mismip2DRep(:,6),Mismip2DRep(:,1),X,Y);
-% ZsInt = griddata(ZsRep(:,4),ZsRep(:,6),ZsRep(:,2),X,Y);
-% BedrockInt = griddata(ZsRep(:,4),ZsRep(:,6),ZsRep(:,1),X,Y);
-% ZbInt = griddata(ZbRep(:,4),ZbRep(:,6),ZbRep(:,3),X,Y);
-% % Zb = griddata(Mismip2DRep(:,4),Mismip2DRep(:,6),Mismip2DRep(:,3),X,Y);
-% %
-% figure
-% surf(ZbInt)
-% hold on
-% surf(ZsInt)
-% surf(BedrockInt)
-% shading flat
-%
-% XVec = X(:);
-% YVec = Y(:);
-% BedVec = BedrockInt(:);
-% ZbVec = ZbInt(:);
-% ZsVec = ZsInt(:);
-%
-% BedrockXYZ = [XVec YVec BedVec];
-% SurMinThickXYZ = [XVec YVec ZbVec];
-% ZsXYZ = [XVec YVec ZsVec];
-%
-% DomainOutline = [X(1:5:end,1) Y(1:5:end,1); X(end,2:5:end-1)' Y(end,2:5:end-1)'; ...
-%                  X(1:5:end,end) flipud(Y(1:5:end,end)); fliplr(X(1,1:5:end-1))' Y(1,1:5:end-1)'];
-%
-% figure
-% scatter(DomainOutline(1:19,1),DomainOutline(1:19,2),'r','filled')
-% hold on
-% scatter(DomainOutline(20:38,1),DomainOutline(20:38,2),'b','filled')
-% scatter(DomainOutline(39:57,1),DomainOutline(39:57,2),'g','filled')
-% scatter(DomainOutline(58:74,1),DomainOutline(58:74,2),'c','filled')
-%
-% dlmwrite('ShapeOutline.xyz',DomainOutline,'delimiter',' ')
-% dlmwrite('Bedrock.xyz',BedrockXYZ,'delimiter',' ')
-% dlmwrite('Zb.xyz',SurMinThickXYZ,'delimiter',' ')
-% dlmwrite('Zs.xyz',ZsXYZ,'delimiter',' ')
-% % Interpolation script of Pattyn et al. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % clear all;
-% % close all;
-% % % Loading data
-% % A=load('Elmer75D.dat'); B= sortrows(A,[2 1]); x0=B(:,1);
-% % y0=B(:,2);
-% % h0=B(:,3);
-% % hb0=B(:,4);
-% % % Interpolation on new grid
-% % imax=21; % grid points in transverse direction
-% % jmax=321; % grid points in flow direction (x)
-% % delta=2500;
-% % Li=(imax-1)*delta; % domain size
-% % Lj=(jmax-1)*delta;
-% % [X,Y] = meshgrid(0:delta:Lj,0:delta:Li);
-% % cnt=0;
-% % b = -100 - X./1000;
-% % for i=1:imax
-% %     for j=1:length(B)/imax
-% %     cnt=cnt+1;
-% %     x(j)=x0(cnt); y(j)=y0(cnt); hb1(j)=hb0(cnt); h1(j)=h0(cnt);
-% %     end
-% %     for j=1:jmax
-% %         h(i,j) = interp1(x,h1,X(i,j));
-% %         hb(i,j) = interp1(x,hb1,X(i,j));
-% %    end
-% % end
-% %
-% %
-% % XVec = X(:);
-% % YVec = Y(:);
-% % BedRiseVec = b(:);
-% % ZbVec = hb(:);
-% % ZsVec = h(:);
-% %
-% % BedrockXYZ = [XVec YVec BedRiseVec];
-% % SurMinThickXYZ = [XVec YVec ZbVec];
-% % ZsXYZ = [XVec YVec ZsVec];
-% %
-% % DomainOutline = [X(1:5:end,1) Y(1:5:end,1); X(end,2:8:end-1)' Y(end,2:8:end-1)'; ...
-% %                  X(1:5:end,end) flipud(Y(1:5:end,end)); fliplr(X(1,1:8:end-1))' Y(1,1:8:end-1)'];
-% %
-% % figure
-% % scatter(DomainOutline(1:5,1),DomainOutline(1:5,2),'r','filled')
-% % hold on
-% % scatter(DomainOutline(6:46,1),DomainOutline(6:46,2),'b','filled')
-% % scatter(DomainOutline(47:51,1),DomainOutline(47:51,2),'g','filled')
-% % scatter(DomainOutline(52:end,1),DomainOutline(52:end,2),'c','filled')
-% %
-% % dlmwrite('ShapeOutline.xyz',DomainOutline,'delimiter',' ')
-% % dlmwrite('Bedrock.xyz',BedrockXYZ,'delimiter',' ')
-% % dlmwrite('Zb.xyz',SurMinThickXYZ,'delimiter',' ')
-% % dlmwrite('Zs.xyz',ZsXYZ,'delimiter',' ')
-% %
-% %
-% % dlmwrite('ShapeOutline.xyz',DomainOutline,'delimiter',' ')
-% % dlmwrite('Bedrock.xyz',BedrockXYZ,'delimiter',' ')
-% % dlmwrite('Zb.xyz',SurMinThickXYZ,'delimiter',' ')
-% % dlmwrite('Zs.xyz',ZsXYZ,'delimiter',' ')
