@@ -1,0 +1,2252 @@
+Here comes the partition the job runs in:
+esd1
+Here comes the Nodelist:/var/spool/torque/aux//285824}
+Number of Nodes: 20}
+#make --file MakefileJoh all
+#elmerf90 src/FlotingShelves.f90 -o src/FlotingShelves
+#elmerf90 src/MyFreeSurfaceSolver.f90 -o src/MyFreeSurfaceSolver
+elmerf90 src/DistanceSolveRD.f90 -o src/DistanceSolveRD
+/opt/bwhpc/common/compiler/intel/2017/compilers_and_libraries/linux/bin/intel64/ifort src/DistanceSolveRD.f90 -o src/DistanceSolveRD -DCONTIG=,CONTIGUOUS -DHAVE_EXECUTECOMMANDLINE -DUSE_ISO_C_BINDINGS -DUSE_ARPACK -O2 -g -fPIC -shared -nofor_main -I/home-link/epioi01/elmerice/Elmer_devel_04-17-18/share/elmersolver/include -L/home-link/epioi01/elmerice/Elmer_devel_04-17-18/lib/elmersolver -shared -lelmersolver 
+echo Mismip3DInfluxRemesh.sif > ELMERSOLVER_STARTINFO
+#gmsh Mesh.geo -1 -2
+#ElmerGrid 14 2 Mesh.msh  -autoclean
+#ElmerGrid 2 2 Mesh -partition 4 5 1
+ElmerGrid 2 2 Mesh -partition 4 5 1
+
+Starting program Elmergrid
+Elmergrid reading in-line arguments
+The mesh will be partitioned geometrically to 20 partitions.
+Output will be saved to file Mesh.
+
+Elmergrid loading data:
+-----------------------
+Loading mesh in ElmerSolver format from directory Mesh.
+Loading header from mesh.header
+Maximum elementtype index is: 303
+Maximum number of nodes in element is: 3
+Allocating for 7475 knots and 14848 elements.
+Loading 7475 Elmer nodes from mesh.nodes
+Loading 14848 bulk elements from mesh.elements
+Loading 100 boundary elements from mesh.boundary
+Elmer mesh loaded succesfully
+
+Elmergrid creating and manipulating meshes:
+-------------------------------------------
+Dimension 3 not active but higher dimensions are?
+Coordinates defined in 2 dimensions
+
+Elmergrid partitioning meshes:
+------------------------------
+PartitionSimpleElements
+connect: 0 0
+Making a simple partitioning for 14848 elements in 2-dimensions.
+Ordering 1st direction with (1*x + 0.0001*y + 1e-08*z)
+Ordering in the 2nd direction.
+Creating an inverse topology of the finite element mesh
+There are from 2 to 9 connections in the inverse topology.
+Each node is in average in 5.959 elements
+Number of nodal partitions: 20
+Set the node partitions by the dominating element partition.
+There are from 679 to 727 nodes in the 20 partitions.
+Successfully made a partitioning with 742 to 744 elements.
+Optimizing the partitioning at boundaries.
+Ownership of 0 parents was changed at BCs
+Optimizing for 20 partitions
+Creating a table showing all parenting partitions of nodes.
+Nodes belong to 4 partitions in maximum
+There are 991 shared nodes which is 13.26 % of all nodes.
+The initial owner was not any of the elements for 0 nodes
+Checking partitioning before optimization
+Checking for partitioning
+Information on partition bandwidth
+Average 742 elements with range 2 in partition
+Average 373 nodes with range 15 in partition
+Average 52 shared nodes with range 34 in partition
+Average number of elements in partition 3.738e+02
+Maximum deviation in ownership 15
+Average deviation in ownership 5.019e+00
+Average relative deviation 1.34 %
+Checking for problematic sharings
+Optimizing sharing for 20 partitions
+Changed the ownership of 27 nodes
+Partitions 4 and 2 in element 2468 (3 owners) oddly related 1 times
+Partitions 3 and 5 in element 4179 (3 owners) oddly related 1 times
+Partitions 1 and 3 in element 4455 (3 owners) oddly related 1 times
+Partitions 3 and 5 in element 4473 (3 owners) oddly related 1 times
+Partitions 3 and 5 in element 4664 (3 owners) oddly related 1 times
+Partitions 4 and 2 in element 7024 (2 owners) oddly related 1 times
+Partitions 18 and 16 in element 7193 (3 owners) oddly related 1 times
+Partitions 4 and 2 in element 7696 (3 owners) oddly related 1 times
+Partitions 4 and 2 in element 7884 (3 owners) oddly related 1 times
+Partitions 1 and 3 in element 8221 (3 owners) oddly related 1 times
+Partitions 17 and 19 in element 8330 (3 owners) oddly related 1 times
+Partitions 16 and 18 in element 8504 (3 owners) oddly related 1 times
+Partitions 4 and 2 in element 9627 (2 owners) oddly related 1 times
+Partitions 4 and 2 in element 9982 (3 owners) oddly related 1 times
+Partitions 19 and 17 in element 12071 (3 owners) oddly related 1 times
+Changed the ownership of 15 nodes
+Partitions 3 and 5 in element 4179 (3 owners) oddly related 1 times
+Partitions 1 and 3 in element 4455 (3 owners) oddly related 1 times
+Partitions 3 and 5 in element 4473 (3 owners) oddly related 1 times
+Partitions 3 and 5 in element 4664 (3 owners) oddly related 1 times
+Partitions 4 and 2 in element 7024 (2 owners) oddly related 1 times
+Partitions 18 and 16 in element 7193 (3 owners) oddly related 1 times
+Partitions 4 and 2 in element 7696 (3 owners) oddly related 1 times
+Partitions 4 and 2 in element 7884 (3 owners) oddly related 1 times
+Partitions 1 and 3 in element 8221 (3 owners) oddly related 1 times
+Partitions 17 and 19 in element 8330 (3 owners) oddly related 1 times
+Partitions 16 and 18 in element 8504 (3 owners) oddly related 1 times
+Partitions 4 and 2 in element 9627 (2 owners) oddly related 1 times
+Partitions 4 and 2 in element 9982 (3 owners) oddly related 1 times
+Partitions 19 and 17 in element 12071 (3 owners) oddly related 1 times
+Changed the ownership of 14 nodes
+14 problematic sharings may still exist
+The partitioning was optimized: 56
+Checking partitioning after optimization
+Checking for partitioning
+Information on partition bandwidth
+Average 742 elements with range 2 in partition
+Average 373 nodes with range 13 in partition
+Average 52 shared nodes with range 31 in partition
+
+Elmergrid saving data with method 2:
+-------------------------------------
+Saving Elmer mesh in partitioned format
+Number of boundary nodes at the boundary: 100
+Reusing existing subdirectory: partitioning.20
+Saving mesh in parallel ElmerSolver format to directory Mesh/partitioning.20.
+Nodes belong to 4 partitions in maximum
+Saving mesh for 20 partitions
+   part  elements   nodes      shared   bc elems indirect
+   1     742        380        43       23       0       
+   2     742        371        66       1        0       
+   3     742        373        65       1        0       
+   4     742        373        69       1        0       
+   5     744        382        43       23       0       
+   6     742        371        44       2        0       
+   7     742        371        51       0        0       
+   8     742        371        52       0        0       
+   9     742        372        53       0        0       
+   10    744        371        44       2        0       
+   11    742        372        42       2        0       
+   12    742        370        53       0        0       
+   13    742        373        54       0        0       
+   14    742        371        53       0        0       
+   15    744        372        44       2        0       
+   16    742        382        38       20       0       
+   17    742        370        65       1        0       
+   18    742        375        59       1        0       
+   19    742        372        64       1        0       
+   20    744        383        39       20       0       
+Nodes needed in maximum 2 boundary elements
+----------------------------------------------------------------------------------------------
+   ave   742.4      373.8      52.0     5.0      0.0     
+Writing of partitioned mesh finished
+
+Thank you for using Elmergrid!
+Send bug reports and feature wishes to elmeradm@csc.fi
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ELMER SOLVER (v 8.3) STARTED AT: 2018/12/07 15:33:54
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+ParCommInit:  Initialize #PEs:           20
+MAIN: 
+MAIN: =============================================================
+MAIN: ElmerSolver finite element software, Welcome!
+MAIN: This program is free software licensed under (L)GPL
+MAIN: Copyright 1st April 1995 - , CSC - IT Center for Science Ltd.
+MAIN: Webpage http://www.csc.fi/elmer, Email elmeradm@csc.fi
+MAIN: Version: 8.3 (Rev: f6873f2, Compiled: 2018-04-17)
+MAIN:  Running in parallel using 20 tasks.
+MAIN:  MUMPS library linked in.
+MAIN:  Intel MKL linked in.
+MAIN: =============================================================
+MAIN: 
+MAIN: 
+MAIN: -------------------------------------
+MAIN: Reading Model: Mismip3DInfluxRemesh.sif
+LoadInputFile: Scanning input file: Mismip3DInfluxRemesh.sif
+LoadInputFile: Loading input file: Mismip3DInfluxRemesh.sif
+Model Input:  Unlisted keyword: [water density] in section: [constants]
+Model Input:  Unlisted keyword: [zs accumulation flux 1] in section: [body force 2]
+Model Input:  Unlisted keyword: [zs accumulation flux 2] in section: [body force 2]
+Model Input:  Unlisted keyword: [zs accumulation flux 3] in section: [body force 2]
+Model Input:  Unlisted keyword: [zb accumulation] in section: [body force 3]
+Model Input:  Unlisted keyword: [sea level] in section: [material 1]
+Model Input:  Unlisted keyword: [limit temperature] in section: [material 1]
+Model Input:  Unlisted keyword: [constant temperature] in section: [material 1]
+Model Input:  Unlisted keyword: [min zs] in section: [material 1]
+Model Input:  Unlisted keyword: [max zs] in section: [material 1]
+Model Input:  Unlisted keyword: [max zb] in section: [material 1]
+Model Input:  Unlisted keyword: [variable 1 invert] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 1 data file] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 1 fill] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 1 x0] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 1 y0] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 1 lx] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 1 ly] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 1 nx] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 1 ny] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 1 no data] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 1 no data tol] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 1 invert] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 2 invert] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 2 data file] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 2 fill] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 2 x0] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 2 y0] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 2 lx] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 2 ly] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 2 nx] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 2 ny] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 2 no data] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 2 no data tol] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 3 invert] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 3 data file] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 3 fill] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 3 x0] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 3 y0] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 3 lx] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 3 ly] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 3 nx] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 3 ny] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 3 no data] in section: [solver 1]
+Model Input:  Unlisted keyword: [variable 3 no data tol] in section: [solver 1]
+Model Input:  Unlisted keyword: [mesh update variable] in section: [solver 2]
+Model Input:  Unlisted keyword: [top surface variable name] in section: [solver 2]
+Model Input:  Unlisted keyword: [bottom surface variable name] in section: [solver 2]
+Model Input:  Unlisted keyword: [correct surface] in section: [solver 2]
+Model Input:  Unlisted keyword: [minimum height] in section: [solver 2]
+Model Input:  Unlisted keyword: [toler] in section: [solver 3]
+Model Input:  Unlisted keyword: [bedrock variable] in section: [solver 3]
+Model Input:  Unlisted keyword: [computeall] in section: [solver 4]
+Model Input:  Unlisted keyword: [h scale] in section: [solver 8]
+Model Input:  Unlisted keyword: [dummy distance computation] in section: [solver 8]
+Model Input:  Unlisted keyword: [relaxation factor] in section: [solver 9]
+Model Input:  Unlisted keyword: [relaxation factor] in section: [solver 10]
+Loading user function library: [ElmerIceUSF]...[SeaPressure]
+Model Input:  Unlisted keyword: [compute sea pressure] in section: [boundary condition 3]
+Model Input:  Unlisted keyword: [computenormal] in section: [boundary condition 3]
+Model Input:  Unlisted keyword: [zb condition] in section: [boundary condition 5]
+Loading user function library: [ElmerIceUSF]...[SlidCoef_Contact]
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+Loading user function library: [ElmerIceUSF]...[SlidCoef_Contact]
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+Model Input:  Unlisted keyword: [sliding law] in section: [boundary condition 5]
+Model Input:  Unlisted keyword: [weertman friction coefficient] in section: [boundary condition 5]
+Model Input:  Unlisted keyword: [weertman exponent] in section: [boundary condition 5]
+Model Input:  Unlisted keyword: [weertman linear velocity] in section: [boundary condition 5]
+Model Input:  Unlisted keyword: [grounding line definition] in section: [boundary condition 5]
+Model Input:  Unlisted keyword: [test contact tolerance] in section: [boundary condition 5]
+Model Input:  Unlisted keyword: [non detachment inland distance] in section: [boundary condition 5]
+Loading user function library: [ElmerIceUSF]...[SeaPressure]
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+Loading user function library: [ElmerIceUSF]...[SeaSpring]
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+Model Input:  Unlisted keyword: [computenormal condition] in section: [boundary condition 5]
+Model Input:  Unlisted keyword: [compute sea pressure] in section: [boundary condition 5]
+Model Input:  Unlisted keyword: [compute sea spring] in section: [boundary condition 5]
+Model Input:  Unlisted keyword: [distance] in section: [boundary condition 5]
+Model Input:  Unlisted keyword: [distance condition] in section: [boundary condition 5]
+Model Input:  Unlisted keyword: [computenormal] in section: [boundary condition 6]
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+Loading user function library: [ElmerIceSolvers]...[Grid2DInterpolator_Init0]
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 2
+WARNING:: LoadInputFile: Entry missing for: Initial Condition 3
+Loading user function library: [StructuredMeshMapper]...[StructuredMeshMapper_Init0]
+Loading user function library: [ElmerIceSolvers]...[GroundedSolver_Init0]
+Loading user function library: [ElmerIceSolvers]...[ComputeNormalSolver_Init0]
+Loading user function library: [ElmerIceSolvers]...[GetHydrostaticLoads_Init0]
+Loading user function library: [StructuredProjectToPlane]...[StructuredProjectToPlane_Init0]
+Loading user function library: [src/DistanceSolveRD]...[DistanceSolver1_Init0]
+Loading user function library: [./src/MyFreeSurfaceSolver]...[FreeSurfaceSolver_Init0]
+Loading user function library: [FreeSurfaceSolver]...[FreeSurfaceSolver_Init0]
+Loading user function library: [ResultOutputSolve]...[ResultOutputSolver_Init0]
+LoadMesh: Starting
+ElmerAsciiMesh: Performing step: 1
+LoadMesh: Base mesh name: ./Mesh
+LoadMesh: Reading header info from file: ./Mesh/partitioning.20/part.1.header
+LoadMesh: Number of nodes in mesh: 423
+LoadMesh: Number of bulk elements in mesh: 742
+LoadMesh: Number of boundary elements in mesh: 23
+LoadMesh: Initial number of max element nodes: 3
+ElmerAsciiMesh: Performing step: 2
+LoadMesh: Reading nodes from file: ./Mesh/partitioning.20/part.1.nodes
+LoadMesh: Dimension of model is: 2
+LoadMesh: Dimension of mesh is: 2
+ElmerAsciiMesh: Performing step: 3
+LoadMesh: Reading bulk elements from file: ./Mesh/partitioning.20/part.1.elements
+ElmerAsciiMesh: Performing step: 4
+LoadMesh: Reading boundary elements from file: ./Mesh/partitioning.20/part.1.boundary
+LoadMesh: Performing node mapping
+LoadMesh: Skipping remapping of bodies
+LoadMesh: Remapping boundaries
+LoadMesh: Minimum initial boundary index: 1
+LoadMesh: Maximum initial boundary index: 2
+ElmerAsciiMesh: Performing step: 5
+LoadMesh: Reading nodes from file: ./Mesh/partitioning.20/part.1.shared
+ElmerAsciiMesh: Performing step: 6
+LoadMesh: Loading mesh done
+LoadMesh: Elapsed REAL time:     0.0098 (s)
+MeshStabParams: Computing stabilization parameters
+MeshStabParams: Elapsed REAL time:     0.0001 (s)
+CompleteModelKeywords: Completing keywords for mortar BCs
+UnitSegmentDivision: Creating linear division
+UnitSegmentDivision: Mesh division ready
+UnitSegmentDivision: w(0) :   0.0000E+00
+UnitSegmentDivision: w(1) :   1.1111E-01
+UnitSegmentDivision: w(2) :   2.2222E-01
+UnitSegmentDivision: w(3) :   3.3333E-01
+UnitSegmentDivision: w(4) :   4.4444E-01
+UnitSegmentDivision: w(5) :   5.5556E-01
+UnitSegmentDivision: w(6) :   6.6667E-01
+UnitSegmentDivision: w(7) :   7.7778E-01
+UnitSegmentDivision: w(8) :   8.8889E-01
+UnitSegmentDivision: w(9) :   1.0000E+00
+ExtrudeMesh: First Extruded BC set to: 5
+ExtrudeMesh: Number of new BCs for layers: 1
+MAIN: -------------------------------------
+AddSolvers: Setting up 11 solvers
+AddSolvers: Setting up solver 1: read dem
+AddEquationBasics: Using procedure: ElmerIceSolvers Grid2DInterpolator
+AddEquationBasics: Setting up solver: read dem
+Loading user function library: [ElmerIceSolvers]...[Grid2DInterpolator_Init]
+AddEquationBasics: Checking for _init solver
+Loading user function library: [ElmerIceSolvers]...[Grid2DInterpolator_bulk]
+AddEquationBasics: Checking for _bulk solver
+Loading user function library: [ElmerIceSolvers]...[Grid2DInterpolator]
+AddEquationBasics: Time stepping method is: bdf
+AddSolvers: Setting up solver 2: mapcoordinate
+AddEquationBasics: Using procedure: StructuredMeshMapper StructuredMeshMapper
+AddEquationBasics: Setting up solver: mapcoordinate
+Loading user function library: [StructuredMeshMapper]...[StructuredMeshMapper_Init]
+AddEquationBasics: Checking for _init solver
+Loading user function library: [StructuredMeshMapper]...[StructuredMeshMapper_bulk]
+AddEquationBasics: Checking for _bulk solver
+Loading user function library: [StructuredMeshMapper]...[StructuredMeshMapper]
+AddEquationBasics: Time stepping method is: bdf
+AddSolvers: Setting up solver 3: groundedmaskini
+AddEquationBasics: Using procedure: ElmerIceSolvers GroundedSolver
+AddEquationBasics: Setting up solver: groundedmaskini
+Loading user function library: [ElmerIceSolvers]...[GroundedSolver_Init]
+AddEquationBasics: Checking for _init solver
+Loading user function library: [ElmerIceSolvers]...[GroundedSolver_bulk]
+AddEquationBasics: Checking for _bulk solver
+Loading user function library: [ElmerIceSolvers]...[GroundedSolver]
+AddEquationBasics: Time stepping method is: bdf
+AddEquationBasics: Creating standard variable: groundedmask
+AddEquationBasics: Computing size of permutation vector
+AddEquationBasics: Maximum size of permutation vector is: 4230
+AddEquationBasics: Creating solver matrix topology
+CreateMatrix: creating initial permutation
+CreateMatrix: Creating inverse of initial order os size: 423
+CreateMatrix: Creating list matrix for equation
+MakeListMatrix: Creating list matrix
+OptimizeBandwidth: ---------------------------------------------------------
+OptimizeBandwidth: Computing matrix structure for: groundedmaskini...done.
+OptimizeBandwidth: Half bandwidth without optimization: 390
+OptimizeBandwidth: 
+OptimizeBandwidth: Bandwidth Optimization ...done.
+OptimizeBandwidth: Half bandwidth after optimization: 43
+OptimizeBandwidth: ---------------------------------------------------------
+CreateMatrix: Initializing list matrix for equation
+CRS_CreateMatrix: Creating CRS Matrix of size: 423
+CRS_CreateMatrix: Creating CRS Matrix with nofs: 2751
+CRS_CreateMatrix: Creating CRS Matrix finished
+CreateMatrix: Matrix created
+AddEquationBasics: Number of rows in CRS matrix: 423
+AddEquationBasics: Creating solver variable
+VariableAdd: Adding variable > groundedmask < of size 423
+AddSolvers: Setting up solver 4: normalvector
+AddEquationBasics: Using procedure: ElmerIceSolvers ComputeNormalSolver
+AddEquationBasics: Setting up solver: normalvector
+Loading user function library: [ElmerIceSolvers]...[ComputeNormalSolver_Init]
+AddEquationBasics: Checking for _init solver
+Loading user function library: [ElmerIceSolvers]...[ComputeNormalSolver_bulk]
+AddEquationBasics: Checking for _bulk solver
+Loading user function library: [ElmerIceSolvers]...[ComputeNormalSolver]
+AddEquationBasics: Time stepping method is: bdf
+AddEquationBasics: Creating standard variable: normal vector
+AddEquationBasics: Computing size of permutation vector
+AddEquationBasics: Maximum size of permutation vector is: 4230
+AddEquationBasics: Creating solver matrix topology
+CreateMatrix: creating initial permutation
+CreateMatrix: Creating inverse of initial order os size: 4230
+CreateMatrix: Creating list matrix for equation
+MakeListMatrix: Creating list matrix
+OptimizeBandwidth: ---------------------------------------------------------
+OptimizeBandwidth: Computing matrix structure for: normalvector...done.
+OptimizeBandwidth: Half bandwidth without optimization: 804
+OptimizeBandwidth: ---------------------------------------------------------
+CreateMatrix: Initializing list matrix for equation
+CRS_CreateMatrix: Creating CRS Matrix of size: 12690
+CRS_CreateMatrix: Creating CRS Matrix with nofs: 693252
+CRS_CreateMatrix: Creating CRS Matrix finished
+CreateMatrix: Matrix created
+AddEquationBasics: Number of rows in CRS matrix: 12690
+AddEquationBasics: Creating solver variable
+VariableAdd: Adding variable > normal vector < of size 12690
+VariableAdd: Adding variable > normal vector 1 < of size 4230
+VariableAdd: Adding variable > normal vector 2 < of size 4230
+VariableAdd: Adding variable > normal vector 3 < of size 4230
+AddSolvers: Setting up solver 5: fw
+AddEquationBasics: Using procedure: ElmerIceSolvers GetHydrostaticLoads
+AddEquationBasics: Setting up solver: fw
+Loading user function library: [ElmerIceSolvers]...[GetHydrostaticLoads_Init]
+AddEquationBasics: Checking for _init solver
+Loading user function library: [ElmerIceSolvers]...[GetHydrostaticLoads_bulk]
+AddEquationBasics: Checking for _bulk solver
+Loading user function library: [ElmerIceSolvers]...[GetHydrostaticLoads]
+AddEquationBasics: Time stepping method is: bdf
+AddEquationBasics: Creating standard variable: fw[fwater:3]
+AddEquationBasics: Computing size of permutation vector
+AddEquationBasics: Maximum size of permutation vector is: 4230
+AddEquationBasics: Creating solver matrix topology
+CreateMatrix: creating initial permutation
+CreateMatrix: Creating inverse of initial order os size: 423
+CreateMatrix: Creating list matrix for equation
+MakeListMatrix: Creating list matrix
+OptimizeBandwidth: ---------------------------------------------------------
+OptimizeBandwidth: Computing matrix structure for: fw...done.
+OptimizeBandwidth: Half bandwidth without optimization: 390
+OptimizeBandwidth: 
+OptimizeBandwidth: Bandwidth Optimization ...done.
+OptimizeBandwidth: Half bandwidth after optimization: 43
+OptimizeBandwidth: ---------------------------------------------------------
+CreateMatrix: Initializing list matrix for equation
+CRS_CreateMatrix: Creating CRS Matrix of size: 1269
+CRS_CreateMatrix: Creating CRS Matrix with nofs: 24759
+CRS_CreateMatrix: Creating CRS Matrix finished
+CreateMatrix: Matrix created
+AddEquationBasics: Number of rows in CRS matrix: 1269
+AddEquationBasics: Creating solver variable
+VariableAdd: Adding variable > fw[fwater:3] < of size 1269
+VariableAdd: Adding variable > fwater 1 < of size 423
+VariableAdd: Adding variable > fwater 2 < of size 423
+VariableAdd: Adding variable > fwater 3 < of size 423
+AddSolvers: Setting up solver 6: navier-stokes
+AddEquationBasics: Setting up keywords internally for legacy solver: navier-stokes
+AddEquationBasics: Using procedure: FlowSolve FlowSolver
+AddEquationBasics: Setting up solver: navier-stokes
+Loading user function library: [FlowSolve]...[FlowSolver_Init]
+AddEquationBasics: Checking for _init solver
+Loading user function library: [FlowSolve]...[FlowSolver_bulk]
+AddEquationBasics: Checking for _bulk solver
+Loading user function library: [FlowSolve]...[FlowSolver]
+AddEquationBasics: Time stepping method is: bdf
+AddEquationBasics: Creating standard variable: flow solution[velocity:3 pressure:1]
+AddEquationBasics: Computing size of permutation vector
+AddEquationBasics: Maximum size of permutation vector is: 4230
+AddEquationBasics: Creating solver matrix topology
+CreateMatrix: creating initial permutation
+CreateMatrix: Creating inverse of initial order os size: 4230
+CreateMatrix: Creating list matrix for equation
+MakeListMatrix: Creating list matrix
+OptimizeBandwidth: ---------------------------------------------------------
+OptimizeBandwidth: Computing matrix structure for: navier-stokes...done.
+OptimizeBandwidth: Half bandwidth without optimization: 804
+OptimizeBandwidth: 
+OptimizeBandwidth: Bandwidth Optimization ...done.
+OptimizeBandwidth: Half bandwidth after optimization: 469
+OptimizeBandwidth: ---------------------------------------------------------
+CreateMatrix: Initializing list matrix for equation
+CRS_CreateMatrix: Creating CRS Matrix of size: 16920
+CRS_CreateMatrix: Creating CRS Matrix with nofs: 1232448
+CRS_CreateMatrix: Creating CRS Matrix finished
+CreateMatrix: Matrix created
+AddEquationBasics: Number of rows in CRS matrix: 16920
+AddEquationBasics: Creating solver variable
+VariableAdd: Adding variable > flow solution[velocity:3 pressure:1] < of size 16920
+VariableAdd: Adding variable > velocity 1 < of size 4230
+VariableAdd: Adding variable > velocity 2 < of size 4230
+VariableAdd: Adding variable > velocity 3 < of size 4230
+VariableAdd: Adding variable > pressure < of size 4230
+AddEquationBasics: Creating exported variable: flow solution loads[stress vector:3 ceq residual:1]
+VariableAdd: Adding variable > flow solution loads[stress vector:3 ceq residual:1] < of size 16920
+AddEquationBasics: Succesfully created variable: flow solution loads[stress vector:3 ceq residual:1]
+VariableAdd: Adding variable > stress vector 1 < of size 4230
+AddEquationBasics: Succesfully created variable: stress vector 1
+VariableAdd: Adding variable > stress vector 2 < of size 4230
+AddEquationBasics: Succesfully created variable: stress vector 2
+VariableAdd: Adding variable > stress vector 3 < of size 4230
+AddEquationBasics: Succesfully created variable: stress vector 3
+VariableAdd: Adding variable > ceq residual < of size 4230
+AddEquationBasics: Succesfully created variable: ceq residual
+AddEquationBasics: Creating exported variable: -dofs 1 dsdt
+VariableAdd: Adding variable > dsdt < of size 4230
+AddEquationBasics: Succesfully created variable: dsdt
+AddEquationBasics: Creating exported variable: -dofs 1 ds
+VariableAdd: Adding variable > ds < of size 4230
+AddEquationBasics: Succesfully created variable: ds
+AddEquationBasics: Creating exported variable: -dofs 1 bedrock
+VariableAdd: Adding variable > bedrock < of size 4230
+AddEquationBasics: Succesfully created variable: bedrock
+AddSolvers: Setting up solver 7: heightdepth
+AddEquationBasics: Using procedure: StructuredProjectToPlane StructuredProjectToPlane
+AddEquationBasics: Setting up solver: heightdepth
+Loading user function library: [StructuredProjectToPlane]...[StructuredProjectToPlane_Init]
+AddEquationBasics: Checking for _init solver
+Loading user function library: [StructuredProjectToPlane]...[StructuredProjectToPlane_bulk]
+AddEquationBasics: Checking for _bulk solver
+Loading user function library: [StructuredProjectToPlane]...[StructuredProjectToPlane]
+AddEquationBasics: Time stepping method is: bdf
+AddSolvers: Setting up solver 8: solvedistance
+AddEquationBasics: Using procedure: src/DistanceSolveRD DistanceSolver1
+AddEquationBasics: Setting up solver: solvedistance
+Loading user function library: [src/DistanceSolveRD]...[DistanceSolver1_Init]
+AddEquationBasics: Checking for _init solver
+Loading user function library: [src/DistanceSolveRD]...[DistanceSolver1_bulk]
+AddEquationBasics: Checking for _bulk solver
+Loading user function library: [src/DistanceSolveRD]...[DistanceSolver1]
+AddEquationBasics: Time stepping method is: bdf
+AddEquationBasics: Creating standard variable: distance
+AddEquationBasics: Computing size of permutation vector
+AddEquationBasics: Maximum size of permutation vector is: 4230
+AddEquationBasics: Creating solver matrix topology
+CreateMatrix: creating initial permutation
+CreateMatrix: Creating inverse of initial order os size: 423
+CreateMatrix: Creating list matrix for equation
+MakeListMatrix: Creating list matrix
+OptimizeBandwidth: ---------------------------------------------------------
+OptimizeBandwidth: Computing matrix structure for: solvedistance...done.
+OptimizeBandwidth: Half bandwidth without optimization: 390
+OptimizeBandwidth: 
+OptimizeBandwidth: Bandwidth Optimization ...done.
+OptimizeBandwidth: Half bandwidth after optimization: 43
+OptimizeBandwidth: ---------------------------------------------------------
+CreateMatrix: Initializing list matrix for equation
+CRS_CreateMatrix: Creating CRS Matrix of size: 423
+CRS_CreateMatrix: Creating CRS Matrix with nofs: 2751
+CRS_CreateMatrix: Creating CRS Matrix finished
+CreateMatrix: Matrix created
+AddEquationBasics: Number of rows in CRS matrix: 423
+AddEquationBasics: Creating solver variable
+VariableAdd: Adding variable > distance < of size 423
+AddSolvers: Setting up solver 9: free surface top
+AddEquationBasics: Using procedure: ./src/MyFreeSurfaceSolver FreeSurfaceSolver
+AddEquationBasics: Setting up solver: free surface top
+Loading user function library: [./src/MyFreeSurfaceSolver]...[FreeSurfaceSolver_Init]
+AddEquationBasics: Checking for _init solver
+Loading user function library: [./src/MyFreeSurfaceSolver]...[FreeSurfaceSolver_bulk]
+AddEquationBasics: Checking for _bulk solver
+Loading user function library: [./src/MyFreeSurfaceSolver]...[FreeSurfaceSolver]
+AddEquationBasics: Time stepping method is: bdf
+AddEquationBasics: Creating standard variable: zs
+AddEquationBasics: Computing size of permutation vector
+AddEquationBasics: Maximum size of permutation vector is: 4230
+AddEquationBasics: Creating solver matrix topology
+CreateMatrix: creating initial permutation
+CreateMatrix: Creating inverse of initial order os size: 423
+CreateMatrix: Creating list matrix for equation
+MakeListMatrix: Creating list matrix
+OptimizeBandwidth: ---------------------------------------------------------
+OptimizeBandwidth: Computing matrix structure for: free surface top...done.
+OptimizeBandwidth: Half bandwidth without optimization: 390
+OptimizeBandwidth: 
+OptimizeBandwidth: Bandwidth Optimization ...done.
+OptimizeBandwidth: Half bandwidth after optimization: 43
+OptimizeBandwidth: ---------------------------------------------------------
+CreateMatrix: Initializing list matrix for equation
+CRS_CreateMatrix: Creating CRS Matrix of size: 423
+CRS_CreateMatrix: Creating CRS Matrix with nofs: 2751
+CRS_CreateMatrix: Creating CRS Matrix finished
+CreateMatrix: Matrix created
+AddEquationBasics: Number of rows in CRS matrix: 423
+AddEquationBasics: Creating solver variable
+VariableAdd: Adding variable > zs < of size 423
+AddEquationBasics: Creating exported variable: zs residual
+VariableAdd: Adding variable > zs residual < of size 423
+AddEquationBasics: Succesfully created variable: zs residual
+Loading user function library: [EliminateDirichlet]...[EliminateDirichlet]
+AddSolvers: Setting up solver 10: free surface sea/shelf
+AddEquationBasics: Using procedure: FreeSurfaceSolver FreeSurfaceSolver
+AddEquationBasics: Setting up solver: free surface sea/shelf
+Loading user function library: [FreeSurfaceSolver]...[FreeSurfaceSolver_Init]
+AddEquationBasics: Checking for _init solver
+Loading user function library: [FreeSurfaceSolver]...[FreeSurfaceSolver_bulk]
+AddEquationBasics: Checking for _bulk solver
+Loading user function library: [FreeSurfaceSolver]...[FreeSurfaceSolver]
+AddEquationBasics: Time stepping method is: bdf
+AddEquationBasics: Creating standard variable: zb
+AddEquationBasics: Computing size of permutation vector
+AddEquationBasics: Maximum size of permutation vector is: 4230
+AddEquationBasics: Creating solver matrix topology
+CreateMatrix: creating initial permutation
+CreateMatrix: Creating inverse of initial order os size: 423
+CreateMatrix: Creating list matrix for equation
+MakeListMatrix: Creating list matrix
+OptimizeBandwidth: ---------------------------------------------------------
+OptimizeBandwidth: Computing matrix structure for: free surface sea/shelf...done.
+OptimizeBandwidth: Half bandwidth without optimization: 390
+OptimizeBandwidth: 
+OptimizeBandwidth: Bandwidth Optimization ...done.
+OptimizeBandwidth: Half bandwidth after optimization: 43
+OptimizeBandwidth: ---------------------------------------------------------
+CreateMatrix: Initializing list matrix for equation
+CRS_CreateMatrix: Creating CRS Matrix of size: 423
+CRS_CreateMatrix: Creating CRS Matrix with nofs: 2751
+CRS_CreateMatrix: Creating CRS Matrix finished
+CreateMatrix: Matrix created
+AddEquationBasics: Number of rows in CRS matrix: 423
+AddEquationBasics: Creating solver variable
+VariableAdd: Adding variable > zb < of size 423
+AddEquationBasics: Creating exported variable: zb residual
+VariableAdd: Adding variable > zb residual < of size 423
+AddEquationBasics: Succesfully created variable: zb residual
+AddEquationBasics: Creating exported variable: zb accumulation
+VariableAdd: Adding variable > zb accumulation < of size 423
+AddEquationBasics: Succesfully created variable: zb accumulation
+AddSolvers: Setting up solver 11: result output
+AddEquationBasics: Using procedure: ResultOutputSolve ResultOutputSolver
+AddEquationBasics: Setting up solver: result output
+Loading user function library: [ResultOutputSolve]...[ResultOutputSolver_Init]
+AddEquationBasics: Checking for _init solver
+Loading user function library: [ResultOutputSolve]...[ResultOutputSolver_bulk]
+AddEquationBasics: Checking for _bulk solver
+Loading user function library: [ResultOutputSolve]...[ResultOutputSolver]
+AddEquationBasics: Time stepping method is: bdf
+AddSolvers: Setting up solvers done
+AddMeshCoordinatesAndTime: Setting mesh coordinates and time
+VariableAdd: Adding variable > Coordinate 1 < of size 4230
+VariableAdd: Adding variable > Coordinate 2 < of size 4230
+VariableAdd: Adding variable > Coordinate 3 < of size 4230
+VariableAdd: Adding variable > Time < of size 1
+VariableAdd: Adding variable > Periodic Time < of size 1
+VariableAdd: Adding variable > Timestep < of size 1
+VariableAdd: Adding variable > Timestep size < of size 1
+VariableAdd: Adding variable > Timestep interval < of size 1
+VariableAdd: Adding variable > nonlin iter < of size 1
+VariableAdd: Adding variable > coupled iter < of size 1
+VariableAdd: Adding variable > Partition < of size 1
+SetInitialConditions: Setting up initial conditions (if any)
+ListInitElementKeyword: Treating keyword: velocity 1
+ListInitElementKeyword: Initiated handle for: > velocity 1 < of type: 4
+ListInitElementKeyword: Treating keyword: velocity 2
+ListInitElementKeyword: Initiated handle for: > velocity 2 < of type: 4
+ListInitElementKeyword: Treating keyword: velocity 3
+ListInitElementKeyword: Initiated handle for: > velocity 3 < of type: 4
+ListInitElementKeyword: Treating keyword: pressure
+ListInitElementKeyword: Initiated handle for: > pressure < of type: 4
+SetActiveElementsTable: Creating table showing active element indexes
+SingleSolver: Attempting to call solver
+SingleSolver: Solver Equation string is: read dem
+Grid2DInterpolator: Inverting order (row major) for variable Variable 1
+Grid2DInterpolator: Filling empty entries for Variable 1
+Grid2DInterpolator: Keyword <Variable 1 position tol> not found, using default 0.10000000E-05
+Grid2DInterpolator: Inverting order (row major) for variable Variable 2
+Grid2DInterpolator: Filling empty entries for Variable 2
+Grid2DInterpolator: Keyword <Variable 2 position tol> not found, using default 0.10000000E-05
+Grid2DInterpolator: Inverting order (row major) for variable Variable 3
+Grid2DInterpolator: Filling empty entries for Variable 3
+Grid2DInterpolator: Keyword <Variable 3 position tol> not found, using default 0.10000000E-05
+Grid2DInterpolator: ----------ALL DONE----------
+MAIN: 
+MAIN: -------------------------------------
+MAIN:  Time: 1/1  1.000000000000000E-002
+MAIN: -------------------------------------
+MAIN: 
+SolveEquations: Solvers before timestep
+SolveEquations: Solvers in main iteration loop
+SolveEquations: -------------------------------------
+SolveEquations:  Coupled system iteration:            1
+SolveEquations: -------------------------------------
+SetActiveElementsTable: Creating table showing active element indexes
+SingleSolver: Attempting to call solver
+SingleSolver: Solver Equation string is: mapcoordinate
+StructuredMeshMapper: ---------------------------------------
+StructuredMeshMapper: Performing mapping on a structured mesh
+StructuredMeshMapper: ---------------------------------------
+DetectExtrudedStructure: Determining extruded structure
+DetectExtrudedStructure: Unit vector of direction:   0.000   0.000   1.000
+DetectExtrudedStructure: Applying mask to the whole mesh
+DetectExtrudedStructure: determine up and down pointers
+DetectExtrudedStructure: determine top and bottom pointers
+DetectExtrudedStructure: Layered structure detected in 9 cycles
+DetectExtrudedStructure: counting top and bottom bodes
+DetectExtrudedStructure: Setting pointer structures
+DetectExtrudedStructure:  Top and bottom pointer init time:   3.712000000000049E-003
+DetectExtrudedStructure:  Top and bottom pointer init rounds:            9
+DetectExtrudedStructure:  Number of nodes at the top:          423
+DetectExtrudedStructure:  Number of nodes at the bottom:          423
+StructuredMeshMapper: > Correct Surface < in case of intersecting upper and lower surface
+StructuredMeshMapper: Adjusting upper surface to maintain minimum height to: 0.1000E+01
+StructuredMeshMapper:  Active coordinate mapping time:   2.689999999999637E-004
+SetActiveElementsTable: Creating table showing active element indexes
+ListToCRSMatrix: Matrix format changed from CRS to List
+List_ToCRSMatrix: Number of entries in CRS matrix: 2470
+ListToCRSMatrix: Matrix format changed from List to CRS
+SingleSolver: Attempting to call solver
+SingleSolver: Solver Equation string is: groundedmaskini
+GroundedSolver: Computing grounded mask from geometry
+GroundedSolver: Memory allocation done.
+GroundedSolver: Bedrock Variable name found
+ Grounding Line, (x,y)   1053897.04100000       -421.198855911000     
+ Grounding Line, (x,y)   1053887.07155000        15056.7451484000     
+ Grounding Line, (x,y)   1052889.54616000        13573.7787494000     
+ Grounding Line, (x,y)   1053438.79423000        12209.1816074000     
+ Grounding Line, (x,y)   1053332.85446000        17319.2195003000     
+ Grounding Line, (x,y)   1053801.97367000       -2920.56766276000     
+ Grounding Line, (x,y)   1053938.93273000       -3122.52894097000     
+ Grounding Line, (x,y)   1053897.59655000       -2078.28792481000     
+ Grounding Line, (x,y)   1053993.17540000       -2383.54449354000     
+ Grounding Line, (x,y)   1053777.21868000        2961.35328631000     
+ Grounding Line, (x,y)   1053982.42953000        2754.63252306000     
+ Grounding Line, (x,y)   1053930.59686000        3750.77183139000     
+ Grounding Line, (x,y)   1053943.08679000        2459.47754357000     
+ Grounding Line, (x,y)   1053718.98111000        3497.48452311000     
+ Grounding Line, (x,y)   1053836.80109000        4023.03162420000     
+ Grounding Line, (x,y)   1053915.85473000        6902.90444018000     
+ Grounding Line, (x,y)   1053718.40179000        11074.4947734000     
+ Grounding Line, (x,y)   1053942.41290000        10083.1553702000     
+ Grounding Line, (x,y)   1053868.28955000       -4531.38089930000     
+ Grounding Line, (x,y)   1053782.37888000       -3371.07075260000     
+ Grounding Line, (x,y)   1053963.89735000        2124.15428036000     
+ Grounding Line, (x,y)   1053910.16756000        5430.97468855000     
+ Grounding Line, (x,y)   1053734.49203000        5167.73391497000     
+ Grounding Line, (x,y)   1053810.07677000        4857.53165712000     
+ Grounding Line, (x,y)   1050477.00643000        20000.0000000000     
+ Grounding Line, (x,y)   1051562.24992000        18548.1601022000     
+ Grounding Line, (x,y)   1053824.43167000        6321.65979132000     
+ Grounding Line, (x,y)   1053947.94211000        6008.30249908000     
+ Grounding Line, (x,y)   1053017.37006000       -14625.2151340000     
+ Grounding Line, (x,y)   1053736.83324000       -16666.8963566000     
+ Grounding Line, (x,y)   1053900.62154000       -3598.90968592000     
+ Grounding Line, (x,y)   1053869.18515000       -4065.89260670000     
+ Grounding Line, (x,y)   1053733.24838000       -3834.73721616000     
+ Grounding Line, (x,y)   1053937.93734000       -5026.79756489000     
+ Grounding Line, (x,y)   1053655.80869000        4299.09556120000     
+ Grounding Line, (x,y)   1053898.41238000        4546.69268363000     
+ Grounding Line, (x,y)   1053754.84192000        5737.98272335000     
+ Grounding Line, (x,y)   1053771.25234000        7684.32696801000     
+ Grounding Line, (x,y)   1053910.16756000        5430.97468855000     
+ Grounding Line, (x,y)   1053756.18366000       -5912.69137197000     
+ Grounding Line, (x,y)   1053890.40218000       -6241.43981449000     
+ Grounding Line, (x,y)   1053976.66294000       -6616.40012615000     
+ Grounding Line, (x,y)   1053906.86315000       -2677.81369915000     
+ Grounding Line, (x,y)   1053967.99235000       -4286.48699313000     
+ Grounding Line, (x,y)   1053852.28747000        3243.54245509000     
+ Grounding Line, (x,y)   1053815.08524000        1840.23160423000     
+ Grounding Line, (x,y)   1053839.57099000        7277.81572507000     
+ Grounding Line, (x,y)   1053476.14237000        9405.30914187000     
+ Grounding Line, (x,y)   1053614.63398000       -8301.60901389000     
+ Grounding Line, (x,y)   1053817.60553000       -8925.25487535000     
+ Grounding Line, (x,y)   1053964.40478000       -7003.31458720000     
+ Grounding Line, (x,y)   1053970.73022000       -1747.38969226000     
+ Grounding Line, (x,y)   1053696.07605000        6650.36278454000     
+ Grounding Line, (x,y)   1053728.49660000        8181.44275331000     
+ Grounding Line, (x,y)   1053952.38786000       -7426.22038816000     
+ Grounding Line, (x,y)   1053184.89965000       -11305.6778547000     
+ Grounding Line, (x,y)   1053168.74832000       -12832.0957286000     
+ Grounding Line, (x,y)   1053808.18860000       -7906.35175015000     
+ Grounding Line, (x,y)   1053777.26966000       -5564.08400736000     
+ Grounding Line, (x,y)   1053746.12616000       -4799.07509488000     
+ Grounding Line, (x,y)   1053954.95626000       -5321.46903177000     
+ Grounding Line, (x,y)   1053664.68959000        8710.48473188000     
+ Grounding Line, (x,y)   1051909.77573000       -18244.7413150000     
+ Grounding Line, (x,y)   1053426.03838000       -10303.5593339000     
+ Grounding Line, (x,y)   1053334.53548000       -9599.36068446000     
+ Grounding Line, (x,y)   1049542.23862000       -20000.0000000000     
+ Grounding Line, (x,y)   1053970.73022000       -1747.38969226000     
+ Grounding Line, (x,y)   1053954.95626000       -5321.46903177000     
+ Grounding Line, (x,y)   1053848.41156000       -1492.60031851000     
+ Grounding Line, (x,y)   1053795.66989000       -1241.57515725000     
+ Grounding Line, (x,y)   1053934.26165000        260.046283942000     
+ Grounding Line, (x,y)   1053775.11677000       -62.6140180247000     
+ Grounding Line, (x,y)   1053897.35149000        623.336843661000     
+ Grounding Line, (x,y)   1053879.09704000        1278.61696516000     
+ Grounding Line, (x,y)   1053934.81485000        1591.81624998000     
+ Grounding Line, (x,y)   1053794.42527000        991.905605096000     
+ Grounding Line, (x,y)   1053815.08524000        1840.23160423000     
+ Grounding Line, (x,y)   1053947.58333000       -758.642857349000     
+ Grounding Line, (x,y)   1053732.14691000       -954.270372939000     
+GroundedSolver: Done
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: SS (ITER=1) (NRM,RELC): ( 0.99529188      2.0000000     ) :: groundedmaskini
+SetActiveElementsTable: Creating table showing active element indexes
+ListToCRSMatrix: Matrix format changed from CRS to List
+List_ToCRSMatrix: Number of entries in CRS matrix: 622440
+ListToCRSMatrix: Matrix format changed from List to CRS
+SingleSolver: Attempting to call solver
+SingleSolver: Solver Equation string is: normalvector
+ComputeNormalSolver: Computing Normal Vector for Nodes
+ComputeNormalSolver: End
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: SS (ITER=1) (NRM,RELC): ( 0.79679568E-01  2.0000000     ) :: normalvector
+SetActiveElementsTable: Creating table showing active element indexes
+ListToCRSMatrix: Matrix format changed from CRS to List
+List_ToCRSMatrix: Number of entries in CRS matrix: 22230
+ListToCRSMatrix: Matrix format changed from List to CRS
+SingleSolver: Attempting to call solver
+SingleSolver: Solver Equation string is: fw
+GetHydrostaticLoads: Memory allocation done.
+SeaPressure: Water Density =     0.0000
+SeaPressure: Variable Buoyancy Use Basal Melt not found. Setting to FALSE
+SeaPressure: Sea level =     0.0000
+GetHydrostaticLoads: End
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: SS (ITER=1) (NRM,RELC): (  7533091.6      2.0000000     ) :: fw
+SetActiveElementsTable: Creating table showing active element indexes
+ListToCRSMatrix: Matrix format changed from CRS to List
+List_ToCRSMatrix: Number of entries in CRS matrix: 1106560
+ListToCRSMatrix: Matrix format changed from List to CRS
+SingleSolver: Attempting to call solver
+SingleSolver: Solver Equation string is: navier-stokes
+FlowSolver: Solving the Navier-Stokes equations
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION           1
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+ Flow Solution                                                                  
+                                                   F
+SeaSpring: Water Density =     0.0000
+ Flow Solution                                                                  
+                                                   F
+ Flow Solution                                                                  
+                                                   F
+ Flow Solution                                                                  
+                                                   F
+SlidCoef_Contact: Using default name >Flow Solution<
+SlidCoef_Contact: Grounding Line Defined as discontinuous
+SlidCoef_Contact: GL may move by default
+SlidCoef_Contact: If you want to fix the Grounding Line, put the keyword "Grounding line moves" to False
+SlidCoef_Contact: Contact tested for a tolerance of 0.10000000E-02
+SlidCoef_Contact: far inland nodes will not detach
+ Flow Solution                                                                  
+                                                   F
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=1) (NRM,RELC): (  5.4757991      2.0000000     ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:    1 Assembly: (s)    1.37    1.37
+FlowSolve: iter:    1 Solve:    (s)    8.26    8.26
+FlowSolve:  Result Norm     :    5.47579911308543
+FlowSolve:  Relative Change :    2.00000000000000
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION           2
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=2) (NRM,RELC): (  13.838995     0.86598861     ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:    2 Assembly: (s)    1.28    2.65
+FlowSolve: iter:    2 Solve:    (s)    8.27   16.53
+FlowSolve:  Result Norm     :    13.8389949238337
+FlowSolve:  Relative Change :   0.865988609017779
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION           3
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=3) (NRM,RELC): (  40.188209     0.97540544     ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:    3 Assembly: (s)    1.29    3.94
+FlowSolve: iter:    3 Solve:    (s)    8.25   24.79
+FlowSolve:  Result Norm     :    40.1882093718941
+FlowSolve:  Relative Change :   0.975405438483665
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION           4
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=4) (NRM,RELC): (  114.83677     0.96305201     ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:    4 Assembly: (s)    1.29    5.24
+FlowSolve: iter:    4 Solve:    (s)    8.27   33.05
+FlowSolve:  Result Norm     :    114.836766613412
+FlowSolve:  Relative Change :   0.963052008453054
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION           5
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=5) (NRM,RELC): (  288.13062     0.86008874     ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:    5 Assembly: (s)    1.30    6.53
+FlowSolve: iter:    5 Solve:    (s)    8.21   41.26
+FlowSolve:  Result Norm     :    288.130624098549
+FlowSolve:  Relative Change :   0.860088739086121
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION           6
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=6) (NRM,RELC): (  563.15216     0.64613437     ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:    6 Assembly: (s)    1.29    7.82
+FlowSolve: iter:    6 Solve:    (s)    8.22   49.48
+FlowSolve:  Result Norm     :    563.152157864172
+FlowSolve:  Relative Change :   0.646134374130139
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION           7
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=7) (NRM,RELC): (  868.26363     0.42630726     ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:    7 Assembly: (s)    1.30    9.12
+FlowSolve: iter:    7 Solve:    (s)    8.20   57.69
+FlowSolve:  Result Norm     :    868.263633328744
+FlowSolve:  Relative Change :   0.426307264935645
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION           8
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=8) (NRM,RELC): (  1132.2874     0.26395102     ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:    8 Assembly: (s)    1.30   10.42
+FlowSolve: iter:    8 Solve:    (s)    8.28   65.97
+FlowSolve:  Result Norm     :    1132.28737359919
+FlowSolve:  Relative Change :   0.263951020849887
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION           9
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=9) (NRM,RELC): (  1330.1099     0.16067471     ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:    9 Assembly: (s)    1.32   11.74
+FlowSolve: iter:    9 Solve:    (s)    8.24   74.21
+FlowSolve:  Result Norm     :    1330.10985022671
+FlowSolve:  Relative Change :   0.160674707324557
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          10
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=10) (NRM,RELC): (  1467.2676     0.98061687E-01 ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:   10 Assembly: (s)    1.33   13.07
+FlowSolve: iter:   10 Solve:    (s)    8.31   82.52
+FlowSolve:  Result Norm     :    1467.26762733074
+FlowSolve:  Relative Change :   9.806168685092172E-002
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          11
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=11) (NRM,RELC): (  1558.5266     0.60320663E-01 ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:   11 Assembly: (s)    1.30   14.38
+FlowSolve: iter:   11 Solve:    (s)    8.24   90.76
+FlowSolve:  Result Norm     :    1558.52658317040
+FlowSolve:  Relative Change :   6.032066260352077E-002
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          12
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=12) (NRM,RELC): (  1617.9398     0.37408351E-01 ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:   12 Assembly: (s)    1.32   15.70
+FlowSolve: iter:   12 Solve:    (s)    8.14   98.90
+FlowSolve:  Result Norm     :    1617.93976717607
+FlowSolve:  Relative Change :   3.740835094896470E-002
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          13
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=13) (NRM,RELC): (  1656.1926     0.23366675E-01 ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:   13 Assembly: (s)    1.32   17.02
+FlowSolve: iter:   13 Solve:    (s)    8.24  107.14
+FlowSolve:  Result Norm     :    1656.19256043281
+FlowSolve:  Relative Change :   2.336667515492635E-002
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          14
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=14) (NRM,RELC): (  1680.6962     0.14686523E-01 ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:   14 Assembly: (s)    1.31   18.32
+FlowSolve: iter:   14 Solve:    (s)    8.28  115.42
+FlowSolve:  Result Norm     :    1680.69620731837
+FlowSolve:  Relative Change :   1.468652304048830E-002
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          15
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=15) (NRM,RELC): (  1696.3673     0.92809127E-02 ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:   15 Assembly: (s)    1.31   19.64
+FlowSolve: iter:   15 Solve:    (s)    8.30  123.72
+FlowSolve:  Result Norm     :    1696.36732318874
+FlowSolve:  Relative Change :   9.280912679788533E-003
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          16
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=16) (NRM,RELC): (  1706.3939     0.58932242E-02 ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:   16 Assembly: (s)    1.31   20.95
+FlowSolve: iter:   16 Solve:    (s)    8.21  131.92
+FlowSolve:  Result Norm     :    1706.39394074062
+FlowSolve:  Relative Change :   5.893224222439482E-003
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          17
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=17) (NRM,RELC): (  1712.8194     0.37584352E-02 ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:   17 Assembly: (s)    1.34   22.29
+FlowSolve: iter:   17 Solve:    (s)    8.26  140.18
+FlowSolve:  Result Norm     :    1712.81938661481
+FlowSolve:  Relative Change :   3.758435206591648E-003
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          18
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=18) (NRM,RELC): (  1716.9463     0.24065386E-02 ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:   18 Assembly: (s)    1.34   23.63
+FlowSolve: iter:   18 Solve:    (s)    8.26  148.44
+FlowSolve:  Result Norm     :    1716.94631832277
+FlowSolve:  Relative Change :   2.406538558607209E-003
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          19
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=19) (NRM,RELC): (  1719.6038     0.15465859E-02 ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:   19 Assembly: (s)    1.33   24.96
+FlowSolve: iter:   19 Solve:    (s)    8.20  156.64
+FlowSolve:  Result Norm     :    1719.60377823372
+FlowSolve:  Relative Change :   1.546585870297669E-003
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          20
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=20) (NRM,RELC): (  1721.3196     0.99730925E-03 ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:   20 Assembly: (s)    1.33   26.29
+FlowSolve: iter:   20 Solve:    (s)    8.20  164.84
+FlowSolve:  Result Norm     :    1721.31961058867
+FlowSolve:  Relative Change :   9.973092458394040E-004
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          21
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SlidCoef_Contact: FLOW SOLVER HAS SLIGHTLY CONVERGED: look for new basal conditions
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=21) (NRM,RELC): (  1722.4305     0.64513375E-03 ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:   21 Assembly: (s)    1.33   27.63
+FlowSolve: iter:   21 Solve:    (s)    8.18  173.02
+FlowSolve:  Result Norm     :    1722.43045029137
+FlowSolve:  Relative Change :   6.451337542256072E-004
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          22
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
+BackScaleLinearSystem: Scaling back to original scale
+SolveLinearSystem: Calculating nodal loads
+ComputeNorm: Computing norm of solution
+ComputeNorm: Using consistent norm in parallel
+ComputeChange: NS (ITER=22) (NRM,RELC): (  1723.1515     0.41853448E-03 ) :: navier-stokes
+SolveSystem: System solved
+SolveSystem: Finished solving the system
+FlowSolve: iter:   22 Assembly: (s)    1.31   28.94
+FlowSolve: iter:   22 Solve:    (s)    8.25  181.27
+FlowSolve:  Result Norm     :    1723.15149771812
+FlowSolve:  Relative Change :   4.185344813314890E-004
+FlowSolve: 
+FlowSolve: 
+FlowSolve: -------------------------------------
+FlowSolve:  NAVIER-STOKES ITERATION          23
+FlowSolve: -------------------------------------
+FlowSolve: 
+FlowSolve: Starting Assembly...
+FlowSolve: Assembly:
+GetNOFActive: Number of active elements: 6678
+: .Saving bulk values for: navier-stokes
+FlowSolve: Assembly done
+SetDirichletBoundaries: Number of dofs set: 0
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 1
+DefUtils::DefaultDirichletBCs: p-element preparations: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 1
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 3666
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 1
+SetNodalLoads: Checking for nodal loads for variable: velocity 2
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 1381
+DefUtils::DefaultDirichletBCs: p-element condition setup: velocity 2
+SetNodalLoads: Checking for nodal loads for variable: velocity 3
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+SetNodalLoads: Checking for nodal loads for variable: pressure
+SetNodalLoads: Finished checking for nodal loads
+SetDirichletBoundaries: Number of dofs set: 0
+EnforceDirichletConditions: Applying Dirichlet conditions using scaled diagonal
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+EnforceDirichletConditions: Dirichlet boundary conditions enforced
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+FlowSolve: Dirichlet conditions done
+DefaultSolve: Solving linear system with default routines
+GenerateConstraintMatrix: Nothing to do for now
+DefaultSolve: Calling SolveSystem for linear solution
+SolveSystem: Solving linear system
+SolveSystem: Solving linear system without constraint matrix
+SolveLinearSystem: Assuming real valued linear system
+ScaleLinearSystem: Scaling diagonal entries to unity
+ScaleLinearSystem: Computing > DiagScaling < vector
+ScaleLinearSystem: Assuming real valued matrix while scaling
+ScaleLinearSystem: Scaling matrix values
+ScaleLinearSystem: Scaling Rhs vector
+SolveSystem: Linear System Solver: direct
+DirectSolver: Using direct method: mumps
