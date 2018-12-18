@@ -23,11 +23,11 @@ do
     case $opt in
         "Option 1: Save in uniform-mesh folder")
             #echo "Folder for uniform-mesh"
-			rsync -ruvt Cluster:/beegfs/work/zxmjf89/Mismip3DSetUpSteadyState_UniformMesh/Mesh_uni //volumes/esd01/docs/jloos/data_small/runs_elmerice_uniform/Mesh$x/ 
+			#rsync -ruvt Cluster:/beegfs/work/zxmjf89/Mismip3DSetUpSteadyState_UniformMesh/Mesh_uni //volumes/esd01/docs/jloos/data_small/runs_elmerice_uniform/Mesh$x/ 
             ;;
         "Option 2: Save in refined-mesh folder")
             echo "Folder for refined-mesh"
-			rsync -ruvt Cluster:/beegfs/work/zxmjf89/Mismip3DSetUpSteadyState_UniformMesh/Mesh_uni //volumes/esd01/docs/jloos/data_small/runs_elmerice_refined/Mesh$x/ 
+			#rsync -ruvt Cluster:/beegfs/work/zxmjf89/Mismip3DSetUpSteadyState_Remesh/Mesh_remesh //volumes/esd01/docs/jloos/data_small/runs_elmerice_refined/Mesh300_8001800_400/ 
             ;;
                 "Quit")
             break
@@ -35,6 +35,17 @@ do
         *) echo "invalid option $REPLY";;
     esac
 done
+
+
+if [ "$1" = "" ]; then
+    cat ~/.remember_info
+  elif [ "$1" = clean ]; then
+    rm -r ~/.remember_info
+    touch ~/.remember_info
+  else
+    echo "$1" >> ~/.remember_info;
+  fi
+
 
 
 

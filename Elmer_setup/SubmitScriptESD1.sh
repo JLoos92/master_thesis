@@ -1,15 +1,14 @@
 #!/bin/bash -l
-
 ###----------------------------------------------------------------------------#
-### Run script for ESD Cluster
+### Run script for ESD (1 or 2) refined
 ###----------------------------------------------------------------------------#
 
-#PBS -N Bump400300015000_msh
+#PBS -N Bump60_200500_0
 #PBS -m abe
 #PBS -M julius-loos@gmx.de
 #PBS -o ${PBS_JOBNAME}${PBS_JOBID}.out
 #PBS -e ${PBS_JOBNAME}${PBS_JOBID}.err
-#PBS -l walltime=50:30:00
+#PBS -l walltime=999:99:00
 #PBS -l nodes=1:ppn=20:esd2
 #PBS -q esd2
 ##PBS -l pmem=150gb
@@ -43,9 +42,9 @@ cd $PBS_O_WORKDIR
 #cat $PBS_NODEFILE | sort | uniq > nodelist.tmp
 
 #while read line; do
-#echo $line
-#scp $ELMEREXEC $line:/scratch/${PBS_JOBID}/ElmerSolver_mpi
-##scp $ELMEREXEC $line:/scratch/Elmer
+	#echo $line
+	#scp $ELMEREXEC $line:/scratch/${PBS_JOBID}/ElmerSolver_mpi
+	##scp $ELMEREXEC $line:/scratch/Elmer
 #done < nodelist.tmp
 
 #sleep 3s
@@ -56,7 +55,7 @@ echo Number of Nodes: ${ncpus}}
 #echo $PBS_NODEFILE
 
 
-#cp $ELMER_HOME/share/elmersolver/lib/FreeSurfaceSolver.so src/MyFreeSurfaceSolver.so
+cp $ELMER_HOME/share/elmersolver/lib/FreeSurfaceSolver.so src/MyFreeSurfaceSolver.so
 make compile
 make ini
 make grid
@@ -65,4 +64,6 @@ mpirun -n $ncpus ElmerSolver_mpi
 #make submit
 #mpirun -n 60 /scratch/Elmer
 #mpirun -n 60 /scratch/${PBS_JOBID}/ElmerSolver_mpi
+
+
 

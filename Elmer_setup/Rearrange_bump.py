@@ -44,9 +44,9 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 ###################### 0. Load and arrange data ##################################
 
 
-ZB = genfromtxt('DEM/ZB.xyz')
-BED = genfromtxt('DEM/BED.xyz')
-ZS =  genfromtxt('DEM/ZS.xyz')
+ZB = genfromtxt('Mismip3DSetUpSteadyState_Remesh/DEM/ZB.xyz')
+BED = genfromtxt('Mismip3DSetUpSteadyState_Remesh/DEM/BED.xyz')
+ZS =  genfromtxt('Mismip3DSetUpSteadyState_Remesh/DEM/ZS.xyz')
  
 # Rearrange ZB   
 y= np.unique(ZB[:,0])
@@ -78,12 +78,12 @@ GLx = 1055 * 1000
 
 M = np.zeros((201,51))
 N = 1; # number of bumps
-maxAmplitude = 300
-sigmax = 800
-sigmay = 1800
+maxAmplitude = 60
+sigmax = 200
+sigmay = 500
 theta = 2*np.pi     #rotation of bump
 
-dl = 400
+dl = 0
 
 a = ((np.cos(theta))**2)/(2*(sigmax**2)) + ((np.sin(theta))**2)/(2*sigmay**2)
 b = (-np.sin(2*theta))/(4*(sigmax**2)) + (np.sin(2*theta))/(4*sigmay**2)
@@ -141,8 +141,8 @@ BED_B_safe = (np.matrix([BED[:,0],BED[:,1],BED_B_safe])).T
 
 
 # Write new DEM file for BED surface
-np.savetxt("DEM/BED_bump" + str(maxAmplitude) + str(sigmax) + str(sigmay)+ "_" + str(dl) + ".xyz",BED_B_safe)
-np.savetxt("DEM/ZB_bump" + str(maxAmplitude) + str(sigmax) + str(sigmay)+ "_" + str(dl) + ".xyz",ZB_B_safe)
+np.savetxt("BED_bump" + str(maxAmplitude)+ "_" + str(sigmax) + str(sigmay)+ "_" + str(dl) + ".xyz",BED_B_safe)
+np.savetxt("ZB_bump" + str(maxAmplitude)+ "_" + str(sigmax) + str(sigmay)+ "_" + str(dl) + ".xyz",ZB_B_safe)
 
 
 
