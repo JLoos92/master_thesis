@@ -176,7 +176,7 @@ Solver 1
 
   Variable 1 Invert = Logical True
   Variable 1 = String "Bedrock"
-Variable 2 data file = File "./DEM/BED_bump60_200500_0.xyz"
+Variable 1 data file = File "./DEM/BED_bump100_5001000_0.xyz"
   Variable 1 Fill = Logical True
   Variable 1 x0 = Real $xzero
   Variable 1 y0 = REal $yzero
@@ -192,7 +192,7 @@ Variable 2 data file = File "./DEM/BED_bump60_200500_0.xyz"
 
   Variable 2 Invert = Logical True
   Variable 2 = String "Zb"
-Variable 2 data file = File "./DEM/ZB_bump60_200500_0.xyz"
+Variable 2 data file = File "./DEM/ZB_bump100_5001000_0.xyz"
   Variable 2 Fill = Logical True
   Variable 2 x0 = Real $xzero
   Variable 2 y0 = REal $yzero

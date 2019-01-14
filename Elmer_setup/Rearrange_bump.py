@@ -44,9 +44,9 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 ###################### 0. Load and arrange data ##################################
 
 
-ZB = genfromtxt('Mismip3DSetUpSteadyState_Remesh/DEM/ZB.xyz')
-BED = genfromtxt('Mismip3DSetUpSteadyState_Remesh/DEM/BED.xyz')
-ZS =  genfromtxt('Mismip3DSetUpSteadyState_Remesh/DEM/ZS.xyz')
+ZB = genfromtxt('Mismip3DSetUpSteadyState_Remesh1000MChannel/DEM/ZB.xyz')
+BED = genfromtxt('Mismip3DSetUpSteadyState_Remesh1000MChannel/DEM/BED.xyz')
+ZS =  genfromtxt('Mismip3DSetUpSteadyState_Remesh1000MChannel/DEM/ZS.xyz')
  
 # Rearrange ZB   
 y= np.unique(ZB[:,0])
@@ -55,18 +55,18 @@ x= np.unique(ZB[:,1])
 xx,yy = np.meshgrid(x, y)
 
 ZB_B = np.asmatrix(ZB[:,2])
-ZB_B = ZB_B.reshape(201,51)
+ZB_B = ZB_B.reshape(xx.shape[0],xx.shape[1])
     
 
 # Rearrange BED
 
 BED_B = np.asmatrix(BED[:,2])
-BED_B = BED_B.reshape(201,51)
+BED_B = BED_B.reshape(xx.shape[0],xx.shape[1])
 
 # Rearrange ZS
 
 ZS_B = np.asmatrix(ZS[:,2])
-ZS_B = ZS_B.reshape(201,51)
+ZS_B = ZS_B.reshape(xx.shape[0],xx.shape[1])
 
 
  
@@ -76,11 +76,11 @@ GLx = 1055 * 1000
 
 # Bump function with sigma and amplitude
 
-M = np.zeros((201,51))
+M = np.zeros((xx.shape[0],xx.shape[1]))
 N = 1; # number of bumps
-maxAmplitude = 60
-sigmax = 200
-sigmay = 500
+maxAmplitude = 20
+sigmax = 500
+sigmay = 1000
 theta = 2*np.pi     #rotation of bump
 
 dl = 0
@@ -105,7 +105,7 @@ amplitude = maxAmplitude
     
  # add Gauss to the matrix M
  
-Zero = np.zeros((201,51)) 
+Zero = np.zeros((xx.shape[0],xx.shape[1])) 
  
 
 M = M + (amplitude*np.exp(-exponent_el))
@@ -123,8 +123,8 @@ ZB_B_PLOT = ZB_B + M
 
 # Cut ZB for ELMER
 
-M_ZB = ZB_B_PLOT[0:101,:]
-M_Zero = ZB_B[101:201,:]
+M_ZB = ZB_B_PLOT[0:50,:]
+M_Zero = ZB_B[50:101,:]
 
 ZB_B_PLOT = np.append(M_ZB,M_Zero,axis=0)
 
@@ -141,8 +141,8 @@ BED_B_safe = (np.matrix([BED[:,0],BED[:,1],BED_B_safe])).T
 
 
 # Write new DEM file for BED surface
-np.savetxt("BED_bump" + str(maxAmplitude)+ "_" + str(sigmax) + str(sigmay)+ "_" + str(dl) + ".xyz",BED_B_safe)
-np.savetxt("ZB_bump" + str(maxAmplitude)+ "_" + str(sigmax) + str(sigmay)+ "_" + str(dl) + ".xyz",ZB_B_safe)
+np.savetxt("Mismip3DSetUpSteadyState_Remesh500MChannel/BED_bump" + str(maxAmplitude)+ "_" + str(sigmax) + str(sigmay)+ "_" + str(dl) + ".xyz",BED_B_safe)
+np.savetxt("Mismip3DSetUpSteadyState_Remesh500MChannel/ZB_bump" + str(maxAmplitude)+ "_" + str(sigmax) + str(sigmay)+ "_" + str(dl) + ".xyz",ZB_B_safe)
 
 
 

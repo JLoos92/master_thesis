@@ -26,8 +26,8 @@ echo "Amplitude = $a for the given BED topography. X and Y direction $x + $y for
 
 
 # Find and replace line in .sif file for given amplitude $x (changes BED)
-find . -type f -name "Mismip3DInfluxRemesh.sif" | xargs sed -i '' '179s/.*/Variable 1 data file = File ".\/DEM\/BED_bump'$a'_'$x''$y'_'$dl'.xyz"/g' Mismip3DInfluxRemesh.sif 
-find . -type f -name "Mismip3DInfluxRemesh.sif" | xargs sed -i '' '195s/.*/Variable 2 data file = File ".\/DEM\/ZB_bump'$a'_'$x''$y'_'$dl'.xyz"/g' Mismip3DInfluxRemesh.sif | rsync -ruvt 'Mismip3DInfluxRemesh.sif' 'Cluster:/beegfs/work/zxmjf89/Mismip3DSetUpSteadyState_Remesh/'
+find . -type f -name "Mismip3DInfluxRemesh.sif" | xargs sed -i '' '179s/.*/   Variable 1 data file = File ".\/DEM\/BED_bump'$a'_'$x''$y'_'$dl'.xyz"/g' Mismip3DInfluxRemesh.sif 
+find . -type f -name "Mismip3DInfluxRemesh.sif" | xargs sed -i '' '195s/.*/   Variable 2 data file = File ".\/DEM\/ZB_bump'$a'_'$x''$y'_'$dl'.xyz"/g' Mismip3DInfluxRemesh.sif | rsync -ruvt 'Mismip3DInfluxRemesh.sif' 'Cluster:/beegfs/work/zxmjf89/Mismip3DSetUpSteadyState_Remesh/'
 #find . -type d -name "Cluster:/beegfs/work/zxmjf89/Mismip3DInflux.sif" | xargs sed -i '' '181s/.*/Variable 1 data file = File ".\/DEM\/BED_bump'$x'.xyz"/g' Mismip3DInflux.sif
 #ssh Cluster "find /beegfs/work/zxmjf89 -name Mismip3DInflux.sif" | xargs sed -i '' '181s/.*/Variable 2 data file = File ".\/DEM\/ZB_bump'$x'.xyz"/g' SubmitScriptESD1.sh
 

@@ -3,7 +3,7 @@
 ### Run script for ESD (1 or 2) refined
 ###----------------------------------------------------------------------------#
 
-#PBS -N Bump60_200500_0
+#PBS -N Bump100_5001000_0
 #PBS -m abe
 #PBS -M julius-loos@gmx.de
 #PBS -o ${PBS_JOBNAME}${PBS_JOBID}.out
