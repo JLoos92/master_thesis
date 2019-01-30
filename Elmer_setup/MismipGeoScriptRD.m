@@ -244,7 +244,7 @@ figure(6)
 surf (ZB_B)
 hold on
 %surf (ZB)
-surf(BED_B)
+%surf(BED_B)
 surf (ZS)
 
 figure(7)

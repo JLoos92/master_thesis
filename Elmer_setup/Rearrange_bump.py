@@ -71,14 +71,14 @@ ZS_B = ZS_B.reshape(xx.shape[0],xx.shape[1])
 
  
 # Setup for Bumpfunction
-GLx = 1055 * 1000
+GLx = 1056 * 1000
 # Add Gauss Bump to BED topography
 
 # Bump function with sigma and amplitude
 
 M = np.zeros((xx.shape[0],xx.shape[1]))
 N = 1; # number of bumps
-maxAmplitude = 20
+maxAmplitude = 50
 sigmax = 500
 sigmay = 1000
 theta = 2*np.pi     #rotation of bump
@@ -92,7 +92,7 @@ c = ((np.sin(theta))**2)/(2*(sigmax**2)) + ((np.cos(theta))**2)/(2*(sigmay**2))
   
 #location of bumps or xc, yc for grounding line position
 xc = 0
-dl = 0
+dl = 3000
 yc = GLx - dl
     
 
@@ -114,7 +114,7 @@ M = M + (amplitude*np.exp(-exponent_el))
 # Add Gauss to topography (plot matrice for regular and rot)
 BED_B_PLOT = BED_B + M
 ZB_B_PLOT = ZB_B + M
-
+#ZS_B_PLOT = ZS_B + M
 
 
 
@@ -132,12 +132,15 @@ ZB_B_PLOT = np.append(M_ZB,M_Zero,axis=0)
 #from np.matrix to np.array
 BED_B_safe = np.squeeze(np.asarray(BED_B_PLOT))
 ZB_B_safe = np.squeeze(np.asarray(ZB_B_PLOT))
+#ZS_B_safe = np.squeeze(np.asarray(ZS_B_PLOT))
 
 BED_B_safe = BED_B_safe.flatten()
 ZB_B_safe = ZB_B_safe.flatten()
+#ZS_B_safe = ZS_B_safe.flatten()
 
 ZB_B_safe = (np.matrix([BED[:,0],BED[:,1],ZB_B_safe])).T
 BED_B_safe = (np.matrix([BED[:,0],BED[:,1],BED_B_safe])).T
+#ZS_B_safe = (np.matrix([BED[:,0],BED[:,1],ZS_B_safe])).T
 
 
 # Write new DEM file for BED surface
@@ -151,6 +154,7 @@ fig = plt.figure()
 ax = fig.gca(projection='3d')
 ax.plot_surface(xx,yy,BED_B_PLOT,cmap=cm.coolwarm)
 ax.plot_surface(xx,yy,ZS_B,cmap=cm.coolwarm)
-ax.plot_surface(xx,yy,ZB_B_PLOT,cmap=cm.coolwarm)#ax.plot_surface(xx,yy,ZS_B,cmap=cm.coolwarm)
+ax.plot_surface(xx,yy,ZB_B_PLOT,cmap=cm.coolwarm)
+#ax.plot_surface(xx,yy,ZS_B,cmap=cm.coolwarm)
 ax.view_init(azim=-151,elev=23)
    
