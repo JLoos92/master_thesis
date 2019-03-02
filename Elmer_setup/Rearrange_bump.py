@@ -144,8 +144,8 @@ BED_B_safe = (np.matrix([BED[:,0],BED[:,1],BED_B_safe])).T
 
 
 # Write new DEM file for BED surface
-np.savetxt("Mismip3DSetUpSteadyState_Remesh500MChannel/BED_bump" + str(maxAmplitude)+ "_" + str(sigmax) + str(sigmay)+ "_" + str(dl) + ".xyz",BED_B_safe)
-np.savetxt("Mismip3DSetUpSteadyState_Remesh500MChannel/ZB_bump" + str(maxAmplitude)+ "_" + str(sigmax) + str(sigmay)+ "_" + str(dl) + ".xyz",ZB_B_safe)
+#np.savetxt("Mismip3DSetUpSteadyState_Remesh500MChannel/BED_bump" + str(maxAmplitude)+ "_" + str(sigmax) + str(sigmay)+ "_" + str(dl) + ".xyz",BED_B_safe)
+#np.savetxt("Mismip3DSetUpSteadyState_Remesh500MChannel/ZB_bump" + str(maxAmplitude)+ "_" + str(sigmax) + str(sigmay)+ "_" + str(dl) + ".xyz",ZB_B_safe)
 
 
 

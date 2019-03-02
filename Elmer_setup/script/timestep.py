@@ -33,19 +33,3 @@ class timestep():
         plot_data = copy(self.data[variable])
           # def timestep(self,timestep):
             
-try:
-engine = mayavi.engine
-except NameError:
-                    from mayavi.api import Engine
-                    engine = Engine()
-                    engine.start()
-            if len(engine.scenes) == 0:
-                        engine.new_scene()
-                        
-                 
-           
-           
-                vtkxml_file_reader = engine.open('ForwardRemesh100M20L0011.pvtu')
-                surface = Surface()
-                engine.add_module(surface, obj=None)
-                vtkxml_file_reader.timestep = 3
