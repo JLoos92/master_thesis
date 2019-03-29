@@ -17,7 +17,7 @@ from pandas import DataFrame, Series
 from scipy.spatial.distance import pdist, squareform
 import matplotlib.pyplot as plt
 from numpy import genfromtxt
-import plotly as py
+#import plotly as py
 from scipy.interpolate import griddata
 import matplotlib.pyplot as plt
 
@@ -27,15 +27,15 @@ p_a = 2
 H_a = 0
 
 
-Points_0 =  vtk_to_numpy(xmlReader2.GetOutput().GetPoints().GetData())
-Points_60 =  vtk_to_numpy(xmlReader60.GetOutput().GetPoints().GetData())
+Points_0 =  vtk_to_numpy(case_0.points)
+#Points_60 =  vtk_to_numpy(xmlReader60.GetOutput().GetPoints().GetData())
 
 
-H2 = ((p_w*Points_0[:,2])/(p_w-p_i))-(((p_a-p_i)/(p_i-p_w))* H_a)
-H60 = ((p_w*Points_60[:,2])/(p_w-p_i))-(((p_a-p_i)/(p_i-p_w))*H_a)
+#H2 = ((p_w*Points_0[:,2])/(p_w-p_i))-(((p_a-p_i)/(p_i-p_w))* H_a)
+#H60 = ((p_w*Points_60[:,2])/(p_w-p_i))-(((p_a-p_i)/(p_i-p_w))*H_a)
 
-H_thickness = H2 - H60
-H_thickness_new = H2 - Points_60[:,2]
+#H_thickness = H2 - H60
+#H_thickness_new = H2 - Points_60[:,2]
 
 
 ly_max = 5000

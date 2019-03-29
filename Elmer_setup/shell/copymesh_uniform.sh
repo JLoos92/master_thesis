@@ -12,7 +12,7 @@ open 'smb://134.2.5.43/esd01'
 
 amp="$AMP"
 AMP=:
-echo "\n Which amplitude and sigma did you use? Please define number for dirname (e.g. 200 for maxAmplitude 1000 for sigma = Mesh2001000)"
+echo "\Amplitude,sigma and GL position for modelrun Please define number for dirname (e.g. 200 for maxAmplitude 1000 for sigma = Mesh200_500500_0)"
 read x
 AMP=$amp
 
@@ -53,6 +53,6 @@ mkdir -p //volumes/esd01/docs/jloos/data_small/runs_elmerice_uniform/Mesh$x
 
 echo "----------------------------------------------------------------------------------
 	New folder Mesh$x can be found on ESD1 FileServer under data_small
-------------------------------------------------------------------------------------"
+"------------------------------------------------------------------------------------"
 
 #rsync -ruvt Cluster:/beegfs/work/zxmjf89/Mismip3DSetUpSteadyState_UniformMesh/Mesh_uni //volumes/esd01/docs/jloos/data_small/runs_elmerice_uniform/Mesh$x/ 

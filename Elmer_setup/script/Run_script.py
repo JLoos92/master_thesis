@@ -13,48 +13,20 @@ from vtk.util.numpy_support import vtk_to_numpy
 
 
 
-# Setup Reader and path
-xmlReader = vtk.vtkXMLPUnstructuredGridReader()
-xmlReader.SetFileName('/Volumes/esd01/docs/jloos/data_small/runs_elmerice_refined/Mesh20_5001000_0_0.1/Mesh/ForwardRemesh100M20L0011.pvtu')
-xmlReader.Update()
-narrays = xmlReader.GetOutput().GetPointData().GetNumberOfArrays()
-output = xmlReader.GetOutput()
-xmlReader.Update()
-npartition = xmlReader.GetNumberOfPieces()
-#bedrock = xmlReader.GetPointArrayName(4)
+p1 = (1010000,0)
+p2 = (1080000,0)
 
-# Create variable-dictionary (contains scalars and vector)
-
-dict_var = {}
-
-for i in range(narrays):
-    
-        dict_var[i] = xmlReader.GetPointArrayName(i)
-        
-print(dict_var)
-    
-xmlReader.Update()
-npoints=xmlReader.GetOutput().GetNumberOfPoints()
-ncells=xmlReader.GetOutput().GetNumberOfCells()
+p1 = np.append(np.array(p1),0)
+p2 = np.append(np.array(p2),0)
 
 
-xmlReader.Update()
-Cells =  vtk_to_numpy(xmlReader.GetOutput().GetCells().GetData())
-xmlReader.Update()
-Points = vtk_to_numpy(xmlReader.GetOutput().GetPoints().GetData())
+unit = (p2-p1/np.linalg.norm(p2-p1))
 
+geoNormal = np.array([0,0,1])
+planeNormal = np.cross(unit,geoNormal)
 
-    
-velocity =  vtk_to_numpy(xmlReader.GetOutput().GetPointData().GetArray(18))
-
-test = xmlReader.GetOutput().GetPointData().SetActiveScalars("velocity")
-
-
-
-
-
-
-
+plane = vtk.vtkPlane()
+plane.SetNormal(planeNormal[0],planeNormal[0])
 
 
 
