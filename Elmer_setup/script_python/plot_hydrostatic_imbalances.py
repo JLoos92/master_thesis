@@ -11,7 +11,7 @@ from scipy.spatial.distance import pdist, squareform
 import matplotlib.pyplot as plt
 from numpy import genfromtxt
 import turbulucid
-from modelrun import *
+from modelrun import ModelRun
 from scipy.spatial.distance import pdist, squareform
 import matplotlib.pyplot as plt
 from numpy import genfromtxt
@@ -32,7 +32,7 @@ from matplotlib.tri import Triangulation,TriInterpolator, LinearTriInterpolator,
 import pylab
 from numpy.linalg import inv
 from mpl_toolkits.mplot3d import Axes3D
-from scipy.interpolate import LinearNDInterpolator,Rbf, UnivariateSpline,CloughTocher2DInterpolator, griddata
+from scipy.interpolate import LinearNDInterpolator,Rbf, UnivariateSpline,CloughTocher2DInterpolator, griddata, CubicSpline
 import concave_hull
 from collections import OrderedDict
 from matplotlib.colors import LogNorm
@@ -45,7 +45,7 @@ from matplotlib.colors import LogNorm
 
 
 # Get runs, put them into a dictionary (iterable)
-hydrostatic_thicknesses= {
+hydrostatic_thicknesses = {
     '1_ht_250_25' : ModelRun(250,250,250,0,25).compute_hydrostatic_thickness(),
     '2_ht_250_50' : ModelRun(250,250,250,0,50).compute_hydrostatic_thickness(),
     '3_ht_250_100' : ModelRun(250,250,250,0,100).compute_hydrostatic_thickness(),
@@ -63,18 +63,24 @@ hydrostatic_thicknesses = OrderedDict(hydrostatic_thicknesses)
 
 
 concave_hulls= {
-    '1_ch_250_25' : ModelRun(250,250,250,0,25).compute_concavehull(1076000,2),
-    '2_ch_250_50' : ModelRun(250,250,250,0,50).compute_concavehull(1076000,5),
-    '3_ch_250_100' : ModelRun(250,250,250,0,100).compute_concavehull(1076000,5),
-    '4_ch_250_150' : ModelRun(250,250,250,0,100).compute_concavehull(1076000,3),
+    '1_ch_250_25' : ModelRun(250,250,250,0,25).compute_concavehull(1076000,3),
+    '2_ch_250_50' : ModelRun(250,250,250,0,50).compute_concavehull(1076000,3),
+    '3_ch_250_100' : ModelRun(250,250,250,0,100).compute_concavehull(1076000,3),
+    '4_ch_250_150' : ModelRun(250,250,250,0,150).compute_concavehull(1076000,3),
     
     '5_ch_500_25' : ModelRun(150,500,500,0,25).compute_concavehull(1076000,3),
     '6_ch_500_50' : ModelRun(150,500,500,0,50).compute_concavehull(1076000,3),
     '7_ch_500_100': ModelRun(150,500,500,0,100).compute_concavehull(1076000,3),
-    '8_ch_250_150' : ModelRun(250,250,250,0,100).compute_concavehull(1076000,3)
+    '8_ch_500_150' : ModelRun(150,500,500,0,150).compute_concavehull(1076000,3)
     }
 
 concave_hulls = OrderedDict(concave_hulls)
+
+
+
+
+
+
 
 
 
@@ -91,6 +97,10 @@ font_axes ={'color':'black',
        'weight':'italic'
        }
 
+font_annotation = {'color':'black',
+                   'size': '10'
+                   }
+
 # Make subplots and iterate over dictionary for hydrostatic imbalances
 fig,axs = plt.subplots(nrows = 2, ncols = 4,figsize=(40,15),subplot_kw={'xticks':[],
                        'yticks':[]})
@@ -106,6 +116,8 @@ for ax, run in zip(axs.flat, hydrostatic_thicknesses.keys()):
     points = [x,y]
     points = np.asarray(points)
     points = points.transpose()
+    
+    
     # Delaunay triangulation for grid
     tri = Triangulation(x,y)
     delaunay = Delaunay(points)
@@ -115,9 +127,9 @@ for ax, run in zip(axs.flat, hydrostatic_thicknesses.keys()):
     
     stress = ModelRun(250,250,250,0,50).cut_and_slice(1076000,'stress vector')[0] 
     linepoints = ModelRun(250,250,250,0,50).cut_and_slice(1076000,'stress vector')[1]    
-    ax.plot(linepoints[:,0],linepoints[:,1],'-r',label = 'A')
-    ax.text(1076000,-5000,'A',fontdict=font)
-    ax.text(1076000,5000,"A'",fontdict=font)
+    ax.plot(linepoints[:,0],linepoints[:,1],'-r',label = "A")
+    ax.text(1076000,-5000,"A",fontdict=font_annotation)
+    ax.text(1076000,5000,"A'",fontdict=font_annotation)
     
 
         
@@ -128,7 +140,7 @@ for ax, run in zip(axs.flat, hydrostatic_thicknesses.keys()):
 
 
 # Make subplots and iterate over dictionary for concave hulls 
-fig1,axs1 = plt.subplots(nrows = 2, ncols = 3,figsize=(30,15))
+fig1,axs1 = plt.subplots(nrows = 2, ncols = 4,figsize=(40,15))
 fig1.suptitle('Concave hulls of crosssections', 
              fontsize = 30)
     
@@ -140,23 +152,29 @@ for ax, run in zip(axs1.flat, concave_hulls.keys()):
     ax.grid()
     ax.title.set_text('width = {:s}, time = {:s}' .format(run.split('_')[2], run.split('_')[-1]))
     
+
+
+
+
+
+
+
+
    
-x_list = linepoints[:,1]
-y_list = linepoints[:,2]
-z_list = stress[:,2]    
- 
-    
- 
-    
-X, Y = np.meshgrid(x_list,y_list)
-
-# Show the positions of the sample points, just to have some reference
-
-#plt.scatter(x_list,y_list,400,facecolors='none')  
-    
-npoints = np.delete(linepoints, 0, 1)   
-grid = griddata(npoints,z_list,(X,Y),method = 'nearest')  
-    
+#x_list = linepoints[:,1]
+#y_list = linepoints[:,2]
+#z_list = stress[:,2]    
+# 
+#    
+#    
+#X, Y = np.meshgrid(x_list,y_list)
+#
+## Show the positions of the sample points, just to have some reference
+#
+#    
+#npoints = np.delete(linepoints, 0, 1)   
+#grid = griddata(npoints,z_list,(X,Y),method = 'nearest')  
+#    
     
     
     

@@ -108,7 +108,7 @@ class ModelRun():
         sub_mesh_directory = 'Mesh/'
 
         # change output directory according to mesh refinement:
-       # grid_refinement = bool(input("Enter case for folder (True==fixed, False==fixed): "))
+        # grid_refinement = bool(input("Enter case for folder (True==fixed, False==fixed): "))
         
         #if grid_refinement==True:
          #   res_folder = os.path.join(home_directory + 'fixed')
@@ -117,6 +117,7 @@ class ModelRun():
             
         # create fodername of the run:    
         run_folder = 'Mesh{:}_{:}{:}_{:}'.format(self.bump_amplitude,self.bump_distribution_x,self.bump_distribution_y,self.bump_offset) 
+        
         # path to the directory of the model run:
         self.run_directory = os.path.join(res_folder,run_folder,sub_mesh_directory)  
         
@@ -294,7 +295,7 @@ class ModelRun():
         self.y = self.points[:,1]
         self.z = self.points[:,2]
 
-       
+        # Function to find min-values of
         def selectMinz_vectorized(x, y, z):
             # Get grouped lex-sort indices
             sidx = (y + x*(y.max() - y.min() + 1)).argsort()
@@ -360,13 +361,8 @@ class ModelRun():
         self.zb_new = self.zb[zmin_ind]
         self.zs_new = self.zs[zmax_ind]
 
-#        self.zs_ind = np.asarray(np.where(self.zs>0))
-#        self.zs_ind = self.zs_ind.transpose().flatten()
         self.x_new = self.x[zmax_ind]
         self.y_new = self.y[zmax_ind]
-#        
-#        self.zs_s = self.zs[self.zs!=0]
-#        self.zb_s = self.zb[self.zb!=0]
         
         self.thick_model = -self.zs_new-self.zb_new       
         self.thick_calc = np.divide((p_w*self.zs_new),(p_w-p_i))                
@@ -399,7 +395,7 @@ class ModelRun():
         
         Returns:
         ----------
-        Tuple(float): Matrix of variable cut at x-coordinate, line points to
+        Tuple (float): Matrix of variable cut at x-coordinate, line points to
         compute concave hull
         
         
@@ -437,12 +433,19 @@ class ModelRun():
         
         """
         Method: compute_concavehull 
+        ----------
+        This method computes the channel imprint at a given x - coordinate.
+        Define number of neighbors (default = 3) for concave hull function and
+        x-coordinate.
         
         Parameters
         ----------
-
+        xcoord : int
+        neighbors :int
         
-       
+        Returns:
+        ----------
+        Tuple (float): x, z arrays for concave hull
         
         """     
         # Set x-coordinate
