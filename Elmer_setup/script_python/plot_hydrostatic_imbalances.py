@@ -46,15 +46,15 @@ from matplotlib.colors import LogNorm
 
 # Get runs, put them into a dictionary (iterable)
 hydrostatic_thicknesses = {
-    '1_ht_250_25' : ModelRun(250,250,250,0,25).compute_hydrostatic_thickness(),
-    '2_ht_250_50' : ModelRun(250,250,250,0,50).compute_hydrostatic_thickness(),
-    '3_ht_250_100' : ModelRun(250,250,250,0,100).compute_hydrostatic_thickness(),
-    '4_ht_250_150' : ModelRun(250,250,250,0,150).compute_hydrostatic_thickness(),
+    '1_ht_250_25' : ModelRun(250,150,150,0,1).compute_hydrostatic_thickness(),
+    '2_ht_250_50' : ModelRun(250,150,150,0,10).compute_hydrostatic_thickness(),
+    '3_ht_250_100' : ModelRun(250,150,150,0,20).compute_hydrostatic_thickness(),
+    '4_ht_250_150' : ModelRun(250,150,150,0,30).compute_hydrostatic_thickness(),
     
-    '5_ht_500_25' : ModelRun(150,500,500,0,25).compute_hydrostatic_thickness(),
-    '6_ht_500_50' : ModelRun(150,500,500,0,50).compute_hydrostatic_thickness(),
-    '7_ht_500_100': ModelRun(150,500,500,0,100).compute_hydrostatic_thickness(),
-    '8_ht_500_150': ModelRun(150,500,500,0,150).compute_hydrostatic_thickness()
+    '5_ht_shift_25' : ModelRun(250,150,150,99,1).compute_hydrostatic_thickness(),
+    '6_ht_shift_50' : ModelRun(250,150,150,99,10).compute_hydrostatic_thickness(),
+    '7_ht_shift_100': ModelRun(250,150,150,99,20).compute_hydrostatic_thickness(),
+    '8_ht_shift_150': ModelRun(250,150,150,99,30).compute_hydrostatic_thickness()
     }
 
 hydrostatic_thicknesses = OrderedDict(hydrostatic_thicknesses)
@@ -63,15 +63,15 @@ hydrostatic_thicknesses = OrderedDict(hydrostatic_thicknesses)
 
 
 concave_hulls= {
-    '1_ch_250_25' : ModelRun(250,250,250,0,25).compute_concavehull(1076000,3),
-    '2_ch_250_50' : ModelRun(250,250,250,0,50).compute_concavehull(1076000,3),
-    '3_ch_250_100' : ModelRun(250,250,250,0,100).compute_concavehull(1076000,3),
-    '4_ch_250_150' : ModelRun(250,250,250,0,150).compute_concavehull(1076000,3),
+    '1_ch_shift_25' : ModelRun(250,150,150,99,1).compute_concavehull(1067000,3),
+    '2_ch_shift_50' : ModelRun(250,150,150,99,10).compute_concavehull(1067000,3),
+    '3_ch_shift_100' : ModelRun(250,150,150,99,20).compute_concavehull(1067000,3),
+    '4_ch_shift_150' : ModelRun(250,150,150,99,30).compute_concavehull(1067000,3),
     
-    '5_ch_500_25' : ModelRun(150,500,500,0,25).compute_concavehull(1076000,3),
-    '6_ch_500_50' : ModelRun(150,500,500,0,50).compute_concavehull(1076000,3),
-    '7_ch_500_100': ModelRun(150,500,500,0,100).compute_concavehull(1076000,3),
-    '8_ch_500_150' : ModelRun(150,500,500,0,150).compute_concavehull(1076000,3)
+    '5_ch_500_25' : ModelRun(250,150,150,0,1).compute_concavehull(1067000,3),
+    '6_ch_500_50' : ModelRun(250,150,150,0,10).compute_concavehull(1067000,3),
+    '7_ch_500_100': ModelRun(250,150,150,0,20).compute_concavehull(1067000,3),
+    '8_ch_500_150' : ModelRun(250,150,150,0,30).compute_concavehull(1067000,3)
     }
 
 concave_hulls = OrderedDict(concave_hulls)
@@ -102,7 +102,7 @@ font_annotation = {'color':'black',
                    }
 
 # Make subplots and iterate over dictionary for hydrostatic imbalances
-fig,axs = plt.subplots(nrows = 2, ncols = 4,figsize=(40,15),subplot_kw={'xticks':[],
+fig,axs = plt.subplots(nrows = 2, ncols = 4,figsize=(50,20),subplot_kw={'xticks':[],
                        'yticks':[]})
 fig.suptitle('Deviation of hydrostatic equilibrium with channel width 500 and 250', 
              fontsize = 30)
@@ -125,11 +125,11 @@ for ax, run in zip(axs.flat, hydrostatic_thicknesses.keys()):
     ax.title.set_text('width = {:s}, time = {:s}' .format(run.split('_')[2], run.split('_')[-1]))
     
     
-    stress = ModelRun(250,250,250,0,50).cut_and_slice(1076000,'stress vector')[0] 
-    linepoints = ModelRun(250,250,250,0,50).cut_and_slice(1076000,'stress vector')[1]    
+   # stress = ModelRun(250,150,150,0,50).cut_and_slice(1067000,'stress vector')[0] 
+    linepoints = ModelRun(250,150,150,99,10).cut_and_slice(1067000,'stress vector')[1]    
     ax.plot(linepoints[:,0],linepoints[:,1],'-r',label = "A")
-    ax.text(1076000,-5000,"A",fontdict=font_annotation)
-    ax.text(1076000,5000,"A'",fontdict=font_annotation)
+    ax.text(1067000,-5000,"A",fontdict=font_annotation)
+    ax.text(1067000,5000,"A'",fontdict=font_annotation)
     
 
         

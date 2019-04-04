@@ -22,29 +22,18 @@ from numpy import genfromtxt
 import concave_hull
 import numpy as np
 from tempfile import TemporaryFile
-
+import glob
+from scipy.interpolate import interp1d
 
 #from timestep import Timestep
 
-#from mayavi.modules.scalar_cut_plane import ScalarCutPlane
-#from pyface.timer.api import Timer
-#from mayavi.core.api import Engine
-#from mayavi.core.base import Base
-#from mayavi.core.module import Module
-#from mayavi.core.lut_manager import LUTManager
-#from mayavi.core.common import handle_children_state, exception
-#from mayavi.core.pipeline_info import PipelineInfo
-#from mayavi import mlab
-#from mayavi import tools     
 
-#from mayavi.modules.surface import Surface
-import glob
  
 
 
     
 '''
-Check if file server is connected with local 
+Check if file server is connected with local machine, then run class + method.
 '''
 
 path_to_volume = '/Volumes/esd01'
@@ -53,7 +42,7 @@ if os.path.ismount(path_to_volume)==True:
         print ('ESD01 fileserver is already mounted.')
 else:
         subprocess.Popen(["open smb://134.2.5.43/esd01"], shell=True)
-        print ('Fileserver has been mounted.')  
+        print ('Fileserver has been mounted to local machine.')  
 
 
 
@@ -63,7 +52,7 @@ else:
 class ModelRun():
     
     """
-    Class ModelRun
+    Class ModelRun:
     Here description
     """
     
@@ -75,7 +64,7 @@ class ModelRun():
                  bump_amplitude, 
                  bump_distribution_x,
                  bump_distribution_y,
-                 bump_offset,
+                 prop,
                  timestep):
         
         
@@ -90,16 +79,17 @@ class ModelRun():
             height of the bump
         bump_distribution_y : int
             height of the bump    
-        bump_offset : int
-            extent flow direction
-         grid_refinement : boolean
-            whether the grid is refined or not
+        prop : string
+            extra specification e.g. double (two gauss functions)
+         timestep : int
+            number of timestep
         """
         
         self.bump_amplitude = bump_amplitude
         self.bump_distribution_x = bump_distribution_x
         self.bump_distribution_y = bump_distribution_y
-        self.bump_offset = bump_offset
+        self.k = 0
+        self.prop = prop
         self.timestep = timestep
         #self.grid_refinement = grid_refinement
         
@@ -116,7 +106,7 @@ class ModelRun():
         res_folder = os.path.join(home_directory + 'fixed')
             
         # create fodername of the run:    
-        run_folder = 'Mesh{:}_{:}{:}_{:}'.format(self.bump_amplitude,self.bump_distribution_x,self.bump_distribution_y,self.bump_offset) 
+        run_folder = 'Mesh{:}_{:}{:}_{:}'.format(self.bump_amplitude,self.bump_distribution_x,self.bump_distribution_y,self.prop) 
         
         # path to the directory of the model run:
         self.run_directory = os.path.join(res_folder,run_folder,sub_mesh_directory)  
@@ -198,7 +188,7 @@ class ModelRun():
         
         # Change for cut plane in x direction ()
         if GL is None:
-            self.GL = 1065000
+            self.GL = 1056000
         elif GL is not None:
             self.GL = GL
 
@@ -228,14 +218,16 @@ class ModelRun():
 
     
         
-    def convexhull(self):
+    def compute_convexhull(self):
         
         """
         Method: convexhull 
+        ----------
+        Computes boundary hull of cutted domain.
         
         Parameters
         ----------
-        self
+        -
         
        
         
@@ -278,7 +270,7 @@ class ModelRun():
      
     # Paraneter for calculation of hydrostatic thickness
         
-        p_w = 1027.0 #kg m−3 ), ice (ρi =918kgm−3), and air (ρa =2kgm−3):
+        p_w = 1000.0 #kg m−3 ), ice (ρi =918kgm−3), and air (ρa =2kgm−3):
         p_i = 900.0
         p_a = 2.0
         H_a = 0
@@ -295,20 +287,19 @@ class ModelRun():
         self.y = self.points[:,1]
         self.z = self.points[:,2]
 
-        # Function to find min-values of
-        def selectMinz_vectorized(x, y, z):
+        # Function to find min-values of z_b
+        
+        def selectMinz(x, y, z):
             # Get grouped lex-sort indices
             sidx = (y + x*(y.max() - y.min() + 1)).argsort()
-            # or sidx = np.lexsort([x, y])
+            
         
-            # Lex-sort x, y, z
+            # Sort x, y, z
             x_sorted = x[sidx]
             y_sorted = y[sidx]
             z_sorted = z[sidx]
         
-            # Get equality mask between each sorted X and Y elem against previous ones.
-            # The non-zero indices of its inverted mask gives us the indices where the 
-            # new groupings start. We are calling those as cut_idx.
+            # Get equality mask between each sorted X and Y elem against previous 
             seq_eq_mask = (x_sorted[1:] == x_sorted[:-1]) & (y_sorted[1:] == y_sorted[:-1])
             cut_idx = np.flatnonzero(np.concatenate(( [True], ~seq_eq_mask)))
         
@@ -318,20 +309,19 @@ class ModelRun():
             # Make tuples of the groupings of x,y and the corresponding min Z values
             return (zip(x_sorted[cut_idx], y_sorted[cut_idx]), minZ.tolist())
         
-        
-        def selectMaxz_vectorized(x, y, z):
-            # Get grouped lex-sort indices
+         # Function to find min-values of z_s
+         
+        def selectMaxz(x, y, z):
+            # Get grouped indices
             sidx = (y + x*(y.max() - y.min() + 1)).argsort()
-            # or sidx = np.lexsort([x, y])
+           
         
-            # Lex-sort x, y, z
+            # sort x, y, z
             x_sorted = x[sidx]
             y_sorted = y[sidx]
             z_sorted = z[sidx]
         
-            # Get equality mask between each sorted X and Y elem against previous ones.
-            # The non-zero indices of its inverted mask gives us the indices where the 
-            # new groupings start. We are calling those as cut_idx.
+            # Get equality mask between each sorted X and Y elem against previous 
             seq_eq_mask = (x_sorted[1:] == x_sorted[:-1]) & (y_sorted[1:] == y_sorted[:-1])
             cut_idx = np.flatnonzero(np.concatenate(( [True], ~seq_eq_mask)))
         
@@ -342,8 +332,8 @@ class ModelRun():
             return (zip(x_sorted[cut_idx], y_sorted[cut_idx]), maxZ.tolist())
         
         
-        zmin = selectMinz_vectorized(self.x,self.y,self.z)
-        zmax = selectMaxz_vectorized(self.x,self.y,self.z)
+        zmin = selectMinz(self.x,self.y,self.z)
+        zmax = selectMaxz(self.x,self.y,self.z)
 
         zmax = zmax[1]
         zmax = np.asarray(zmax)
@@ -364,11 +354,12 @@ class ModelRun():
         self.x_new = self.x[zmax_ind]
         self.y_new = self.y[zmax_ind]
         
-        self.thick_model = -self.zs_new-self.zb_new       
+        self.thick_model = -self.zs_new+self.zb_new       
         self.thick_calc = np.divide((p_w*self.zs_new),(p_w-p_i))                
-        self.h_thickness = self.thick_model - self.thick_calc 
+        self.h_thickness = self.thick_model + self.thick_calc 
         
-        return self.x_new,self.y_new,self.h_thickness
+        # Return values of coordinates and calculated hydrostatic thickness
+        return self.x_new, self.y_new, self.h_thickness, self.thick_calc, self.thick_model
     
     
     
@@ -450,15 +441,21 @@ class ModelRun():
         """     
         # Set x-coordinate
         self.xcoord = xcoord
-        
+#        self.xcoord_1 = xcoord_1
+#        self.xcoord_2 = xcoord_2
+#        self.xcoord_3 = xcoord_3
+#        
+#        self.coordsx = [self.xcoord_1,self.xcoord_2,self.xcoord_3]
+#        print("Coordinates for crosssections:" , self.coordsx)
         # Set number for neighbors to compute concave hull
         self.neighbors = neighbors
         
         
         # Cut and slice
-       
+        #for x in self.coordsx:
+            
         self.line=vtk.vtkPlane()
-        self.line.SetOrigin(self.xcoord,0,0)
+        self.line.SetOrigin(xcoord,0,0)
         self.line.SetNormal(1,0,0)
         
         self.clipped_area = self.cutter()
@@ -474,7 +471,28 @@ class ModelRun():
         # Compute concave hull at crosssection of line points
         self.hull = concave_hull.compute(self.hull_points,self.neighbors)
         
-        return self.hull
+        # Add function for smoothing
+        
+        x_smooth = self.hull[:,0]
+        z_smooth = self.hull[:,1]
+        
+        x = np.ndarray.tolist(x_smooth)
+        z = np.ndarray.tolist(z_smooth)
+        orig_len = len(x)
+        
+        x = x[-6:-1] + x + x[1:6]
+        z = z[-6:-1] + z + z[1:6]
+        
+        t = np.arange(len(x))
+        ti = np.linspace(2, orig_len + 1, 10 * orig_len)
+        
+        xi = interp1d(t, x, kind='cubic')(ti)
+        zi = interp1d(t, z, kind='cubic')(ti)
+               
+        self.hull_smoothed = xi,zi        
+               
+        
+        return self.hull_smoothed
   
         
         
