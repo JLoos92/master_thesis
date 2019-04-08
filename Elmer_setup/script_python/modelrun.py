@@ -24,7 +24,7 @@ import numpy as np
 from tempfile import TemporaryFile
 import glob
 from scipy.interpolate import interp1d
-
+import pandas as pd
 #from timestep import Timestep
 
 
@@ -168,7 +168,7 @@ class ModelRun():
        
         
     
-    def cutter(self, GL=None):
+    def cutter(self ,GL=None):
         
         """
         Method: cutter
@@ -188,10 +188,12 @@ class ModelRun():
         
         # Change for cut plane in x direction ()
         if GL is None:
-            self.GL = 1056000
+            self.GL = 1057000
         elif GL is not None:
             self.GL = GL
-
+        
+        
+        
         #create a plane to cut,here it cuts in the XZ direction (xz normal=(1,0,0);XY =(0,0,1),YZ =(0,1,0)
         self.plane=vtk.vtkPlane()
         self.plane.SetOrigin(self.GL,0,0)
@@ -204,7 +206,7 @@ class ModelRun():
         self.clipData.Update()
         #self.clipData = self.clipData.GetOutput()
        # self.dict_var_clipped = self.clipData.SetInputConnection(self.xmlReader.GetOutputPort().GetPointArrayName())
-        
+        #self.out = vtk_to_numpy(self.cutter.GetOutput().GetPointData().GetArray(self.var))
         #Check for arrays
        # for i in range(self.narrays):
     
@@ -307,7 +309,7 @@ class ModelRun():
             minZ = np.minimum.reduceat(z_sorted, cut_idx)
         
             # Make tuples of the groupings of x,y and the corresponding min Z values
-            return (zip(x_sorted[cut_idx], y_sorted[cut_idx]), minZ.tolist())
+            return (x_sorted[cut_idx], y_sorted[cut_idx]), minZ.tolist()
         
          # Function to find min-values of z_s
          
@@ -329,37 +331,42 @@ class ModelRun():
             maxZ = np.maximum.reduceat(z_sorted, cut_idx)
         
             # Make tuples of the groupings of x,y and the corresponding min Z values
-            return (zip(x_sorted[cut_idx], y_sorted[cut_idx]), maxZ.tolist())
+            return (x_sorted[cut_idx], y_sorted[cut_idx]), maxZ.tolist()
         
         
         zmin = selectMinz(self.x,self.y,self.z)
         zmax = selectMaxz(self.x,self.y,self.z)
 
-        zmax = zmax[1]
-        zmax = np.asarray(zmax)
-
-        zmin = zmin[1]
-        zmin = np.asarray(zmin)
+        zs = zmax[1]
+        zs = np.asarray(zs)
+        xy_zmax = zmax[0]
+       
         
+        zb = zmin[1]
+        zb = np.asarray(zb)
+        xy_zmin = zmin[0]
         
-        zmin_ind = np.isin(self.z,zmin)
-        zmax_ind = np.isin(self.z,zmax)
+        #zmin_ind = np.isin(self.z,zmin)
+        #zmax_ind = np.isin(self.z,zmax)
         
-        zmin_ind = np.where(zmin_ind)
-        zmax_ind = np.where(zmax_ind)
+        #zmin_ind = np.where(zmin_ind)
+        #zmax_ind = np.where(zmax_ind)
         
-        self.zb_new = self.zb[zmin_ind]
-        self.zs_new = self.zs[zmax_ind]
-
-        self.x_new = self.x[zmax_ind]
-        self.y_new = self.y[zmax_ind]
+        #self.zb_new = self.zb[zmin_ind]
+        #self.zs_new = self.zs[zmax_ind]
+        self.zb_new = zb
+        self.zs_new = zs
+        #self.x_new = self.x[zmax_ind]
+        #self.y_new = self.y[zmax_ind]
+        x_corr = xy_zmax[0] 
+        y_corr = xy_zmax[1]
         
         self.thick_model = -self.zs_new+self.zb_new       
         self.thick_calc = np.divide((p_w*self.zs_new),(p_w-p_i))                
         self.h_thickness = self.thick_model + self.thick_calc 
         
         # Return values of coordinates and calculated hydrostatic thickness
-        return self.x_new, self.y_new, self.h_thickness, self.thick_calc, self.thick_model
+        return x_corr, y_corr, self.h_thickness, self.thick_calc, self.thick_model
     
     
     
@@ -439,6 +446,8 @@ class ModelRun():
         Tuple (float): x, z arrays for concave hull
         
         """     
+        
+        
         # Set x-coordinate
         self.xcoord = xcoord
 #        self.xcoord_1 = xcoord_1
@@ -452,7 +461,7 @@ class ModelRun():
         
         
         # Cut and slice
-        #for x in self.coordsx:
+        # for x in self.coordsx:
             
         self.line=vtk.vtkPlane()
         self.line.SetOrigin(xcoord,0,0)
@@ -471,7 +480,18 @@ class ModelRun():
         # Compute concave hull at crosssection of line points
         self.hull = concave_hull.compute(self.hull_points,self.neighbors)
         
-        # Add function for smoothing
+        # Using pandas-dataframe
+        #df = pd.DataFrame(self.hull_points,index=['x','y'])
+        df = pd.DataFrame(self.hull_points,columns=['x','y'])
+        grouped = df.groupby('x')
+        
+        #Upper and lower boundary
+        lower_boundary = grouped.min()
+        upper_boundary = grouped.max()
+        
+        self.hull_panda = upper_boundary,lower_boundary
+        
+        # Add function for smoothing concave hull
         
         x_smooth = self.hull[:,0]
         z_smooth = self.hull[:,1]
@@ -480,8 +500,8 @@ class ModelRun():
         z = np.ndarray.tolist(z_smooth)
         orig_len = len(x)
         
-        x = x[-6:-1] + x + x[1:6]
-        z = z[-6:-1] + z + z[1:6]
+        x = x[-3:-1] + x + x[1:3]
+        z = z[-3:-1] + z + z[1:3]
         
         t = np.arange(len(x))
         ti = np.linspace(2, orig_len + 1, 10 * orig_len)
@@ -492,7 +512,7 @@ class ModelRun():
         self.hull_smoothed = xi,zi        
                
         
-        return self.hull_smoothed
+        return self.hull_smoothed, upper_boundary, lower_boundary
   
         
         

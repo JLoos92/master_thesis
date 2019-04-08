@@ -40,61 +40,61 @@ from matplotlib.colors import LogNorm
 
 
 t1 = 10
-t2 = 20
-t3 = 25
-t4 = 55
+t2 = 50
+t3 = 100
+t4 = 200
 
-neighbor = 1
+neighbor = 4
 
 
 
 # Get runs, put them into a dictionary (iterable)
 hydrostatic_thicknesses = {
-    '1_ht_150_10' : ModelRun(250,150,150,0,t1).compute_hydrostatic_thickness(),
-    '2_ht_150_25' : ModelRun(250,150,150,0,t2).compute_hydrostatic_thickness(),
-    '3_ht_150_50' : ModelRun(250,150,150,0,t3).compute_hydrostatic_thickness(),
-    '4_ht_150_100' : ModelRun(250,150,150,0,t4).compute_hydrostatic_thickness(),
+    '1.1_ht_150_10' : ModelRun(250,150,150,0,t1).compute_hydrostatic_thickness(),
+    '1.2_ht_150_25' : ModelRun(250,150,150,0,t2).compute_hydrostatic_thickness(),
+    '1.3_ht_150_50' : ModelRun(250,150,150,0,t3).compute_hydrostatic_thickness(),
+    '1.4_ht_150_100' : ModelRun(250,150,150,0,t4).compute_hydrostatic_thickness(),
     
-    '5_ht_150shift_10' : ModelRun(250,250,250,0,t1).compute_hydrostatic_thickness(),
-    '6_ht_150shift_25' : ModelRun(250,250,250,0,t2).compute_hydrostatic_thickness(),
-    '7_ht_150shift_50': ModelRun(250,250,250,0,t3).compute_hydrostatic_thickness(),
-    '8_ht_150shift_100': ModelRun(250,250,250,0,t4).compute_hydrostatic_thickness(),
+    '2.1_ht_150shift_10' : ModelRun(250,250,250,0,t1).compute_hydrostatic_thickness(),
+    '2.2_ht_150shift_25' : ModelRun(250,250,250,0,t2).compute_hydrostatic_thickness(),
+    '2.3_ht_150shift_50': ModelRun(250,250,250,0,t3).compute_hydrostatic_thickness(),
+    '2.4_ht_150shift_100': ModelRun(250,250,250,0,t4).compute_hydrostatic_thickness(),
     
-    '9_ht_300_10' : ModelRun(250,300,300,0,t1).compute_hydrostatic_thickness(),
-    '10_ht_300_25' : ModelRun(250,300,300,0,t2).compute_hydrostatic_thickness(),
-    '11_ht_300_50': ModelRun(250,300,300,0,t3).compute_hydrostatic_thickness(),
-    '12_ht_300_100': ModelRun(250,300,300,0,t4).compute_hydrostatic_thickness(),
+    '3.1_ht_300_10' : ModelRun(250,400,400,'double',t1).compute_hydrostatic_thickness(),
+    '3.2_ht_300_25' : ModelRun(250,400,400,'double',t2).compute_hydrostatic_thickness(),
+    '3.3_ht_300_50': ModelRun(250,400,400,'double',t3).compute_hydrostatic_thickness(),
+    '3.4_ht_300_100': ModelRun(250,400,400,'double',t4).compute_hydrostatic_thickness(),
     
-    '13_ht_400_10' : ModelRun(250,200,200,'double',t1).compute_hydrostatic_thickness(),
-    '14_ht_400_25' : ModelRun(250,200,200,'double',t2).compute_hydrostatic_thickness(),
-    '15_ht_400_50': ModelRun(250,200,200,'double',t3).compute_hydrostatic_thickness(),
-    '16_ht_400_100': ModelRun(250,200,200,'double',t4).compute_hydrostatic_thickness()
+    '4.1_ht_400_10' : ModelRun(250,300,300,'double',t1).compute_hydrostatic_thickness(),
+    '4.2_ht_400_25' : ModelRun(250,300,300,'double',t2).compute_hydrostatic_thickness(),
+    '4.3_ht_400_50': ModelRun(250,300,300,'double',t3).compute_hydrostatic_thickness(),
+    '4.4_ht_400_100': ModelRun(250,300,300,'double',t4).compute_hydrostatic_thickness()
     }
 
 hydrostatic_thicknesses = OrderedDict(hydrostatic_thicknesses)
 
-cs = 1057000
+cs = 1060000
 
 concave_hulls= {
-    '1_ch_150_5' : ModelRun(250,150,150,0,t1).compute_concavehull(cs,neighbor),
-    '2_ch_150_10' : ModelRun(250,150,150,0,t2).compute_concavehull(cs,neighbor),
-    '3_ch_150_25' : ModelRun(250,150,150,0,t3).compute_concavehull(cs,neighbor),
-    '4_ht_150_62' : ModelRun(250,150,150,0,t4).compute_concavehull(cs,neighbor),
+    '1.1_ch_150_5' : ModelRun(250,150,150,0,t1).compute_concavehull(cs,neighbor),
+    '1.2_ch_150_10' : ModelRun(250,150,150,0,t2).compute_concavehull(cs,neighbor),
+    '1.3_ch_150_25' : ModelRun(250,150,150,0,t3).compute_concavehull(cs,neighbor),
+    '1.4_ht_150_62' : ModelRun(250,150,150,0,t4).compute_concavehull(cs,neighbor),
     
-    '5_ch_250_5' : ModelRun(250,250,250,0,t1).compute_concavehull(cs,neighbor),
-    '6_ch_250_10' : ModelRun(250,250,250,0,t2).compute_concavehull(cs,neighbor),
-    '7_ch_250_25': ModelRun(250,250,250,0,t3).compute_concavehull(cs,neighbor),
-    '8_ch_250_62': ModelRun(250,250,250,0,t4).compute_concavehull(cs,neighbor),
+    '2.1_ch_250_5' : ModelRun(250,250,250,0,t1).compute_concavehull(cs,neighbor),
+    '2.2_ch_250_10' : ModelRun(250,250,250,0,t2).compute_concavehull(cs,neighbor),
+    '2.3_ch_250_25': ModelRun(250,250,250,0,t3).compute_concavehull(cs,neighbor),
+    '2.4_ch_250_62': ModelRun(250,250,250,0,t4).compute_concavehull(cs,neighbor),
     
-    '9_ch_300_5' : ModelRun(250,300,300,0,t1).compute_concavehull(cs,neighbor),
-    '10_ch_300_10' : ModelRun(250,300,300,0,t2).compute_concavehull(cs,neighbor),
-    '11_ch_300_25': ModelRun(250,300,300,0,t3).compute_concavehull(cs,neighbor),
-    '12_ch_300_62': ModelRun(250,300,300,0,t4).compute_concavehull(cs,neighbor),
+    '3.1_ch_300_5' : ModelRun(250,400,400,'double',t1).compute_concavehull(cs,neighbor),
+    '3.2_ch_300_10' : ModelRun(250,400,400,'double',t2).compute_concavehull(cs,neighbor),
+    '3.3_ch_300_25': ModelRun(250,400,400,'double',t3).compute_concavehull(cs,neighbor),
+    '3.4_ch_300_62': ModelRun(250,400,400,'double',t4).compute_concavehull(cs,neighbor),
     
-    '9_ch_300_10' : ModelRun(250,200,200,'double',t1).compute_concavehull(cs,neighbor),
-    '10_ch_300_25' : ModelRun(250,200,200,'double',t2).compute_concavehull(cs,neighbor),
-    '11_ch_300_50': ModelRun(250,200,200,'double',t3).compute_concavehull(cs,neighbor),
-    '12_ch_300_100': ModelRun(250,200,200,'double',t4).compute_concavehull(cs,neighbor),
+    '4.1_ch_300_10' : ModelRun(250,300,300,'double',t1).compute_concavehull(cs,neighbor),
+    '4.2_ch_300_25' : ModelRun(250,300,300,'double',t2).compute_concavehull(cs,neighbor),
+    '4.3_ch_300_50': ModelRun(250,300,300,'double',t3).compute_concavehull(cs,neighbor),
+    '4.4_ch_300_100': ModelRun(250,300,300,'double',t4).compute_concavehull(cs,neighbor),
     
     
     }
@@ -120,8 +120,7 @@ font_annotation = {'color':'black',
                    }
 
 # Make subplots and iterate over dictionary for hydrostatic imbalances
-fig,axs = plt.subplots(nrows = 4, ncols = 4,figsize=(50,20),subplot_kw={'xticks':[],
-                       'yticks':[]})
+fig,axs = plt.subplots(nrows = 4, ncols = 4,figsize=(50,20))
 fig.suptitle('Deviation of hydrostatic equilibrium with channel widths 150, 250, 300 shift and 250', 
              fontsize = 30)
 
@@ -167,10 +166,11 @@ fig1.suptitle('Concave hulls of crosssections at C',
              fontsize = 30)
     
 for ax, run in zip(axs1.flat, concave_hulls.keys()):
-    x = concave_hulls[run][0]
-    z = concave_hulls[run][1]
+    lower = concave_hulls[run][1]
+    upper = concave_hulls[run][2]
    
-    ax.plot(x,z,'b-')
+    ax.plot(lower,'b-')
+    ax.plot (upper,'b')
     ax.grid()
     ax.title.set_text('width = {:s}, time = {:s}' .format(run.split('_')[2], run.split('_')[-1]))
 

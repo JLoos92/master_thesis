@@ -116,8 +116,8 @@ for ax, run in zip(axs.flat, hydrostatic_thicknesses.keys()):
     x = hydrostatic_thicknesses[run][0]
     y = hydrostatic_thicknesses[run][1]
     ht = hydrostatic_thicknesses[run][2]
-    thick_calc = hydrostatic_thicknesses[run][3]
-    thick_model = hydrostatic_thicknesses[run][4]
+    #thick_calc = hydrostatic_thicknesses[run][3]
+    #thick_model = hydrostatic_thicknesses[run][4]
     im = ax.tripcolor(x,y,ht,shading='gouraud',vmin=-15,vmax=15,cmap = 'RdBu')   
     fig.colorbar(im, ax=ax)
     points = [x,y]
@@ -145,20 +145,19 @@ for ax, run in zip(axs.flat, hydrostatic_thicknesses.keys()):
    
    
 neighbor = 1   
-cs = 1056500                           
+cs = 1070000                          
 rcParams['figure.figsize'] = 50,20
-ch = ModelRun(250,200,200,'double',10).compute_concavehull(cs,neighbor)
-points = ch[1]
-hullpoints = ch[0]
 
-x = hullpoints[:,0]
-y = hullpoints[:,1]
+
+
+x = ch[0]
+y = ch[1]
 
 x = np.ndarray.tolist(x)
 y = np.ndarray.tolist(y)
 orig_len = len(x)
-x = x[-6:-1] + x + x[1:6]
-y = y[-6:-1] + y + y[1:6]
+x = x[-3:-1] + x + x[1:3]
+y = y[-3:-1] + y + y[1:3]
 
 t = np.arange(len(x))
 ti = np.linspace(2, orig_len + 1, 10 * orig_len)
@@ -175,10 +174,10 @@ plt.show()
 
 
 
-plt.plot(points[:,0],points[:,1],'bo')
+plt.plot(x,y,'bo')
 plt.show()
 
-plt.plot(hullpoints[:,0],hullpoints[:,1],'r-')
+plt.plot(hullpoints[:,0],hullpoints[:,1],'ro')
 plt.show()
 
    
