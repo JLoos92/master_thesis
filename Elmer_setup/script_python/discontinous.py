@@ -118,8 +118,10 @@ font_axes ={'color':'black',
 font_annotation = {'color':'black',
                    'size': '10'
                    }
+    
+  
 
-# Make subplots and iterate over dictionary for hydrostatic imbalances
+ # Make subplots and iterate over dictionary for hydrostatic imbalances
 fig,axs = plt.subplots(nrows = 4, ncols = 4,figsize=(50,20))
 fig.suptitle('Deviation of hydrostatic equilibrium with channel widths 150, 250, 300 shift and 250', 
              fontsize = 30)
@@ -129,8 +131,17 @@ for ax, run in zip(axs.flat, hydrostatic_thicknesses.keys()):
     y = hydrostatic_thicknesses[run][1]
     ht = hydrostatic_thicknesses[run][2]
     im = ax.tripcolor(x,y,ht,shading='gouraud',vmin=-15,vmax=15,cmap = 'RdBu')
-    cbar = fig.colorbar(im, ax=ax)
+    cbar = fig.colorbar(im, ax=ax, extend = 'both')
     cbar.set_label('Deviation of hydrostatic equilibrium [m]')
+    axins = zoomed_inset_axes(ax,2,loc='upper right')
+    axins.tripcolor(x,y,ht,shading='gouraud',vmin=-15,vmax=15,cmap = 'RdBu')
+    axins.set_xlim(x1,x2)
+    axins.set_ylim(y1,y2)
+    plt.yticks(visible=False)
+    plt.xticks(visible=False)
+    mark_inset(ax,axins,loc1=2,loc2=4,fc="none", ec="0.5")
+    
+    
     points = [x,y]
     points = np.asarray(points)
     points = points.transpose()
@@ -141,9 +152,9 @@ for ax, run in zip(axs.flat, hydrostatic_thicknesses.keys()):
     delaunay = Delaunay(points)
     ax.triplot(x,y,delaunay.simplices,alpha=0.05)
     ax.title.set_text('width = {:s}, time = {:s}' .format(run.split('_')[2], run.split('_')[-1]))
-    
-    
-    
+
+
+  
 #   # stress = ModelRun(250,150,150,0,50).cut_and_slice(1067000,'stress vector')[0] 
 #    linepoints = ModelRun(250,150,150,0,10).cut_and_slice(1067000,'stress vector')[1]    
 #    ax.plot(linepoints[:,0],linepoints[:,1],'-r',label = "A")

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Apr  7 16:11:30 2019
+Created on Fri Dec 21 12:59:31 2018
 
-@author: jloos
+@author: Schmulius
 """
 
 import numpy as np
@@ -15,211 +15,243 @@ from modelrun import ModelRun
 from scipy.spatial.distance import pdist, squareform
 import matplotlib.pyplot as plt
 from numpy import genfromtxt
+import numpy as np
+from tempfile import TemporaryFile
+import numpy as np
+import matplotlib
+from pylab import *
+import numpy as np
+from pandas import DataFrame, Series
+from scipy.spatial.distance import pdist, squareform
+import matplotlib.pyplot as plt
+from numpy import genfromtxt
+from scipy.interpolate import griddata,interp2d,interp1d
+import matplotlib.pyplot as plt
+from scipy.spatial import Delaunay,ConvexHull
+from matplotlib.tri import Triangulation,TriInterpolator, LinearTriInterpolator,CubicTriInterpolator, TriFinder
+import pylab
+from numpy.linalg import inv
+from mpl_toolkits.mplot3d import Axes3D
+from scipy.interpolate import LinearNDInterpolator,Rbf, UnivariateSpline,CloughTocher2DInterpolator, griddata, CubicSpline
+import concave_hull
 from collections import OrderedDict
 from matplotlib.colors import LogNorm
 from pylab import rcParams
-import vtk
-from vtk.util.numpy_support import vtk_to_numpy
-
-Dict = {
-'ghostlayer' : ModelRun(250,300,300,'double',50).compute_hydrostatic_thickness()
-        }
-
-O_Dict = OrderedDict(Dict) 
+from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
+from matplotlib import gridspec
+from matplotlib.colorbar import Colorbar
 
 
 
 
-# Define properties for subplots
-    
-font_title = {'color':'black',
-       'size':'40',
-       'weight':'bold'
-            }
 
-font_axes = {'color':'black',
-       'size':'14',
-       'weight':'italic'
-           }
 
+
+
+#hydrostatic_thicknesses = {
+#    '1_ht_150_10' : ModelRun(250,400,400,'double',t1).compute_hydrostatic_thickness(),
+#    '2_ht_150_10' : ModelRun(250,400,400,'double',t2).compute_hydrostatic_thickness(),
+#    '3_ht_150_10' : ModelRun(250,400,400,'double',t3).compute_hydrostatic_thickness(),
+#    '4_ht_150_10' : ModelRun(250,400,400,'double',t4).compute_hydrostatic_thickness(),
+#    
+#                            }
+#    
+#hydrostatic_thicknesses = OrderedDict(hydrostatic_thicknesses)
+#
+#
+#ch_1= {
+#    '1.1_ch_150_5' : ModelRun(250,150,150,0,t1).compute_concavehull(cs1,neighbor),
+#    '1.2_ch_150_5' : ModelRun(250,150,150,0,t1).compute_concavehull(cs2,neighbor),
+#    '1.3_ch_150_5' : ModelRun(250,150,150,0,t1).compute_concavehull(cs3,neighbor),
+#    
+#    '2.1_ch_150_5' : ModelRun(250,150,150,0,t2).compute_concavehull(cs1,neighbor),
+#    '2.2_ch_150_5' : ModelRun(250,150,150,0,t2).compute_concavehull(cs2,neighbor),
+#    '2.3_ch_150_5' : ModelRun(250,150,150,0,t2).compute_concavehull(cs3,neighbor),
+#    
+#    '3.1_ch_150_5' : ModelRun(250,150,150,0,t3).compute_concavehull(cs1,neighbor),
+#    '3.2_ch_150_5' : ModelRun(250,150,150,0,t3).compute_concavehull(cs2,neighbor),
+#    '3.3_ch_150_5' : ModelRun(250,150,150,0,t3).compute_concavehull(cs3,neighbor),
+#    
+#    '4.1_ch_150_5' : ModelRun(250,150,150,0,t4).compute_concavehull(cs1,neighbor),
+#    '4.2_ch_150_5' : ModelRun(250,150,150,0,t4).compute_concavehull(cs2,neighbor),
+#    '4.3_ch_150_5' : ModelRun(250,150,150,0,t4).compute_concavehull(cs3,neighbor),
+#    
+#    
+#    }
+
+#for t in times:
+#    mr = ModelRun(250,150,150,0,t)
+#    
+#    ht = mr.compute_hydrostatic_thickness()
+#    c1 = mr.compute_concavehull(cs1,neighbor)
+#    c2 = mr.compute_concavehull(cs2,neighbor)
+#    c3 = mr.compute_concavehull(cs3,neighbor)
+#    
+#    
+#ch_1 = OrderedDict(ch_1)
+#
+#
+#
+#ax1 = plt.subplot2grid((3,3), (0,0), colspan=3)
+#ax3 = plt.subplot2grid((3,3), (1, 0))
+#ax4 = plt.subplot2grid((3,3), (1, 1))
+#ax5 = plt.subplot2grid((3,3), (1, 2))
+
+
+ # Make subplots and iterate over dictionary for hydrostatic imbalances
+#fig,axs = plt.subplots(nrows = 4, ncols = 4,figsize=(50,20))
+#fig.suptitle('Deviation of hydrostatic equilibrium with channel widths 150, 250, 300 shift and 250', 
+ #            fontsize = 30)
+ 
+ 
+#ax1 = plt.subplot2grid((3,3), (0,0), colspan=3)
+#ax3 = plt.subplot2grid((3,3), (1, 0))
+#ax4 = plt.subplot2grid((3,3), (1, 1))
+#ax5 = plt.subplot2grid((3,3), (1, 2)) 
+
+
+
+for ax, run in zip(ax1, hydrostatic_thicknesses.keys()):
+    x = hydrostatic_thicknesses[run][0]
+    y = hydrostatic_thicknesses[run][1]
+    ht = hydrostatic_thicknesses[run][2]
+    im = ax1.tripcolor(x,y,ht,shading='gouraud',vmin=-15,vmax=15,cmap = 'RdBu')
+    cbar = fig.colorbar(im, ax1=ax1, extend = 'both')
+    cbar.set_label('Deviation of hydrostatic equilibrium [m]')
+    axins = zoomed_inset_axes(ax1,2,loc='upper right')
+    axins.tripcolor(x,y,ht,shading='gouraud',vmin=-15,vmax=15,cmap = 'RdBu')
+    axins.set_xlim(x1,x2)
+    axins.set_ylim(y1,y2)
+    plt.yticks(visible=False)
+    plt.xticks(visible=False)
+    mark_inset(ax1,axins,loc1=2,loc2=4,fc="none", ec="0.5")
+
+
+#========================================
+#========================================
 font_annotation = {'color':'black',
                    'size': '10'
-                   }
+                   }    
+    
+    
+    
+x1,x2,y1,y2 = 1070000,1075000,-1000,1000
+t1 = 10
+t2 = 50
+t3 = 100
+t4 = 200
+cs1 = 1062500
+cs2 = 1070000
+cs3 = 1075500
+ymin = -5000
+ymax = 5000
 
-# Make subplots and iterate over dictionary for hydrostatic imbalances
+neighbor = 4
 
-run = 'ghostlayer'
-x = O_Dict[run][0]
-y = O_Dict[run][1]
-ht =O_Dict[run][2]
+
+
+fig = plt.figure(figsize = (60,10))    
+
+gs_0 = gridspec.GridSpec(1,4, hspace = 0.1, wspace = 0.1, figure = fig)
+times = [t1, t2, t3, t4]
+
+# 1,4 plots with 3 subplots
+for i ,t in zip(range(4), times):
+    gs00 = gridspec.GridSpecFromSubplotSpec(3,3, height_ratios=[0.05,1,0.5], hspace = 0.15 ,subplot_spec=gs_0[i])
+    
+    mr = ModelRun(250,150,150,0,t)
+    
+    ht = mr.compute_hydrostatic_thickness()
+    c1 = mr.compute_concavehull(cs1,neighbor)
+    c2 = mr.compute_concavehull(cs2,neighbor)
+    c3 = mr.compute_concavehull(cs3,neighbor)
    
-plt.tripcolor(x,y,ht,shading='gouraud',vmin=-15,vmax=15,cmap = 'RdBu')   
-plt.show()
-
-
-cutter = ModelRun(250,300,300,'double',50).cutter()
-
-velocity = cutter.GetOutput().GetPointData().GetArray('dsdt')
-velocity = vtk_to_numpy(velocity)
-points =  cutter.GetOutput().GetPoints().GetData()
-points = vtk_to_numpy(points)
-
-
-
-x1 = points[:,0]
-y1 = points[:,1]
-vel = velocity
+    x = ht[0]
+    y = ht[1]
+    ht_array =ht[2] 
+    
+    # Points for triangulation
+    points = [x,y]
+    points = np.asarray(points)
+    points = points.transpose()
+    
+    
+    
+    #-------------------------------
+    ax1 = plt.Subplot(fig,gs00[1,:])
+    im = ax1.tripcolor(x,y,ht_array,shading='gouraud',vmin=-15,vmax=15,cmap = 'RdBu')
+    
+    # Colorbar definition (extra axis)
+    cbar = plt.subplot(gs00[0,:])
+    cbar = Colorbar(ax=cbar,mappable = im, extend = 'both', orientation = 'horizontal', ticklocation = 'top')
+    cbar.set_label('Deviation of hydrostatic equilibrium [m]',labelpad=10)
+    
+ 
+    # Crosssections
+    line_cs1 = ax1.axvline(x=cs1, ymin=ymin, ymax=ymax, color='r')
+    line_cs2 = ax1.axvline(x=cs2, ymin=ymin, ymax=ymax, color='r')
+    line_cs3 = ax1.axvline(x=cs3, ymin=ymin, ymax=ymax, color='r')
+    
+    ax1.text(cs1,-5000,"A",fontdict=font_annotation)
+    ax1.text(cs1,5000,"A'",fontdict=font_annotation)
+    ax1.text(cs2,-5000,"B",fontdict=font_annotation)
+    ax1.text(cs2,5000,"B'",fontdict=font_annotation)
+    ax1.text(cs3,-5000,"C",fontdict=font_annotation)
+    ax1.text(cs3,5000,"C'",fontdict=font_annotation)
+    
+    
+    # Delaunay triangulation for grid
+    tri = Triangulation(x,y)
+    delaunay = Delaunay(points)
+    ax1.triplot(x,y,delaunay.simplices,alpha=0.05)
+    
+    fig.add_subplot(ax1)
+    
+    # Zoomed in rectangle for better visualisation of channel
+    axins = zoomed_inset_axes(ax1,2,loc='upper right')
+    axins.tripcolor(x,y,ht_array,shading='gouraud',vmin=-15,vmax=15,cmap = 'RdBu')
+    axins.set_xlim(x1,x2)
+    axins.set_ylim(y1,y2)
+    plt.yticks(visible=False)
+    plt.xticks(visible=False)
+    mark_inset(ax1,axins,loc1=2,loc2=4,fc="none", ec="0.5")
+        
    
-#plt.tripcolor(x1,y1,vel,shading='gouraud',cmap = 'RdBu') 
-#plt.show()  
+    
+    #-------------------------------
+    ax2 = plt.Subplot(fig,gs00[2,0])
+    lower = c1[0]
+    upper = c1[1]       
+    ax2.plot(lower,'b-')
+    ax2.plot (upper,'b')
+    ax2.grid()
+    fig.add_subplot(ax2)
+   
+    #-------------------------------
+    ax3 = plt.Subplot(fig,gs00[2,1])
+    lower = c2[0]
+    upper = c2[1]       
+    ax3.plot(lower,'b-')
+    ax3.plot (upper,'b')
+    ax3.grid()
+    fig.add_subplot(ax3)
+    
+    #-------------------------------
+    ax4 = plt.Subplot(fig,gs00[2,2])
+    lower = c3[0]
+    upper = c3[1]       
+    ax4.plot(lower,'b-')
+    ax4.plot (upper,'b')
+    ax4.grid()
+    fig.add_subplot(ax4)
+    
 
-f_name = '/Volumes/esd01/docs/jloos/data_small/runs_elmerice_fixed/Mesh250_200200_double/Mesh/ForwardGLFixed0015.pvtu'
-xmlReader = vtk.vtkXMLPUnstructuredGridReader()
-xmlReader.SetFileName(f_name)
-xmlReader.Update()
-
-
-def selectMaxz(x, y, z):
-            # Get grouped indices
-            sidx = (y + x*(y.max() - y.min() + 1)).argsort()
-           
-        
-            # sort x, y, z
-            x_sorted = x[sidx]
-            y_sorted = y[sidx]
-            z_sorted = z[sidx]
-        
-            # Get equality mask between each sorted X and Y elem against previous 
-            seq_eq_mask = (x_sorted[1:] == x_sorted[:-1]) & (y_sorted[1:] == y_sorted[:-1])
-            cut_idx = np.flatnonzero(np.concatenate(( [True], ~seq_eq_mask)))
-        
-            # Use those cut_idx to get intervalled maximum values
-            maxZ = np.minimum.reduceat(z_sorted, cut_idx)
-        
-            # Make tuples of the groupings of x,y and the corresponding min Z values
-            return (zip(x_sorted[cut_idx], y_sorted[cut_idx]), maxZ.tolist())
-        
-        
-max_points = selectMaxz(points[:,0],points[:,1],points[:,2])       
-z_max = max_points[1]
-z = points[:,2]
-zmax_ind = np.isin(z,z_max)
-zmax_ind_num = np.where(zmax_ind)
-vel_new = vel[zmax_ind]
-x_new = x1[zmax_ind]
-y_new = y1[zmax_ind]
-
-
-plt.tripcolor(x_new,y_new,vel_new,shading='gouraud',cmap = 'RdBu') 
-plt.show() 
-
-
-x =  points[:,0]
-y =  points[:,1]
-z =  points[:,2]
-
-p_w = 1000.0 #kg m−3 ), ice (ρi =918kgm−3), and air (ρa =2kgm−3):
-p_i = 900.0
-
-zs = vtk_to_numpy(cutter.GetOutput().GetPointData().GetArray('zs'))
-zb = vtk_to_numpy(cutter.GetOutput().GetPointData().GetArray('zb'))
-
-def selectMinz(x, y, z):
-            # Get grouped lex-sort indices
-            sidx = (y + x*(y.max() - y.min() + 1)).argsort()
-            
-        
-            # Sort x, y, z
-            x_sorted = x[sidx]
-            y_sorted = y[sidx]
-            z_sorted = z[sidx]
-        
-            # Get equality mask between each sorted X and Y elem against previous 
-            seq_eq_mask = (x_sorted[1:] == x_sorted[:-1]) & (y_sorted[1:] == y_sorted[:-1])
-            cut_idx = np.flatnonzero(np.concatenate(( [True], ~seq_eq_mask)))
-        
-            # Use those cut_idx to get intervalled minimum values
-            minZ = np.minimum.reduceat(z_sorted, cut_idx)
-        
-            # Make tuples of the groupings of x,y and the corresponding min Z values
-            return ((x_sorted[cut_idx], y_sorted[cut_idx]), minZ.tolist())
-        
-         # Function to find min-values of z_s
-         
-def selectMaxz(x, y, z):
-            # Get grouped indices
-            sidx = (y + x*(y.max() - y.min() + 1)).argsort()
-           
-        
-            # sort x, y, z
-            x_sorted = x[sidx]
-            y_sorted = y[sidx]
-            z_sorted = z[sidx]
-        
-            # Get equality mask between each sorted X and Y elem against previous 
-            seq_eq_mask = (x_sorted[1:] == x_sorted[:-1]) & (y_sorted[1:] == y_sorted[:-1])
-            cut_idx = np.flatnonzero(np.concatenate(( [True], ~seq_eq_mask)))
-        
-            # Use those cut_idx to get intervalled maximum values
-            maxZ = np.maximum.reduceat(z_sorted, cut_idx)
-        
-            # Make tuples of the groupings of x,y and the corresponding min Z values
-            return (zip(x_sorted[cut_idx], y_sorted[cut_idx]), maxZ.tolist())
-        
-
-zmin = selectMinz(x,y,z)
-min_pairs = selectMinz(x,y,z)
-min_pairs = min_pairs[0]
-#min_pairs = np.asanyarray(min_pairs)
-
-
-x_corr = min_pairs[0] 
-y_corr = min_pairs[1]
-zmax = selectMaxz(x,y,z)
-
-zmax = zmax[1]
-zmax = np.asarray(zmax)
-
-zmin = zmin[1]
-zmin = np.asarray(zmin)
-
-
-zmin_ind = np.isin(z,zmin)
-zmax_ind = np.isin(z,zmax)
-
-zmin_ind = np.where(zmin_ind)
-zmax_ind = np.where(zmax_ind)
-
-zb_new = zb[zmin_ind]
-zs_new = zs[zmax_ind]
-
-zb_new = zmin
-zs_new = zmax
-#x_new = x[zmax_ind]
-#y_new = y[zmax_ind]
-
-thick_model = -zs_new+zb_new       
-thick_calc = np.divide((p_w*zs_new),(p_w-p_i))                
-h_thickness = thick_model + thick_calc 
+          
+fig.show()
 
 
 
-plt.tripcolor(x_corr,y_corr,h_thickness,shading='gouraud',vmin=-30,vmax=30,cmap = 'RdBu') 
-plt.show() 
-
-plt.tripcolor(x_new,y_new,zb_new,shading='gouraud',cmap = 'RdBu')
-plt.title('old function') 
-plt.show() 
 
 
-plt.tripcolor(x_corr,y_corr,zmin,shading='gouraud',cmap = 'RdBu') 
-plt.title('ZB')
-plt.show()
 
-plt.tripcolor(x_new,y_new,zs_new,shading='gouraud',cmap = 'RdBu') 
-plt.title('ZS')
-plt.show()
 
-plt.tripcolor(x_corr,y_corr,zmax,shading='gouraud',cmap = 'RdBu') 
-plt.title('ZS_real')
-plt.show()

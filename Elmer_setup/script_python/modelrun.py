@@ -69,7 +69,7 @@ class ModelRun():
         
         
         """
-        ModelRun 
+        Initial: ModelRun 
         
         Parameters
         ----------
@@ -81,7 +81,7 @@ class ModelRun():
             height of the bump    
         prop : string
             extra specification e.g. double (two gauss functions)
-         timestep : int
+        timestep : int
             number of timestep
         """
         
@@ -89,9 +89,9 @@ class ModelRun():
         self.bump_distribution_x = bump_distribution_x
         self.bump_distribution_y = bump_distribution_y
         self.k = 0
-        self.prop = prop
+        self.prop = prop # extra property e.g. double bump
         self.timestep = timestep
-        #self.grid_refinement = grid_refinement
+        
         
         
         home_directory = '/Volumes/esd01/docs/jloos/data_small/runs_elmerice_'
@@ -114,8 +114,8 @@ class ModelRun():
         
         
         """        
-        This method provides a dictionary of all pvtu files, which where
-        treated as timesteps (each pvtu file is equal to one timestep)
+        The following segment provides a dictionary of all .pvtu files. Each
+        .pvtu file is equal to one timestep)
         """
         
         self.timestep = timestep
@@ -148,25 +148,15 @@ class ModelRun():
         
         # Dictionary for all arrays, scalars etc.
         self.dict_var = {}
-        #self.dict_arr = {}
+       
         
         for i in range(self.narrays):
     
 #            self.dict_var[i] = self.xmlReader.GetPointArrayName(i)
 #            self.dict_arr[i] = self.xmlReader.GetOutput().GetPointData().GetArray(i))
             self.dict_var[self.xmlReader.GetPointArrayName(i)] = self.xmlReader.GetOutput().GetPointData().GetArray(i)
-        # Pick needed array
-       
-        
-       
-                
-        #iteration über 
-       # for key in dict_var.keys:
-           # dict_var[key]
-        #return self.xmlReader
+        # Pick array
 
-       
-        
     
     def cutter(self ,GL=None):
         
@@ -188,22 +178,37 @@ class ModelRun():
         
         # Change for cut plane in x direction ()
         if GL is None:
-            self.GL = 1057000
+            self.GL = 1060000
         elif GL is not None:
             self.GL = GL
         
         
         
-        #create a plane to cut,here it cuts in the XZ direction (xz normal=(1,0,0);XY =(0,0,1),YZ =(0,1,0)
-        self.plane=vtk.vtkPlane()
-        self.plane.SetOrigin(self.GL,0,0)
-        self.plane.SetNormal(1,0,0)
+        # create a plane to cut; here it cuts in the XZ direction
+        #(xz normal=(1,0,0);XY =(0,0,1),YZ =(0,1,0)
+        self.plane_shelf =vtk.vtkPlane()
+        self.plane_shelf.SetOrigin(self.GL,0,0)
+        self.plane_shelf.SetNormal(1,0,0)
 
         #create cutter
+        self.clipData_shelf = vtk.vtkClipDataSet()   
+        self.clipData_shelf.SetClipFunction(self.plane_shelf)
+        self.clipData_shelf.SetInputConnection(self.xmlReader.GetOutputPort())
+        self.clipData_shelf.Update()
+        
+        # create plane to cut; end of shelf is cut due to boundary and mesh-
+        # refinement adjustment for plotting
+        self.plane_shelf_end = vtk.vtkPlane()
+        self.plane_shelf_end.SetOrigin(1079000,0,0)
+        self.plane_shelf_end.SetNormal(-1,0,0)
+        
+        #create cutter
         self.clipData = vtk.vtkClipDataSet()   
-        self.clipData.SetClipFunction(self.plane)
-        self.clipData.SetInputConnection(self.xmlReader.GetOutputPort())
+        self.clipData.SetClipFunction(self.plane_shelf_end)
+        self.clipData.SetInputConnection(self.clipData_shelf.GetOutputPort())
         self.clipData.Update()
+        
+        
         #self.clipData = self.clipData.GetOutput()
        # self.dict_var_clipped = self.clipData.SetInputConnection(self.xmlReader.GetOutputPort().GetPointArrayName())
         #self.out = vtk_to_numpy(self.cutter.GetOutput().GetPointData().GetArray(self.var))
@@ -468,11 +473,11 @@ class ModelRun():
         self.line.SetNormal(1,0,0)
         
         self.clipped_area = self.cutter()
-        self.cutter = vtk.vtkCutter()   
-        self.cutter.SetCutFunction(self.line)
-        self.cutter.SetInputConnection(self.clipped_area.GetOutputPort())
-        self.cutter.Update()
-        self.line_points = vtk_to_numpy(self.cutter.GetOutput().GetPoints().GetData())
+        self.cutter_ch = vtk.vtkCutter()   
+        self.cutter_ch.SetCutFunction(self.line)
+        self.cutter_ch.SetInputConnection(self.clipped_area.GetOutputPort())
+        self.cutter_ch.Update()
+        self.line_points = vtk_to_numpy(self.cutter_ch.GetOutput().GetPoints().GetData())
         
         # Rearrange matrix to fit input shape ()
         self.hull_points = np.delete(self.line_points, 0, 1)
@@ -493,26 +498,26 @@ class ModelRun():
         
         # Add function for smoothing concave hull
         
-        x_smooth = self.hull[:,0]
-        z_smooth = self.hull[:,1]
-        
-        x = np.ndarray.tolist(x_smooth)
-        z = np.ndarray.tolist(z_smooth)
-        orig_len = len(x)
-        
-        x = x[-3:-1] + x + x[1:3]
-        z = z[-3:-1] + z + z[1:3]
-        
-        t = np.arange(len(x))
-        ti = np.linspace(2, orig_len + 1, 10 * orig_len)
-        
-        xi = interp1d(t, x, kind='cubic')(ti)
-        zi = interp1d(t, z, kind='cubic')(ti)
+#        x_smooth = self.hull[:,0]
+#        z_smooth = self.hull[:,1]
+#        
+#        x = np.ndarray.tolist(x_smooth)
+#        z = np.ndarray.tolist(z_smooth)
+#        orig_len = len(x)
+#        
+#        x = x[-3:-1] + x + x[1:3]
+#        z = z[-3:-1] + z + z[1:3]
+#        
+#        t = np.arange(len(x))
+#        ti = np.linspace(2, orig_len + 1, 10 * orig_len)
+#        
+#        xi = interp1d(t, x, kind='cubic')(ti)
+#        zi = interp1d(t, z, kind='cubic')(ti)
+#               
+#        self.hull_smoothed = xi,zi        
                
-        self.hull_smoothed = xi,zi        
-               
         
-        return self.hull_smoothed, upper_boundary, lower_boundary
+        return upper_boundary, lower_boundary
   
         
         
