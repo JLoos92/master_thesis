@@ -25,16 +25,17 @@ from tempfile import TemporaryFile
 import glob
 from scipy.interpolate import interp1d
 import pandas as pd
-#from timestep import Timestep
+
 
 
  
 
 
     
-'''
-Check if file server is connected with local machine, then run class + method.
-'''
+#==============================================================================    
+# Check if volume is mounted, if not mount volume
+#==============================================================================
+
 
 path_to_volume = '/Volumes/esd01'
 
@@ -55,9 +56,7 @@ class ModelRun():
     Class ModelRun:
     Here description
     """
-    
-# Check if volume is mounted, if not mount volume
-    
+
     
     
     def __init__(self, 
@@ -81,14 +80,14 @@ class ModelRun():
             height of the bump    
         prop : string
             extra specification e.g. double (two gauss functions)
-        timestep : int
+         timestep : int
             number of timestep
         """
         
         self.bump_amplitude = bump_amplitude
         self.bump_distribution_x = bump_distribution_x
         self.bump_distribution_y = bump_distribution_y
-        self.k = 0
+
         self.prop = prop # extra property e.g. double bump
         self.timestep = timestep
         
@@ -103,20 +102,28 @@ class ModelRun():
         #if grid_refinement==True:
          #   res_folder = os.path.join(home_directory + 'fixed')
         #else:
-        res_folder = os.path.join(home_directory + 'fixed')
+        self.res_folder = os.path.join(home_directory + 'fixed')
             
         # create fodername of the run:    
         run_folder = 'Mesh{:}_{:}{:}_{:}'.format(self.bump_amplitude,self.bump_distribution_x,self.bump_distribution_y,self.prop) 
         
         # path to the directory of the model run:
-        self.run_directory = os.path.join(res_folder,run_folder,sub_mesh_directory)  
+        self.run_directory = os.path.join(self.res_folder,run_folder,sub_mesh_directory)  
         
         
         
-        """        
-        The following segment provides a dictionary of all .pvtu files. Each
-        .pvtu file is equal to one timestep)
-        """
+        #======================================================================        
+        # The following segment provides a dictionary of all .pvtu files
+        # and a subdirectory list of all runs. 
+        #====================================================================== 
+        
+        dirlist = [item for item in os.listdir(self.res_folder) \
+                  if os.path.isdir(os.path.join(self.res_folder,item))]
+        self.dirlist = dirlist
+                    
+        
+        
+        
         
         self.timestep = timestep
         self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
@@ -131,8 +138,7 @@ class ModelRun():
         
         
         # Define xmlreader (file-input for VTU-path)
-        # Create vtu objects and to collect properties
-        
+        # Create vtu objects and to collect properties        
         self.xmlReader = vtk.vtkXMLPUnstructuredGridReader()
         self.xmlReader.SetFileName(self.f_name)
         self.xmlReader.Update()
@@ -154,8 +160,9 @@ class ModelRun():
     
 #            self.dict_var[i] = self.xmlReader.GetPointArrayName(i)
 #            self.dict_arr[i] = self.xmlReader.GetOutput().GetPointData().GetArray(i))
-            self.dict_var[self.xmlReader.GetPointArrayName(i)] = self.xmlReader.GetOutput().GetPointData().GetArray(i)
-        # Pick array
+            self.dict_var[self.xmlReader.GetPointArrayName(i)] \
+            = self.xmlReader.GetOutput().GetPointData().GetArray(i)
+        
 
     
     def cutter(self ,GL=None):
@@ -253,7 +260,51 @@ class ModelRun():
         return self.ch_points
               
 
-            
+                   
+    def selectMinz(self, x, y, z):
+        # Get grouped lex-sort indices
+        sidx = (y + x*(y.max() - y.min() + 1)).argsort()
+        
+    
+        # Sort x, y, z
+        x_sorted = x[sidx]
+        y_sorted = y[sidx]
+        z_sorted = z[sidx]
+    
+        # Get equality mask between each sorted X and Y elem against previous 
+        seq_eq_mask = (x_sorted[1:] == x_sorted[:-1]) & (y_sorted[1:] == y_sorted[:-1])
+        cut_idx = np.flatnonzero(np.concatenate(( [True], ~seq_eq_mask)))
+    
+        # Use those cut_idx to get intervalled minimum values
+        minZ = np.minimum.reduceat(z_sorted, cut_idx)
+    
+        # Make tuples of the groupings of x,y and the corresponding min Z values
+        return (x_sorted[cut_idx], y_sorted[cut_idx]), minZ.tolist()
+    
+         # Function to find min-values of z_s
+         
+    def selectMaxz(self,x, y, z):
+        # Get grouped indices
+        sidx = (y + x*(y.max() - y.min() + 1)).argsort()
+       
+    
+        # sort x, y, z
+        x_sorted = x[sidx]
+        y_sorted = y[sidx]
+        z_sorted = z[sidx]
+    
+        # Get equality mask between each sorted X and Y elem against previous 
+        seq_eq_mask = (x_sorted[1:] == x_sorted[:-1]) & (y_sorted[1:] == y_sorted[:-1])
+        cut_idx = np.flatnonzero(np.concatenate(( [True], ~seq_eq_mask)))
+    
+        # Use those cut_idx to get intervalled maximum values
+        maxZ = np.maximum.reduceat(z_sorted, cut_idx)
+    
+        # Make tuples of the groupings of x,y and the corresponding min Z values
+        return (x_sorted[cut_idx], y_sorted[cut_idx]), maxZ.tolist()
+    
+ 
+
 
     def compute_hydrostatic_thickness(self):
         
@@ -275,10 +326,10 @@ class ModelRun():
         
         """
      
-    # Paraneter for calculation of hydrostatic thickness
+        # Paraneter for calculation of hydrostatic thickness
         
-        p_w = 1000.0 #kg m−3 ), ice (ρi =918kgm−3), and air (ρa =2kgm−3):
-        p_i = 900.0
+        self.p_w = 1000.0 #kg m−3 ), ice (ρi =918kgm−3), and air (ρa =2kgm−3):
+        self.p_i = 900.0
         p_a = 2.0
         H_a = 0
         
@@ -295,52 +346,11 @@ class ModelRun():
         self.z = self.points[:,2]
 
         # Function to find min-values of z_b
-        
-        def selectMinz(x, y, z):
-            # Get grouped lex-sort indices
-            sidx = (y + x*(y.max() - y.min() + 1)).argsort()
-            
-        
-            # Sort x, y, z
-            x_sorted = x[sidx]
-            y_sorted = y[sidx]
-            z_sorted = z[sidx]
-        
-            # Get equality mask between each sorted X and Y elem against previous 
-            seq_eq_mask = (x_sorted[1:] == x_sorted[:-1]) & (y_sorted[1:] == y_sorted[:-1])
-            cut_idx = np.flatnonzero(np.concatenate(( [True], ~seq_eq_mask)))
-        
-            # Use those cut_idx to get intervalled minimum values
-            minZ = np.minimum.reduceat(z_sorted, cut_idx)
-        
-            # Make tuples of the groupings of x,y and the corresponding min Z values
-            return (x_sorted[cut_idx], y_sorted[cut_idx]), minZ.tolist()
-        
-         # Function to find min-values of z_s
-         
-        def selectMaxz(x, y, z):
-            # Get grouped indices
-            sidx = (y + x*(y.max() - y.min() + 1)).argsort()
-           
-        
-            # sort x, y, z
-            x_sorted = x[sidx]
-            y_sorted = y[sidx]
-            z_sorted = z[sidx]
-        
-            # Get equality mask between each sorted X and Y elem against previous 
-            seq_eq_mask = (x_sorted[1:] == x_sorted[:-1]) & (y_sorted[1:] == y_sorted[:-1])
-            cut_idx = np.flatnonzero(np.concatenate(( [True], ~seq_eq_mask)))
-        
-            # Use those cut_idx to get intervalled maximum values
-            maxZ = np.maximum.reduceat(z_sorted, cut_idx)
-        
-            # Make tuples of the groupings of x,y and the corresponding min Z values
-            return (x_sorted[cut_idx], y_sorted[cut_idx]), maxZ.tolist()
-        
-        
-        zmin = selectMinz(self.x,self.y,self.z)
-        zmax = selectMaxz(self.x,self.y,self.z)
+
+
+       
+        zmin = self.selectMinz(self.x,self.y,self.z)
+        zmax = self.selectMaxz(self.x,self.y,self.z)
 
         zs = zmax[1]
         zs = np.asarray(zs)
@@ -363,15 +373,17 @@ class ModelRun():
         self.zs_new = zs
         #self.x_new = self.x[zmax_ind]
         #self.y_new = self.y[zmax_ind]
-        x_corr = xy_zmax[0] 
-        y_corr = xy_zmax[1]
+        self.x_corr = xy_zmax[0] 
+        self.y_corr = xy_zmax[1]
         
         self.thick_model = -self.zs_new+self.zb_new       
-        self.thick_calc = np.divide((p_w*self.zs_new),(p_w-p_i))                
+        self.thick_calc = np.divide((self.p_w*self.zs_new),(self.p_w-self.p_i))                
         self.h_thickness = self.thick_model + self.thick_calc 
         
+        
+        
         # Return values of coordinates and calculated hydrostatic thickness
-        return x_corr, y_corr, self.h_thickness, self.thick_calc, self.thick_model
+        return self.x_corr, self.y_corr, self.h_thickness, self.thick_model
     
     
     
@@ -430,8 +442,7 @@ class ModelRun():
         
  
     def compute_concavehull(self,
-                            xcoord,
-                            neighbors):
+                            xcoord):
        # pass
         
         """
@@ -444,7 +455,7 @@ class ModelRun():
         Parameters
         ----------
         xcoord : int
-        neighbors :int
+        
         
         Returns:
         ----------
@@ -455,14 +466,7 @@ class ModelRun():
         
         # Set x-coordinate
         self.xcoord = xcoord
-#        self.xcoord_1 = xcoord_1
-#        self.xcoord_2 = xcoord_2
-#        self.xcoord_3 = xcoord_3
-#        
-#        self.coordsx = [self.xcoord_1,self.xcoord_2,self.xcoord_3]
-#        print("Coordinates for crosssections:" , self.coordsx)
-        # Set number for neighbors to compute concave hull
-        self.neighbors = neighbors
+
         
         
         # Cut and slice
@@ -478,46 +482,77 @@ class ModelRun():
         self.cutter_ch.SetInputConnection(self.clipped_area.GetOutputPort())
         self.cutter_ch.Update()
         self.line_points = vtk_to_numpy(self.cutter_ch.GetOutput().GetPoints().GetData())
-        
+
+       
         # Rearrange matrix to fit input shape ()
         self.hull_points = np.delete(self.line_points, 0, 1)
         
-        # Compute concave hull at crosssection of line points
-        self.hull = concave_hull.compute(self.hull_points,self.neighbors)
+       
+        
+        #======================================================================
+        # Crosssection for zs ()
+        #======================================================================
+        
+        #Cutter for hydrostatic thickness section        
+        self.line_h=vtk.vtkPlane()
+        self.line_h.SetOrigin(self.xcoord,0,0)
+        self.line_h.SetNormal(1,0,0)
+        
+        self.clipped_area = self.cutter()
+        self.cutter_line = vtk.vtkCutter()   
+        self.cutter_line.SetCutFunction(self.line_h)
+        self.cutter_line.SetInputConnection(self.clipped_area.GetOutputPort())
+        self.cutter_line.Update()
+        self.line_points_calc = vtk_to_numpy(self.cutter_line.GetOutput().GetPoints().GetData())
+        
+        self.zmax = self.selectMaxz(self.line_points_calc[:,0],\
+                          self.line_points_calc[:,1],self.line_points_calc[:,2])
+       
+        
+        xy_zmax = self.zmax[0]
+       
+        x  = xy_zmax[0] 
+        y  = xy_zmax[1]
+        
+        
+                
+        zs_line = self.zmax[1]
+        zs_line = np.asarray(zs_line)
+        
+        
+        self.thick_calc = np.divide((self.p_w*zs_line),(self.p_w-self.p_i))
+        self.thick_calc = self.thick_calc *(-1)
+        self.thick_calc = self.thick_calc + zs_line
+        
+        self.hull_points_calc =  y, self.thick_calc
+        self.hull_points_calc = np.asarray(self.hull_points_calc).T
+        
+        
+               
         
         # Using pandas-dataframe
-        #df = pd.DataFrame(self.hull_points,index=['x','y'])
         df = pd.DataFrame(self.hull_points,columns=['x','y'])
+        df_calc = pd.DataFrame(self.hull_points_calc,columns=['x','y'])
+                      
+        # Group
         grouped = df.groupby('x')
+        grouped_calc = df_calc.groupby('x')
         
         #Upper and lower boundary
         lower_boundary = grouped.min()
         upper_boundary = grouped.max()
         
-        self.hull_panda = upper_boundary,lower_boundary
+        #Lower boundary for calculated hydrostatic thickness
+        original_thickness = grouped_calc.min()
+        
+        
+        self.hull_panda = upper_boundary,lower_boundary,original_thickness
         
         # Add function for smoothing concave hull
-        
-#        x_smooth = self.hull[:,0]
-#        z_smooth = self.hull[:,1]
-#        
-#        x = np.ndarray.tolist(x_smooth)
-#        z = np.ndarray.tolist(z_smooth)
-#        orig_len = len(x)
-#        
-#        x = x[-3:-1] + x + x[1:3]
-#        z = z[-3:-1] + z + z[1:3]
-#        
-#        t = np.arange(len(x))
-#        ti = np.linspace(2, orig_len + 1, 10 * orig_len)
-#        
-#        xi = interp1d(t, x, kind='cubic')(ti)
-#        zi = interp1d(t, z, kind='cubic')(ti)
-#               
-#        self.hull_smoothed = xi,zi        
+            
                
         
-        return upper_boundary, lower_boundary
+        return upper_boundary, lower_boundary, original_thickness
   
         
         
