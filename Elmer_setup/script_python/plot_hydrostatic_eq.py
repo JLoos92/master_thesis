@@ -257,7 +257,7 @@ class Plot_hydrostatic_deviation():
             ax3.plot(lower,'b-')
             ax3.plot (upper,'b')
             ax3.plot(original,'r--')
-            ax3.legend(loc = 'upper left')
+            
             ax3.grid()
             ax3.set_ylim([-350,55])
             bottom, top = ax3.get_ylim()
@@ -273,7 +273,7 @@ class Plot_hydrostatic_deviation():
             ax4.plot(lower,'b-')
             ax4.plot (upper,'b')
             ax4.plot(original,'r--')
-            ax4.legend(loc = 'upper left')
+            
             ax4.grid()
             ax4.set_ylim([-350,55])
             bottom, top = ax4.get_ylim()
