@@ -136,9 +136,6 @@ plt.ylabel('RMS hydrostatic deviation in boundaries')
 plt.title('Without noise')
 plt.show()
 
-#====================================================================== 
-# Noise of area
-#====================================================================== 
 
 
 

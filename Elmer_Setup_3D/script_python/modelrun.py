@@ -54,7 +54,10 @@ class ModelRun():
     
     """
     Class ModelRun:
-    Here description
+    The ModelRun class simplifies the data arrangement for large, three
+    dimensional, parallel .vtu files. This class contains static methods and 
+    user functions to load data files of computed model runs of the esd 
+    fileserver (or path to be defined where simulation files are saved).
     """
 
     
@@ -96,16 +99,19 @@ class ModelRun():
         home_directory = '/Volumes/esd01/docs/jloos/data_small/runs_elmerice_'
         sub_mesh_directory = 'Mesh/'
 
-        # change output directory according to mesh refinement:
-        # grid_refinement = bool(input("Enter case for folder (True==fixed, False==fixed): "))
+        # Change output directory according to mesh refinement:
+        # grid_refinement = bool(input("Enter case for folder 
+        # (True==fixed, False==fixed): "))
         
         #if grid_refinement==True:
          #   res_folder = os.path.join(home_directory + 'fixed')
         #else:
+        
         self.res_folder = os.path.join(home_directory + 'fixed')
             
         # create fodername of the run:    
         run_folder = 'Mesh{:}_{:}{:}_{:}'.format(self.bump_amplitude,
+<<<<<<< HEAD:Elmer_Setup_3D/script_python/modelrun.py
                           self.bump_distribution_x,
                           self.bump_distribution_y,
                           self.prop) 
@@ -113,6 +119,13 @@ class ModelRun():
         # path to the directory of the model run:
         self.run_directory = os.path.join(self.res_folder,
                                           run_folder,
+=======
+                          self.bump_distribution_x,self.bump_distribution_y,
+                          self.prop) 
+        
+        # path to the directory of the simulation:
+        self.run_directory = os.path.join(self.res_folder,run_folder,
+>>>>>>> d0d26ebd5636d5e00ad413393f618c412a6dc2df:Elmer_setup/script_python/modelrun.py
                                           sub_mesh_directory)  
         
         
@@ -122,14 +135,12 @@ class ModelRun():
         # and a subdirectory list of all runs. 
         #====================================================================== 
         
-        dirlist = [item for item in os.listdir(self.res_folder) \
+        dirlist = [item for item in os.listdir(self.res_folder) 
                   if os.path.isdir(os.path.join(self.res_folder,item))]
+        
         self.dirlist = dirlist
                     
-        
-        
-        
-        
+       
         self.timestep = timestep
         self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
         self.dic_timesteps.sort(key=os.path.getmtime)
@@ -152,9 +163,12 @@ class ModelRun():
         self.npoints = self.xmlReader.GetOutput().GetNumberOfPoints()
         self.ncells = self.xmlReader.GetOutput().GetNumberOfCells()
         self.bounds = self.xmlReader.GetOutput().GetBounds()
-        self.narrays = self.xmlReader.GetOutput().GetPointData().GetNumberOfArrays()
-        self.Points = vtk_to_numpy(self.xmlReader.GetOutput().GetPoints().GetData())
-        self.Cells =  vtk_to_numpy(self.xmlReader.GetOutput().GetCells().GetData())
+        self.narrays = self.xmlReader.GetOutput().GetPointData(). \
+                                    GetNumberOfArrays()
+        self.Points = vtk_to_numpy(self.xmlReader.GetOutput(). \
+                                   GetPoints().GetData())
+        self.Cells =  vtk_to_numpy(self.xmlReader.GetOutput(). \
+                                   GetCells().GetData())
         
         
         # Dictionary for all arrays, scalars etc.
@@ -163,8 +177,8 @@ class ModelRun():
         
         for i in range(self.narrays):
     
-#            self.dict_var[i] = self.xmlReader.GetPointArrayName(i)
-#            self.dict_arr[i] = self.xmlReader.GetOutput().GetPointData().GetArray(i))
+        #self.dict_var[i] = self.xmlReader.GetPointArrayName(i)
+        #self.dict_arr[i] = self.xmlReader.GetOutput().GetPointData().GetArray(i))
             self.dict_var[self.xmlReader.GetPointArrayName(i)] \
             = self.xmlReader.GetOutput().GetPointData().GetArray(i)
         
@@ -197,12 +211,12 @@ class ModelRun():
         
         
         # create a plane to cut; here it cuts in the XZ direction
-        #(xz normal=(1,0,0);XY =(0,0,1),YZ =(0,1,0)
+        # (xz normal=(1,0,0);XY =(0,0,1),YZ =(0,1,0)
         self.plane_shelf =vtk.vtkPlane()
         self.plane_shelf.SetOrigin(self.GL,0,0)
         self.plane_shelf.SetNormal(1,0,0)
 
-        #create cutter
+        # create first cutter
         self.clipData_shelf = vtk.vtkClipDataSet()   
         self.clipData_shelf.SetClipFunction(self.plane_shelf)
         self.clipData_shelf.SetInputConnection(self.xmlReader.GetOutputPort())
@@ -214,7 +228,7 @@ class ModelRun():
         self.plane_shelf_end.SetOrigin(1079000,0,0)
         self.plane_shelf_end.SetNormal(-1,0,0)
         
-        #create cutter
+        # create second cutter
         self.clipData = vtk.vtkClipDataSet()   
         self.clipData.SetClipFunction(self.plane_shelf_end)
         self.clipData.SetInputConnection(self.clipData_shelf.GetOutputPort())
@@ -224,10 +238,10 @@ class ModelRun():
         #self.clipData = self.clipData.GetOutput()
        # self.dict_var_clipped = self.clipData.SetInputConnection(self.xmlReader.GetOutputPort().GetPointArrayName())
         #self.out = vtk_to_numpy(self.cutter.GetOutput().GetPointData().GetArray(self.var))
+        
         #Check for arrays
-       # for i in range(self.narrays):
-    
-           
+        #for i in range(self.narrays):
+          
            # self.dict_var[self.clipData.GetPointArrayName(i)] = self.clipData.GetOutput().GetPointData().GetArray(i)
         
        
@@ -242,12 +256,18 @@ class ModelRun():
         """
         Method: convexhull 
         ----------
+<<<<<<< HEAD:Elmer_Setup_3D/script_python/modelrun.py
         Computes boundary hull of cutted domain. Only valid if boundaries
         are rectangular (e.g. hull of 3D- Model)
+=======
+        Computes boundary hull of cutted domain. This static method can be used 
+        to obtain the rectangular boundaries of a three dimensional domain.
+>>>>>>> d0d26ebd5636d5e00ad413393f618c412a6dc2df:Elmer_setup/script_python/modelrun.py
         
         Parameters
         ----------
         -
+<<<<<<< HEAD:Elmer_Setup_3D/script_python/modelrun.py
         
         Returns:
         ----------
@@ -256,10 +276,17 @@ class ModelRun():
         """
         
         
+=======
+               
+        """
+       
+        # make triangulation for cutted domain
+>>>>>>> d0d26ebd5636d5e00ad413393f618c412a6dc2df:Elmer_setup/script_python/modelrun.py
         self.triangulation = vtk.vtkDelaunay3D()
         self.triangulation.SetInputData(self.cutter().GetOutput())
         self.triangulation.Update()
         
+        # apply vtk surface filter with triangulation to obtain hull
         self.convexhull = vtk.vtkDataSetSurfaceFilter() 
         self.convexhull.SetInputConnection(self.triangulation.GetOutputPort())
         self.convexhull.Update()
@@ -272,6 +299,7 @@ class ModelRun():
  
                   
     def selectMinz(self, x, y, z):
+<<<<<<< HEAD:Elmer_Setup_3D/script_python/modelrun.py
         
         """
         Method: selectMinz
@@ -295,6 +323,9 @@ class ModelRun():
                 
         """
         
+=======
+        # Get grouped  indices
+>>>>>>> d0d26ebd5636d5e00ad413393f618c412a6dc2df:Elmer_setup/script_python/modelrun.py
         sidx = (y + x*(y.max() - y.min() + 1)).argsort()
         
     
