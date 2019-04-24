@@ -10,14 +10,9 @@ Created on Tue Apr 16 14:43:45 2019
 from pylab import rcParams
 import numpy as np
 import matplotlib.pyplot as plt
-from modelrun import ModelRun
+from __main__ import ModelRun
 import pandas as pd
-
 import math
-
-
-
-
 
 
 
