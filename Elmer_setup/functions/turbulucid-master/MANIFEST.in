@@ -1,7 +1,0 @@
-# Include the license file
-include LICENSE.txt
-include README.rst
-
-# Include the data files
-recursive-include docs *
-recursive-include turbulucid/datasets *
