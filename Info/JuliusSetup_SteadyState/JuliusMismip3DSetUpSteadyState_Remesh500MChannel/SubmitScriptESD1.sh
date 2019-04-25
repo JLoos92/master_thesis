@@ -1,9 +1,11 @@
 #!/bin/bash -l
-#PBS -N Test
+#PBS -N Test_Channel_2D
+#PBS -m abe
+#PBS -M julius-loos@gmx.de
 #PBS -o ${PBS_JOBNAME}${PBS_JOBID}.out
 #PBS -e ${PBS_JOBNAME}${PBS_JOBID}.err
-#PBS -l walltime=09:20:00
-#PBS -l nodes=1:ppn=20:esd2
+#PBS -l walltime=999:99:00
+#PBS -l nodes=1:ppn=1:esd2
 #PBS -q esd2
 ##PBS -l pmem=150gb
 #=================================================================================================================
@@ -11,7 +13,14 @@ module load chains/INTEL-17.0
 module load compiler/intel/17.0
 module load mpi/impi/2017
 module load numlib/mkl/2017.6.256
+module unload mpi.ibm
+module unload mpi.ompi
+module load mpi.intel
+module load scalapack
+module load mumps
+module load metis
 
+source /etc/profile.d/modules.sh
 export ELMER_HOME="/home-link/epioi01/elmerice/Elmer_devel_04-17-18"
 export ELMER_SOLVER_HOME="$ELMER_HOME/bin"
 
@@ -20,12 +29,12 @@ export LD_LIBRARY_PATH=/home-link/epioi01/elmerice/Elmer_devel_04-17-18/share/el
 export LD_LIBRARY_PATH=/home-link/epioi01/elmerice/Elmer_devel_04-17-18/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/home-link/epioi01/elmerice/Elmer_devel_04-17-18/lib/elmersolver/:$LD_LIBRARY_PATH
 
-#export PATH=/home-link/epioi01/INSTALL/mmg-5.3.10/MMG_devel/bin:$PATH
-#export LD_LIBRARY_PATH=/home-link/epioi01/INSTALL/mmg-5.3.10/MMG_devel/lib:$LD_LIBRARY_PATH
+export PATH=/home-link/epioi01/INSTALL/mmg-5.3.10/MMG_devel/bin:$PATH
+export LD_LIBRARY_PATH=/home-link/epioi01/INSTALL/mmg-5.3.10/MMG_devel/lib:$LD_LIBRARY_PATH
 
 export LD_LIBRARY_PATH=/home-link/epioi01/INSTALL/MUMPS_5.1.2/lib:$LD_LIBRARY_PATH
 export PATH=/home-link/epioi01/INSTALL/gmsh-3.0.6-source/build:$PATH
-#export LD_LIBRARY_PATH=/beegfs/home/tu/epioi01/INSTALL/MUMPS_5.1.2/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/beegfs/home/tu/epioi01/INSTALL/MUMPS_5.1.2/lib:$LD_LIBRARY_PATH
 
 #=================================================================================================================
 echo Here comes the partition the job runs in:

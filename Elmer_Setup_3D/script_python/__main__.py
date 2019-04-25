@@ -64,7 +64,9 @@ class ModelRun():
                  bump_distribution_x,
                  bump_distribution_y,
                  prop,
-                 timestep):
+                 timestep,
+                 vtu_type = None,
+                 **kwargs):
         
         
         """
@@ -87,6 +89,7 @@ class ModelRun():
         self.bump_amplitude = bump_amplitude
         self.bump_distribution_x = bump_distribution_x
         self.bump_distribution_y = bump_distribution_y
+        self.vtu_type = vtu_type
 
         self.prop = prop # extra property e.g. double bump
         self.timestep = timestep
@@ -95,14 +98,21 @@ class ModelRun():
         
         home_directory = '/Volumes/esd01/docs/jloos/data_small/runs_elmerice_'
         sub_mesh_directory = 'Mesh/'
+        sub_mesh_directory_2d = 'channel2d/'
 
         # change output directory according to mesh refinement:
-        # grid_refinement = bool(input("Enter case for folder (True==fixed, False==fixed): "))
         
-        #if grid_refinement==True:
-         #   res_folder = os.path.join(home_directory + 'fixed')
-        #else:
-        self.res_folder = os.path.join(home_directory + 'fixed')
+        
+        if self.vtu_type is None:
+             self.res_folder = os.path.join(home_directory + 'fixed')
+            
+        elif self.vtu_type==str("vtu"):            
+             self.res_folder = os.path.join(home_directory + '2d')
+
+        else:
+            raise ValueError('This filetype does not exist in the simulation \
+            folder.')
+                
             
         # create fodername of the run:    
         run_folder = 'Mesh{:}_{:}{:}_{:}'.format(self.bump_amplitude,
@@ -111,15 +121,21 @@ class ModelRun():
                           self.prop) 
         
         # path to the directory of the model run:
-        self.run_directory = os.path.join(self.res_folder,
+        if self.vtu_type is None:
+            self.run_directory = os.path.join(self.res_folder,
                                           run_folder,
-                                          sub_mesh_directory)  
+                                          sub_mesh_directory) 
+
+        elif self.vtu_type==str("vtu"):
+            self.run_directory = os.path.join(self.res_folder,
+                                          run_folder,
+                                          sub_mesh_directory_2d) 
         
         
         
         #======================================================================        
-        # The following segment provides a dictionary of all .pvtu files
-        # and a subdirectory list of all runs. 
+        # The following segment provides a dictionary of all .pvtu or vtu files
+        # (depending on 2d or 3d case) and a subdirectory list of all runs. 
         #====================================================================== 
         
         dirlist = [item for item in os.listdir(self.res_folder) \
@@ -128,10 +144,14 @@ class ModelRun():
                     
         
         
-        
-        
-        self.timestep = timestep
-        self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
+        # sort timesteps after execution (2d or 3d valid)
+        if self.vtu_type is None:
+            self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
+        elif self.vtu_type==str("vtu"):
+            self.dic_timesteps = glob.glob(self.run_directory + '*vtu')
+            
+            
+            
         self.dic_timesteps.sort(key=os.path.getmtime)
         self.f_name = self.dic_timesteps[self.timestep]
         
@@ -143,8 +163,18 @@ class ModelRun():
         
         
         # Define xmlreader (file-input for VTU-path)
-        # Create vtu objects and to collect properties        
-        self.xmlReader = vtk.vtkXMLPUnstructuredGridReader()
+        # Create vtu objects, to collect properties, strings, variables etc
+        # choose pvtu or vtu (2d or 3d)
+         
+
+        if self.vtu_type is None:        
+            self.xmlReader = vtk.vtkXMLPUnstructuredGridReader()
+        elif self.vtu_type==str("vtu"):  
+            self.xmlReader = vtk.vtkXMLUnstructuredGridReader() 
+        else:
+            raise ValueError('VTU reader does not exist. Check file format of \
+            simulation source.')    
+            
         self.xmlReader.SetFileName(self.f_name)
         self.xmlReader.Update()
         

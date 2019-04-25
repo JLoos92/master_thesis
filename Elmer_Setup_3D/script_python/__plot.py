@@ -15,7 +15,7 @@ from scipy.spatial.distance import pdist, squareform
 import matplotlib.pyplot as plt
 from numpy import genfromtxt
 import turbulucid
-from modelrun import ModelRun
+from __main__ import ModelRun
 from scipy.spatial import Delaunay,ConvexHull
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
 from matplotlib import gridspec

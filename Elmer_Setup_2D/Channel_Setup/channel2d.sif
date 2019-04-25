@@ -75,11 +75,11 @@ Simulation
   Simulation Type = "Transient"
   Timestepping Method = "BDF"
   BDF Order = 1
-  Timestep Intervals = 6000
+  Timestep Intervals = 600
   Timestep Sizes = 0.1
   Steady State Min Iterations = 1
   Steady State Max Iterations = 1
-  Output Intervals = 100 
+  Output Intervals = 10 
   Initialize Dirichlet Conditions = Logical False
   Restart before initial conditions = Logical True  
   Restart File = "channel2dini.result"
