@@ -128,8 +128,7 @@ class ModelRun():
 
         elif self.vtu_type==str("vtu"):
             self.run_directory = os.path.join(self.res_folder,
-                                          run_folder,
-                                          sub_mesh_directory_2d) 
+                                          run_folder + '/') 
         
         
         
@@ -148,7 +147,7 @@ class ModelRun():
         if self.vtu_type is None:
             self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
         elif self.vtu_type==str("vtu"):
-            self.dic_timesteps = glob.glob(self.run_directory + '*vtu')
+            self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
             
             
             
@@ -170,7 +169,7 @@ class ModelRun():
         if self.vtu_type is None:        
             self.xmlReader = vtk.vtkXMLPUnstructuredGridReader()
         elif self.vtu_type==str("vtu"):  
-            self.xmlReader = vtk.vtkXMLUnstructuredGridReader() 
+            self.xmlReader = vtk.vtkXMLPUnstructuredGridReader() 
         else:
             raise ValueError('VTU reader does not exist. Check file format of \
             simulation source.')    
@@ -178,7 +177,7 @@ class ModelRun():
         self.xmlReader.SetFileName(self.f_name)
         self.xmlReader.Update()
         
-        # Get outputs
+        # Get outputs of variables and geometry (2D and 3D)
         self.npoints = self.xmlReader.GetOutput().GetNumberOfPoints()
         self.ncells = self.xmlReader.GetOutput().GetNumberOfCells()
         self.bounds = self.xmlReader.GetOutput().GetBounds()
@@ -186,16 +185,27 @@ class ModelRun():
         self.Points = vtk_to_numpy(self.xmlReader.GetOutput().GetPoints().GetData())
         self.Cells =  vtk_to_numpy(self.xmlReader.GetOutput().GetCells().GetData())
         
+        # Get outputs specified for 2D - case
+        self.sxy = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(' sxy'))
+        self.fs_upper = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs upper'))
+        self.fs_lower = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs lower'))
         
-        # Dictionary for all arrays, scalars etc.
-        self.dict_var = {}
-       
+        # Check for variables in list
+        self.list_var_names = []
+        for i in range(self.narrays):            
+            self.name = self.xmlReader.GetPointArrayName(i)
+            self.list_var_names.append(self.name)
+        
+        
+        # Dictionary for variables
+        self.dict_var_names = {}
+        self.dict_var_values = {}
         
         for i in range(self.narrays):
     
-#            self.dict_var[i] = self.xmlReader.GetPointArrayName(i)
-#            self.dict_arr[i] = self.xmlReader.GetOutput().GetPointData().GetArray(i))
-            self.dict_var[self.xmlReader.GetPointArrayName(i)] \
+            self.dict_var_names[i] = self.xmlReader.GetPointArrayName(i)
+            self.dict_var_values[i] = self.xmlReader.GetOutput().GetPointData().GetArray(i)
+            self.dict_var_names[self.xmlReader.GetPointArrayName(i)] \
             = self.xmlReader.GetOutput().GetPointData().GetArray(i)
         
 
@@ -411,62 +421,127 @@ class ModelRun():
         
         
         """
-     
-        # Paraneter setup for calculation of hydrostatic thickness
-        # !!!!!!!!!! Must be changed if input.sif file is changed!!!!!!!!!!!!!!
-        self.p_w = 1000.0 # kg m−3 )
-        self.p_i = 900.0  # ice (ρi =918kgm−3)
-        p_a = 2.0         # air (ρa =2kgm−3)
-        H_a = 0
         
-        #self.cutter = self.clipData
-        self.clipped_area = self.cutter()
-        self.zs = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('zs'))
-        self.zb = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('zb'))
-        self.points = vtk_to_numpy(self.clipped_area.GetOutput().GetPoints().GetData())
+        #======================================================================        
+        # 3D - case 
+        #====================================================================== 
         
-        
-       
-        self.x = self.points[:,0]
-        self.y = self.points[:,1]
-        self.z = self.points[:,2]
-
-        # Function to find min-values of z_b       
-        zmin = self.selectMinz(self.x,self.y,self.z)
-        zmax = self.selectMaxz(self.x,self.y,self.z)
-
-        zs = zmax[1]
-        zs = np.asarray(zs)
-        xy_zmax = zmax[0]
-       
-        
-        zb = zmin[1]
-        zb = np.asarray(zb)
-        xy_zmin = zmin[0]
-        
-
-        self.zb_new = zb
-        self.zs_new = zs
-        
-        self.x_corr = xy_zmax[0] 
-        self.y_corr = xy_zmax[1]
-        
-        # Calculation of real hydrostatic thickniss, modelled thickniss and
-        # deviation of hydrostatic equilibrium
-        self.thick_model = -self.zs_new+self.zb_new       
-        self.thick_calc = np.divide((self.p_w*self.zs_new),(self.p_w-self.p_i))                
-        self.h_thickness = self.thick_model + self.thick_calc 
-        
-        
-        
-        # Return values of coordinates and calculated hydrostatic thickness
-        return self.x_corr, self.y_corr, self.h_thickness, self.thick_model
+        if self.vtu_type is None:
+            
+            # Paraneter setup for calculation of hydrostatic thickness
+            # !!!!!!!!!! Must be changed if input.sif file is changed!!!!!!!!!!!!!!
+            self.p_w = 1000.0 # kg m−3 )
+            self.p_i = 900.0  # ice (ρi =918kgm−3)
+            p_a = 2.0         # air (ρa =2kgm−3)
+            H_a = 0
+            
+            #self.cutter = self.clipData
+            self.clipped_area = self.cutter()
+            self.zs = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('zs'))
+            self.zb = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('zb'))
+            self.points = vtk_to_numpy(self.clipped_area.GetOutput().GetPoints().GetData())
+            
+            
+           
+            self.x = self.points[:,0]
+            self.y = self.points[:,1]
+            self.z = self.points[:,2]
     
+            # Function to find min-values of z_b       
+            zmin = self.selectMinz(self.x,self.y,self.z)
+            zmax = self.selectMaxz(self.x,self.y,self.z)
     
+            zs = zmax[1]
+            zs = np.asarray(zs)
+            xy_zmax = zmax[0]
+           
+            
+            zb = zmin[1]
+            zb = np.asarray(zb)
+            xy_zmin = zmin[0]
+            
     
-    
-    
-    
+            self.zb_new = zb
+            self.zs_new = zs
+            
+            self.x_corr = xy_zmax[0] 
+            self.y_corr = xy_zmax[1]
+            
+            # Calculation of real hydrostatic thickniss, modelled thickniss and
+            # deviation of hydrostatic equilibrium
+            self.thick_model = -self.zs_new+self.zb_new       
+            self.thick_calc = np.divide((self.p_w*self.zs_new),(self.p_w-self.p_i))                
+            self.h_thickness = self.thick_model + self.thick_calc 
+            
+            
+            
+            # Return values of coordinates and calculated hydrostatic thickness
+            return self.x_corr, self.y_corr, self.h_thickness, self.thick_model
+        
+        
+        #======================================================================        
+        # 2D - case 
+        #====================================================================== 
+        
+        elif self.vtu_type is not None:
+            
+            # Paraneter setup for calculation of hydrostatic thickness
+            # !!!!!!!!!! Must be changed if input.sif file is changed!!!!!!!!!!!!!!
+            
+            self.p_w = 1000.0 # kg m−3 )
+            self.p_i = 910.0  # ice (ρi = 918kgm−3)
+            
+            # pick surface and bottom coordinates
+            self.fs_upper = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs upper'))
+            self.fs_lower = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs lower'))
+            self.points = vtk_to_numpy(self.xmlReader.GetOutput().GetPoints().GetData())
+            
+            
+            self.x = self.points[:,0]
+            self.y = self.points[:,1]
+            
+            # Rearrange matrix to fit input shape ()
+            self.points = np.delete(self.points, 0, 1)
+            
+            # Using pandas-dataframe
+            df = pd.DataFrame(self.points,columns=['x','y'])
+           
+            # Group
+           # grouped = df.groupby('y')
+        
+            #Upper and lower boundary
+            #lower_boundary = grouped.min()
+#            lower_boundary = np.asarray(lower_boundary[0])
+#            lower_boundary = lower_boundary[:,0]
+            
+            #upper_boundary = grouped.max()
+#            upper_boundary = np.asarray(upper_boundary[0])
+#            upper_boundary = upper_boundary[:,0]
+            
+            ind_fs_lower = np.where(self.fs_lower<0)
+            ind_fs_upper = np.where(self.fs_upper>0)
+            
+            corr_fs_lower = self.fs_lower[ind_fs_lower] 
+            corr_fs_upper = self.fs_upper[ind_fs_upper]
+            
+            upper_model = y[ind_fs_upper]
+            lower_model = y[ind_fs_lower] 
+            
+            # Real model thickness
+            self.thick_model_2d = -corr_fs_upper+corr_fs_lower
+            
+            # Calculated thickness
+            self.thick_calc_2d = np.divide((self.p_w*corr_fs_upper),\
+                                        (self.p_w-self.p_i)) 
+            #
+            self.h_thickness = self.thick_model_2d + self.thick_calc_2d
+            
+            return self.thick_model_2d, self.thick_calc_2d, self.h_thickness, upper_model, lower_model, corr_fs_lower
+        
+        
+        
+        
+        
     def cut_and_slice(self, 
                       xcoord,
                       var):
