@@ -170,6 +170,7 @@ class ModelRun():
             self.xmlReader = vtk.vtkXMLPUnstructuredGridReader()
         elif self.vtu_type==str("vtu"):  
             self.xmlReader = vtk.vtkXMLPUnstructuredGridReader() 
+            
         else:
             raise ValueError('VTU reader does not exist. Check file format of \
             simulation source.')    
@@ -184,11 +185,11 @@ class ModelRun():
         self.narrays = self.xmlReader.GetOutput().GetPointData().GetNumberOfArrays()
         self.Points = vtk_to_numpy(self.xmlReader.GetOutput().GetPoints().GetData())
         self.Cells =  vtk_to_numpy(self.xmlReader.GetOutput().GetCells().GetData())
-        
-        # Get outputs specified for 2D - case
+         # Get outputs specified for 2D - case
         self.sxy = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(' sxy'))
         self.fs_upper = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs upper'))
         self.fs_lower = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs lower'))
+       
         
         # Check for variables in list
         self.list_var_names = []
@@ -488,8 +489,8 @@ class ModelRun():
             # Paraneter setup for calculation of hydrostatic thickness
             # !!!!!!!!!! Must be changed if input.sif file is changed!!!!!!!!!!!!!!
             
-            self.p_w = 1000.0 # kg m−3 )
-            self.p_i = 910.0  # ice (ρi = 918kgm−3)
+            self.p_w_2d = 1000.0 # kg m−3 )
+            self.p_i_2d = 910.0  # ice (ρi = 918kgm−3)
             
             # pick surface and bottom coordinates
             self.fs_upper = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs upper'))
@@ -501,10 +502,10 @@ class ModelRun():
             self.y = self.points[:,1]
             
             # Rearrange matrix to fit input shape ()
-            self.points = np.delete(self.points, 0, 1)
+            self.points = np.delete(self.points, 2, 1)
             
             # Using pandas-dataframe
-            df = pd.DataFrame(self.points,columns=['x','y'])
+            #df = pd.DataFrame(self.points,columns=['x','y'])
            
             # Group
            # grouped = df.groupby('y')
@@ -523,20 +524,25 @@ class ModelRun():
             
             corr_fs_lower = self.fs_lower[ind_fs_lower] 
             corr_fs_upper = self.fs_upper[ind_fs_upper]
+            x_new_upper =  self.x[ind_fs_upper]
+            x_new_lower =  self.x[ind_fs_lower] 
             
-            upper_model = y[ind_fs_upper]
-            lower_model = y[ind_fs_lower] 
+            upper_model = self.y[ind_fs_upper]
+            lower_model = self.y[ind_fs_lower] 
             
             # Real model thickness
             self.thick_model_2d = -corr_fs_upper+corr_fs_lower
             
             # Calculated thickness
-            self.thick_calc_2d = np.divide((self.p_w*corr_fs_upper),\
-                                        (self.p_w-self.p_i)) 
+            self.thick_calc_2d = np.divide((self.p_w_2d*corr_fs_upper),(self.p_w_2d-self.p_i_2d)) 
+            self.thick_calc_2d = self.thick_calc_2d * -1
+            self.thick_calc_2d = self.thick_calc_2d                        
             #
             self.h_thickness = self.thick_model_2d + self.thick_calc_2d
             
-            return self.thick_model_2d, self.thick_calc_2d, self.h_thickness, upper_model, lower_model, corr_fs_lower
+            return self.thick_model_2d, self.thick_calc_2d, \
+                    x_new_lower,x_new_upper, self.points, corr_fs_lower,\
+                    corr_fs_upper,self.fs_lower,self.fs_upper
         
         
         

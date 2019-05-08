@@ -48,7 +48,6 @@ calcccc = surface[1]
 caldddd = abs(surface[0])
 calc = surface[1]
 fig = plt.figure(figsize = (20,15))
-plt.plot(model)
 plt.plot(calc)
 plt.plot(calcccc)
 
