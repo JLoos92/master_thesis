@@ -135,7 +135,7 @@ class Plot_bridging_2d():
         ymax = 60
 
         
-        original_width = self.width/100/2
+        original_width = round(np.sqrt(self.width)*2)*2
         
         
         #======================================================================
@@ -157,8 +157,10 @@ class Plot_bridging_2d():
                 mr = ModelRun(100000,0,0,0,t)
             mr = ModelRun(self.width,0,0,0,t,"vtu")
             
-            ht = mr.compute_hydrostatic_thickness()
            
+            ht = mr.compute_hydrostatic_thickness()
+            calc_thickness_bs = ht[1]
+            
             points = ht[4]
             x = points[:,0]
             y = points[:,1]
@@ -171,35 +173,37 @@ class Plot_bridging_2d():
             points = points.transpose()
             max_sxy = np.max(sxy)
             min_sxy = np.min(sxy)
+            masked_sxy = ma.masked_where(sxy>-10,sxy)
+            print(masked_sxy)
             
             
             #------------------------------------------------------------------
             ax1 = plt.Subplot(fig,gs00[1,:])
-            im = ax1.tripcolor(x,y,sxy,shading='gouraud',vmin=-0.03,vmax=0.03,cmap = 'RdBu')
+            im = ax1.tripcolor(x,y,masked_sxy,shading="gouraud",vmin=-0.03,vmax=0.03,cmap = 'RdBu')
             
             # Colorbar definition (extra axis)
             cbar = plt.subplot(gs00[0,:])
             cbar = Colorbar(ax=cbar, mappable = im, extend = 'both', \
             orientation = 'horizontal', ticklocation = 'top') 
             cbar.set_label('Bridging stress $\sigma_{xy}$ \n' \
-            + 't = ' + str(t) + ', channel width = ' + str(original_width) + 'm \n' + \
+            + 't = ' + str(t*10) + ', channel width = ' + str(original_width) + 'm \n' + \
             '$\sigma_{xy} max$'+ ' = ' + str(max_sxy.round(4)),labelpad=10, fontdict = font_title)
             
             ax1.set_xlabel('Width [m]',fontdict = font_label)
             ax1.set_ylabel('Height [m]',fontdict = font_label)
             ax1.minorticks_on()
-            upper=ht[5]
-            lower=ht[6]
+            upper=ht[2]
+            lower=ht[3]
             points=ht[4]
-            x_line = ht[3]
+            x_line = ht[0]
             ax1.plot(x_line,lower,'b-')
             ax1.plot(x_line,upper,'r-')
 
 
          
             # Delaunay triangulation for grid
-            delaunay = Delaunay(points)
-            ax1.triplot(x,y,delaunay.simplices,alpha=0.05)
+            #delaunay = Delaunay(points)
+            #ax1.triplot(x,y,delaunay.simplices,alpha=0.05)
             
             fig.add_subplot(ax1)
             
@@ -216,12 +220,13 @@ class Plot_bridging_2d():
             
             #------------------------------------------------------------------
             ax2 = plt.Subplot(fig,gs00[2,:])
-            upper=ht[5]
-            lower=ht[6]
-            points=ht[4]
-            x = ht[3]
+            upper=ht[2]
+            lower=ht[3]
+            #points=ht[4]
+            x = ht[0]
             ax2.plot(x,lower,'b-', label = 'Modelled thickness')
             ax2.plot(x,upper,'b')
+            ax2.plot(x,calc_thickness_bs,'r--',label = 'Hydrostatic thickness')
            # ax2.plot(original,'r--', label = 'Hydrostatic thickness')
             ax2.legend(loc = 'lower right', bbox_to_anchor=(0.55,0.77))
             ax2.grid()

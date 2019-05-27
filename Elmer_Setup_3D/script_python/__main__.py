@@ -153,7 +153,7 @@ class ModelRun():
         elif self.vtu_type==str("vtu"):
                 self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
                 
-        
+        self.dic_timesteps.sort(key=os.path.getmtime)
             
             
         self.f_name = self.dic_timesteps[self.timestep]
@@ -502,7 +502,7 @@ class ModelRun():
             # Paraneter setup for calculation of hydrostatic thickness
             # !!!!!!!!!! Must be changed if input.sif file is changed!!!!!!!!
             
-            self.p_w_2d = 1000.0 # kg m−3 )
+            self.p_w_2d = 1025.0 # kg m−3 )
             self.p_i_2d = 910.0  # ice (ρi = 918kgm−3)
             
             # pick surface and bottom coordinates
@@ -543,21 +543,22 @@ class ModelRun():
             x_new_upper =  self.x[ind_fs_upper]
             x_new_lower =  self.x[ind_fs_lower] 
             
-            upper_model = self.y[ind_fs_upper]
-            lower_model = self.y[ind_fs_lower] 
+            self.upper_model = self.y[ind_fs_upper]
+            self.lower_model = self.y[ind_fs_lower] 
             
             # Real model thickness
             self.thick_model_2d = -corr_fs_upper+corr_fs_lower
             
-            # Calculated thickness
+            # Calculated thickness and thickness below sea-level
             self.thick_calc_2d = np.divide((self.p_w_2d*corr_fs_upper),(self.p_w_2d-self.p_i_2d)) 
             self.thick_calc_2d = -1 * self.thick_calc_2d                    
-            #
+            self.thick_calc_2d_bs = self.thick_calc_2d  + self.upper_model
+            
+            
             self.h_thickness = self.thick_model_2d + self.thick_calc_2d
             
-            return self.thick_model_2d, self.thick_calc_2d, \
-                    x_new_lower,x_new_upper, self.points, corr_fs_lower,\
-                    corr_fs_upper,self.fs_lower,self.fs_upper
+            return x_new_upper, self.thick_calc_2d_bs,self.upper_model,self.lower_model, self.points
+                    
         
         
         
