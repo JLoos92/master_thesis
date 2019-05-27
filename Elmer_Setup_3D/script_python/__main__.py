@@ -60,13 +60,13 @@ class ModelRun():
     
     
     def __init__(self, 
-                 bump_amplitude, 
-                 bump_distribution_x,
-                 bump_distribution_y,
-                 prop,
-                 timestep,
-                 vtu_type = None,
-                 **kwargs):
+             bump_amplitude , 
+             bump_distribution_x ,
+             bump_distribution_y ,
+             prop ,
+             timestep ,
+             vtu_type = None,
+             **kwargs):
         
         
         """
@@ -86,52 +86,29 @@ class ModelRun():
             number of timestep
         """
         
-        self.bump_amplitude = bump_amplitude
-        self.bump_distribution_x = bump_distribution_x
-        self.bump_distribution_y = bump_distribution_y
+        
+        
         self.vtu_type = vtu_type
-
-        self.prop = prop # extra property e.g. double bump
-        self.timestep = timestep
         
-        
-        
-        home_directory = '/Volumes/esd01/docs/jloos/data_small/runs_elmerice_'
-        sub_mesh_directory = 'Mesh/'
-        sub_mesh_directory_2d = 'channel2d/'
+               
+        self.home_directory = '/Volumes/esd01/docs/jloos/data_small/runs_elmerice_'
+        self.sub_mesh_directory = 'Mesh/'
+        self.sub_mesh_directory_2d = 'channel2d/'
 
         # change output directory according to mesh refinement:
         
         
         if self.vtu_type is None:
-             self.res_folder = os.path.join(home_directory + 'fixed')
+             self.res_folder = os.path.join(self.home_directory + 'fixed')
             
         elif self.vtu_type==str("vtu"):            
-             self.res_folder = os.path.join(home_directory + '2d')
+             self.res_folder = os.path.join(self.home_directory + '2d')
 
         else:
             raise ValueError('This filetype does not exist in the simulation \
             folder.')
                 
-            
-        # create fodername of the run:    
-        run_folder = 'Mesh{:}_{:}{:}_{:}'.format(self.bump_amplitude,
-                          self.bump_distribution_x,
-                          self.bump_distribution_y,
-                          self.prop) 
-        
-        # path to the directory of the model run:
-        if self.vtu_type is None:
-            self.run_directory = os.path.join(self.res_folder,
-                                          run_folder,
-                                          sub_mesh_directory) 
-
-        elif self.vtu_type==str("vtu"):
-            self.run_directory = os.path.join(self.res_folder,
-                                          run_folder + '/') 
-        
-        
-        
+                  
         #======================================================================        
         # The following segment provides a dictionary of all .pvtu or vtu files
         # (depending on 2d or 3d case) and a subdirectory list of all runs. 
@@ -140,23 +117,51 @@ class ModelRun():
         dirlist = [item for item in os.listdir(self.res_folder) \
                   if os.path.isdir(os.path.join(self.res_folder,item))]
         self.dirlist = dirlist
-                    
         
+        self.bump_amplitude = bump_amplitude
+        self.bump_distribution_x = bump_distribution_x
+        self.bump_distribution_y = bump_distribution_y
+        self.prop = prop # extra property e.g. double bump
+        self.timestep = timestep
+         
+         
+         
+         
+        # create fodername of the run:    
+        self.run_folder = 'Mesh{:}_{:}{:}_{:}'.format(self.bump_amplitude,
+                       self.bump_distribution_x,
+                       self.bump_distribution_y,
+                       self.prop) 
         
+        # path to the directory of the model run:
+        if self.vtu_type is None:
+            self.run_directory = os.path.join(self.res_folder,
+                                           self.run_folder,
+                                           self.sub_mesh_directory) 
+    
+        elif self.vtu_type==str("vtu"):
+             self.run_directory = os.path.join(self.res_folder,
+                                           self.run_folder + '/') 
+         
+    
+       
         # sort timesteps after execution (2d or 3d valid)
         if self.vtu_type is None:
-            self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
+                self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
+                
+                
         elif self.vtu_type==str("vtu"):
-            self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
-            
-            
-            
-        self.dic_timesteps.sort(key=os.path.getmtime)
-        self.f_name = self.dic_timesteps[self.timestep]
+                self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
+                
         
+            
+            
+        self.f_name = self.dic_timesteps[self.timestep]
+                
+                
         print("Timesteps = ", len(self.dic_timesteps))
         print(self.f_name)
-       
+           
         self.path_timestep = os.path.join(self.run_directory, self.f_name)
         self.dict_var = {}
         
@@ -164,12 +169,12 @@ class ModelRun():
         # Define xmlreader (file-input for VTU-path)
         # Create vtu objects, to collect properties, strings, variables etc
         # choose pvtu or vtu (2d or 3d)
-         
-
+          
+        
         if self.vtu_type is None:        
-            self.xmlReader = vtk.vtkXMLPUnstructuredGridReader()
+             self.xmlReader = vtk.vtkXMLPUnstructuredGridReader()
         elif self.vtu_type==str("vtu"):  
-            self.xmlReader = vtk.vtkXMLPUnstructuredGridReader() 
+             self.xmlReader = vtk.vtkXMLPUnstructuredGridReader() 
             
         else:
             raise ValueError('VTU reader does not exist. Check file format of \
@@ -185,30 +190,38 @@ class ModelRun():
         self.narrays = self.xmlReader.GetOutput().GetPointData().GetNumberOfArrays()
         self.Points = vtk_to_numpy(self.xmlReader.GetOutput().GetPoints().GetData())
         self.Cells =  vtk_to_numpy(self.xmlReader.GetOutput().GetCells().GetData())
-         # Get outputs specified for 2D - case
-        self.sxy = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(' sxy'))
-        self.fs_upper = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs upper'))
-        self.fs_lower = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs lower'))
-       
+        
+        # Get outputs specified for 2D - case
+        if self.vtu_type==str("vtu"):
+             self.sxy = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(' sxy'))
+             self.fs_upper = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs upper'))
+             self.fs_lower = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs lower'))
+           
         
         # Check for variables in list
         self.list_var_names = []
         for i in range(self.narrays):            
-            self.name = self.xmlReader.GetPointArrayName(i)
-            self.list_var_names.append(self.name)
+             self.name = self.xmlReader.GetPointArrayName(i)
+             self.list_var_names.append(self.name)
+            
+            
+            # Dictionary for variables
+             self.dict_var_names = {}
+             self.dict_var_values = {}
+            
+             for i in range(self.narrays):
+        
+                self.dict_var_names[i] = self.xmlReader.GetPointArrayName(i)
+                self.dict_var_values[i] = self.xmlReader.GetOutput().GetPointData().GetArray(i)
+                self.dict_var_names[self.xmlReader.GetPointArrayName(i)] \
+                = self.xmlReader.GetOutput().GetPointData().GetArray(i)
         
         
-        # Dictionary for variables
-        self.dict_var_names = {}
-        self.dict_var_values = {}
         
-        for i in range(self.narrays):
-    
-            self.dict_var_names[i] = self.xmlReader.GetPointArrayName(i)
-            self.dict_var_values[i] = self.xmlReader.GetOutput().GetPointData().GetArray(i)
-            self.dict_var_names[self.xmlReader.GetPointArrayName(i)] \
-            = self.xmlReader.GetOutput().GetPointData().GetArray(i)
         
+          
+            
+   
 
     
     def cutter(self ,GL=None):
@@ -430,7 +443,7 @@ class ModelRun():
         if self.vtu_type is None:
             
             # Paraneter setup for calculation of hydrostatic thickness
-            # !!!!!!!!!! Must be changed if input.sif file is changed!!!!!!!!!!!!!!
+            # !!!!!!!! Must be changed if input.sif file is changed!!!!!!!!
             self.p_w = 1000.0 # kg m−3 )
             self.p_i = 900.0  # ice (ρi =918kgm−3)
             p_a = 2.0         # air (ρa =2kgm−3)
@@ -487,15 +500,18 @@ class ModelRun():
         elif self.vtu_type is not None:
             
             # Paraneter setup for calculation of hydrostatic thickness
-            # !!!!!!!!!! Must be changed if input.sif file is changed!!!!!!!!!!!!!!
+            # !!!!!!!!!! Must be changed if input.sif file is changed!!!!!!!!
             
             self.p_w_2d = 1000.0 # kg m−3 )
             self.p_i_2d = 910.0  # ice (ρi = 918kgm−3)
             
             # pick surface and bottom coordinates
-            self.fs_upper = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs upper'))
-            self.fs_lower = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs lower'))
-            self.points = vtk_to_numpy(self.xmlReader.GetOutput().GetPoints().GetData())
+            self.fs_upper = vtk_to_numpy(self.xmlReader.GetOutput(). \
+                                         GetPointData().GetArray('fs upper'))
+            self.fs_lower = vtk_to_numpy(self.xmlReader.GetOutput(). \
+                                         GetPointData().GetArray('fs lower'))
+            self.points = vtk_to_numpy(self.xmlReader.GetOutput(). \
+                                       GetPoints().GetData())
             
             
             self.x = self.points[:,0]
@@ -535,8 +551,7 @@ class ModelRun():
             
             # Calculated thickness
             self.thick_calc_2d = np.divide((self.p_w_2d*corr_fs_upper),(self.p_w_2d-self.p_i_2d)) 
-            self.thick_calc_2d = self.thick_calc_2d * -1
-            self.thick_calc_2d = self.thick_calc_2d                        
+            self.thick_calc_2d = -1 * self.thick_calc_2d                    
             #
             self.h_thickness = self.thick_model_2d + self.thick_calc_2d
             

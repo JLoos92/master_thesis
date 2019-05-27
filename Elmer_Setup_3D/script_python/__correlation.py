@@ -36,7 +36,8 @@ def compute_correlation(t=None,
     
     
     # Width of bedrock bumps: x2 (gauss-function)
-    runs = [50,75,100,125,150,200,225,250,275,300,400,450,475,500]
+    runs = [50,75,100,125,150,200,225,250,275,300,400,450,475,500,600]
+    
     runs = np.asarray(runs)
     real_width = runs * 2
     
@@ -62,13 +63,13 @@ def compute_correlation(t=None,
         df = pd.DataFrame({'X':x ,'Y':y, 'Hydrostatic deviation':ht})
         df_sorted = df.sort_values(by = ['Y'])
         
-        df_sorted_new = df_sorted[(df_sorted['Y']>= y1)
+        df_sorted_new = df_sorted[(df_sorted['Y']>=  y1)
                                 & (df_sorted['Y']<= y2)]
         df_sorted_new = df_sorted_new[(df_sorted['X']>= x1)
                                 & (df_sorted_new['X']<= x2)]
         
         hd_range = df_sorted_new.iloc[:,2].values
-        
+        #print('hd_range',hd_range)
         hd_mean = np.mean(hd_range)
         
         hd_list_mean.append(hd_mean)
@@ -82,6 +83,7 @@ def compute_correlation(t=None,
         df_sorted_noise = df_sorted_noise[(df_sorted_noise['X']>= x1)
                                         & (df_sorted_noise['X']<= x2)]
         hd_range_noise = df_sorted_noise.iloc[:,2].values
+        
     
         df_sorted_noise_2 = df_sorted[(df_sorted['Y']<= y1)]
         df_sorted_noise_2 = df_sorted_noise_2[(df_sorted_noise_2['X']>= x1)
@@ -90,7 +92,7 @@ def compute_correlation(t=None,
         hd_range_noise_2 = df_sorted_noise_2.iloc[:,2].values
         
         
-        # rms method for calculating noise
+        # rms 
         def rmsvalue(arr,n):
             square = 0
             mean = 0.0
@@ -98,54 +100,92 @@ def compute_correlation(t=None,
             
             for i in range(0,n):
                 square += (arr[i]**2)
-                
+                #print(square)
                 mean = (square / (float)(n))
-                
+                #print('mean = ', mean)
                 root = math.sqrt(mean)
                 
                 return root
-        
+            
+        rms = np.sqrt(np.mean(hd_range**2))
         n = len(hd_range)
         hd_rms = rmsvalue(hd_range,n)
-        hd_list_rms.append(hd_rms)
+        hd_list_rms.append(rms)
+        print('rms = ', rms)
         
+        rms_noise = np.sqrt(np.mean(hd_range_noise**2))
         n = len(hd_range_noise)
         hd_rms_noise = rmsvalue(hd_range_noise,n)
-        hd_list_rms_noise.append(hd_rms_noise)
+        hd_list_rms_noise.append(rms_noise)
+        print(rms_noise)
         
+        rms_noise_2 = np.sqrt(np.mean(hd_range_noise_2**2))
         n = len(hd_range_noise_2)
         hd_rms_noise_2 = rmsvalue(hd_range_noise_2,n)
-        hd_list_rms_noise_2.append(hd_rms_noise_2)
-    
+        hd_list_rms_noise_2.append(rms_noise_2)
+        print(rms_noise_2)
     
         
         
     hd_array_mean = np.asarray(hd_list_mean)    
-    hd_array_rms = np.asarray(hd_list_rms) 
+    hd_array_rms = np.asarray(hd_list_rms)
+    print(hd_array_rms)
     hd_array_rms_noise = np.asarray(hd_list_rms_noise) 
     hd_array_rms_noise_2 = np.asarray(hd_list_rms_noise_2) 
         
     hd_new = hd_array_rms - (hd_array_rms_noise+hd_array_rms_noise_2)
+    hd_noise_ensemble = (hd_array_rms_noise+hd_array_rms_noise_2)
+    #print(hd_array_rms)
+    print('noise_ensemble = ', hd_noise_ensemble)
+    print('real area = ', hd_new)
+    
+#    plt.plot(real_width,hd_array_mean)
+#    plt.plot(real_width,hd_array_mean,'bo')
+#    plt.xlabel(' Width of bedrock bumps [m] ')
+#    plt.ylabel('Mean hydrostatic deviation in boundaries')
+#    plt.title('Hydrostatic deviation as a function of bedrock-bump width')
+#    plt.show()
+#    
+#    plt.plot(real_width,hd_array_rms,'bo')
+#    plt.xlabel('Width of bedrock bumps [m] ')
+#    plt.ylabel('RMS hydrostatic deviation in boundaries')
+#    plt.title('Width')
+#    plt.show()
     
     
-    plt.plot(real_width,hd_array_mean)
-    plt.plot(real_width,hd_array_mean,'bo')
-    plt.xlabel(' Width of bedrock bumps [m] ')
-    plt.ylabel('Mean hydrostatic deviation in boundaries')
-    plt.title('Hydrostatic deviation as a function of bedrock-bump width')
-    plt.show()
+    #==========================================================================
+    # Setup fonts
+    #==========================================================================
+        
+
+    font_annotation = {'color':'black',
+                   'size': '17'
+                   }    
+   
+    font_title = {'color':'black',
+           'size':'20',
+           'weight':'bold'
+           }
+
+    font_axes = {'color':'black',
+           'size':'14',
+           'weight':'normal'
+           }
     
+    font_label = {'color':'black',
+           'size':'15',
+           'weight':'normal'
+           }
+    
+    
+    
+    
+    fig = plt.figure(figsize = (15,10)) 
     plt.plot(real_width,hd_array_rms,'bo')
-    plt.xlabel('Width of bedrock bumps [m] ')
-    plt.ylabel('RMS hydrostatic deviation in boundaries')
-    plt.title('Width')
-    plt.show()
-    
-    
-    plt.plot(real_width,hd_new,'bo')
-    plt.xlabel(' Width of bedrock bumps [m] ')
-    plt.ylabel('RMS hydrostatic deviation in boundaries')
-    plt.title('Without noise')
+    plt.xlabel('Width of bedrock bumps [m] ',fontdict=font_label)
+    plt.ylabel('RMS: Hydrostatic deviation [m]',fontdict=font_label)
+    plt.title('',fontdict=font_title)
+    plt.grid(True)
     plt.show()
     
    

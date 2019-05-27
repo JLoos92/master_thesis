@@ -31,7 +31,7 @@ from math import trunc
 
 
 
-class Plot_hydrostatic_deviation():
+class Plot_hydrostatic_deviation_multiple():
     
     """
     Class Plot_hydrostatic_deviation:
@@ -51,12 +51,6 @@ class Plot_hydrostatic_deviation():
     
     
     def __init__(self,
-                 t1 = None,
-                 t2 = None,
-                 t3 = None,
-                 t4 = None,
-                 amp = None,
-                 width = None,
                  **kwargs): 
                              
                  

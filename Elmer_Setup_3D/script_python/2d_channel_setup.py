@@ -10,7 +10,7 @@ Created on Tue Apr 30 10:47:52 2019
 from __main__ import ModelRun
 from matplotlib.mlab import griddata
 
-channel = ModelRun(90000,0,0,0,10,"vtu")
+channel = ModelRun(900000,0,0,0,10,"vtu")
 
 npoints = channel.npoints
 points = channel.Points

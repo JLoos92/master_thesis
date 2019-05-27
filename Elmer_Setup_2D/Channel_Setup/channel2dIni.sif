@@ -40,7 +40,7 @@ $function smbRD(x) import smb_constant {\
 $function melt_rate(grd) import maxmelt {\
   melting = grd*80.0 ; \
   if (melting>maxmelt) melting=maxmelt ; \
-  _melt_rate = melting ; \
+_ = melting ; \
 }
 
 
