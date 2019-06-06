@@ -249,6 +249,8 @@ class Plot_bridging_2d():
             axins.plot(self.new_x,lower,'b-')
             axins.set_xlim(x1,x2)
             axins.set_ylim(y1,y2)
+            axins.minorticks_on()
+            axins.grid(which='minor',linestyle = ':', linewidth = '0.5', color = 'black')
             # Visibility of ticks
             #plt.yticks(visible=False)
             #plt.xticks(visible=False)

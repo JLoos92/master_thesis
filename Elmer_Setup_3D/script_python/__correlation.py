@@ -157,30 +157,6 @@ def compute_correlation_3d(t=None,
 #    plt.show()
     
     
-    #==========================================================================
-    # Setup fonts
-    #==========================================================================
-        
-
-    font_annotation = {'color':'black',
-                   'size': '17'
-                   }    
-   
-    font_title = {'color':'black',
-           'size':'20',
-           'weight':'bold'
-           }
-
-    font_axes = {'color':'black',
-           'size':'14',
-           'weight':'normal'
-           }
-    
-    font_label = {'color':'black',
-           'size':'15',
-           'weight':'normal'
-           }
-    
     
     
     
@@ -199,10 +175,8 @@ def compute_correlation_2d(t=None,
                         **kwargs):
 
     '''
-    
-    
-    
-        
+    Computes root mean square of the hydrostatic deviation. The hydrostatic de-
+    viation is saved in an 1d array for the 2d simulation case.       
     '''    
     
  
@@ -210,14 +184,14 @@ def compute_correlation_2d(t=None,
     list_widths = ModelRun(200000,0,0,0,50,"vtu").list_widths
     list_widths.sort(key=int)
     list_widths = list_widths[0:10]
-    num_timesteps = ModelRun(200000,0,0,0,50,"vtu").num_timesteps
+    num_timesteps = ModelRun(20000,0,0,0,50,"vtu").num_timesteps
     
-    rms_total = []
+    
     fig1 = plt.figure(figsize = (15,15))
     
     for widths in list_widths:
         rms_total = []
-        for i in range(30,100):
+        for i in range(1,100):
             
             mr = ModelRun(widths,0,0,0,i,"vtu")
             
@@ -242,5 +216,81 @@ def compute_correlation_2d(t=None,
     
     
     return rms_total
+
+
+
+
+
+    
+def plot_correlation_widths_2d(t=None, 
+                        **kwargs):
+
+    '''
+    Computes root mean square of the hydrostatic deviation. The hydrostatic de-
+    viation is saved in an 1d array for the 2d simulation case.       
+    '''    
     
     
+    #==========================================================================
+    # Setup fonts
+    #==========================================================================
+        
+
+    font_annotation = {'color':'black',
+                   'size': '17'
+                   }    
+   
+    font_title = {'color':'black',
+           'size':'20',
+           'weight':'bold'
+           }
+
+    font_axes = {'color':'black',
+           'size':'14',
+           'weight':'normal'
+           }
+    
+    font_label = {'color':'black',
+           'size':'15',
+           'weight':'normal'
+           }
+ 
+    
+    list_widths = ModelRun(200000,0,0,0,50,"vtu").list_widths
+    list_widths.sort(key=int)
+    list_widths = list_widths
+   
+    num_timesteps = ModelRun(200000,0,0,0,50,"vtu").num_timesteps
+    original_widths = []
+    for i in range(len(list_widths)):
+        original_widths_new = int(list_widths[i])
+        original_widths.append(original_widths_new)
+        
+    original_widths = np.sqrt(original_widths)*2*2
+    fig1 = plt.figure(figsize = (15,15))
+    rms_total = []
+    for widths in list_widths:
+        
+            
+
+            mr = ModelRun(widths,0,0,0,1,"vtu")
+            
+            ht = mr.compute_hydrostatic_thickness()
+            
+            
+            # compute deviation
+            lower = ht[3]
+            calc_thickness_bs = ht[1]
+            
+            hydrostatic_deviation = calc_thickness_bs - lower        
+            rms = np.sqrt(np.mean(hydrostatic_deviation**2))
+                   
+            rms_total.append(rms)
+            
+    plt.plot(original_widths,rms_total,'r*')
+   
+    plt.xlabel('Channel width [m]',fontdict = font_label)
+    plt.ylabel('RMS of hydrostatic deviation [m]',fontdict = font_label)
+    
+    
+    return rms_total  

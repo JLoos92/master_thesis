@@ -5,25 +5,22 @@ Created on Tue May 14 15:29:50 2019
 
 @author: jloos
 """
+from scipy import interpolate
+from scipy.interpolate import griddata
 
-# rms 
-#def rmsvalue(arr,n):
-#    square = 0
-#    mean = 0.0
-#    root= 0.0
-#    
-#    for i in test(0,n):
-#        square = (arr[i]**2)
-#        print(square)
-#        mean = (square / (float)(n))
-#        print('mean = ', mean)
-#        root = math.sqrt(mean)
-#        
-#        return root
+mr = ModelRun(200000,0,0,0,50,"vtu")
+            
+ht = mr.compute_hydrostatic_thickness()
 
-test = np.linspace(1,20,10)
-n = len(test)
-#value = rmsvalue(test,n)
+points = ht[4]
+x = points[:,0]
+y = points[:,1]
 
+new_points = x,y
 
-rms = np.sqrt(np.mean(test**2))
+xx,yy = np.meshgrid(x,y)
+
+sxy = mr.sxy
+grid = griddata(new_points,sxy,(xx,yy),method='nearest')
+
+plt.imshow(grid,origin = 'lower',vmin = -0.003, vmax = 0.003)
