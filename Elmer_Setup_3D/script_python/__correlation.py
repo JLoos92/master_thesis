@@ -19,9 +19,13 @@ import math
 
 
 
-def compute_correlation(t=None, 
+def compute_correlation_3d(t=None, 
                         **kwargs):
 
+    ''''
+    
+    
+    '''
 
     #====================================================================== 
     # Mean of hydrostatic deviation ()
@@ -191,7 +195,52 @@ def compute_correlation(t=None,
    
 
 
+def compute_correlation_2d(t=None, 
+                        **kwargs):
 
-
-
+    '''
+    
+    
+    
         
+    '''    
+    
+ 
+    
+    list_widths = ModelRun(200000,0,0,0,50,"vtu").list_widths
+    list_widths.sort(key=int)
+    list_widths = list_widths[0:10]
+    num_timesteps = ModelRun(200000,0,0,0,50,"vtu").num_timesteps
+    
+    rms_total = []
+    fig1 = plt.figure(figsize = (15,15))
+    
+    for widths in list_widths:
+        rms_total = []
+        for i in range(30,100):
+            
+            mr = ModelRun(widths,0,0,0,i,"vtu")
+            
+            ht = mr.compute_hydrostatic_thickness()
+            
+            
+            # compute deviation
+            lower = ht[3]
+            calc_thickness_bs = ht[1]
+            
+            hydrostatic_deviation = calc_thickness_bs - lower        
+            rms = np.sqrt(np.mean(hydrostatic_deviation**2))
+                   
+            rms_total.append(rms)
+            
+            plt.plot(rms_total,label = 'Channel width =' + widths)
+   
+    
+    
+    plt.xlabel('Timesteps')
+    plt.ylabel('RMS of hydrostatic deviation [m]')
+    
+    
+    return rms_total
+    
+    

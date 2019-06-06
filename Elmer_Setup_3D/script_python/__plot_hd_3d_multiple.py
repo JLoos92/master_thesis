@@ -31,7 +31,7 @@ from math import trunc
 
 
 
-class Plot_hydrostatic_deviation_multiple():
+class Plot_hydrostatic_deviation_3d_multiple():
     
     """
     Class Plot_hydrostatic_deviation:
@@ -44,6 +44,7 @@ class Plot_hydrostatic_deviation_multiple():
     three crosssections which can be altered. For each crosssection one subplot 
     is generated which shows the modelled hydrostatic thickness and calculated
     hydrostatic thickness at the vertical crosssection.
+    
     """
     
 

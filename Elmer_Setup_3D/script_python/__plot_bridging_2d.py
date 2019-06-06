@@ -106,10 +106,7 @@ class Plot_bridging_2d():
                'weight':'normal'
                }
         
-        
-        
-        
-        
+     
         
         #======================================================================
         # Define variables for input
@@ -130,18 +127,27 @@ class Plot_bridging_2d():
         self.t4 = t3
         self.width = width
         
-        # Boundaries for model domain
+        # Boundaries ax2 plot
         ymin = -350
         ymax = 60
-
         
-        original_width = round(np.sqrt(self.width)*2)*2
         
         
         #======================================================================
         # Define figure and plot properties
         #======================================================================
+       
+      
+       
         
+
+        # Coordinates for zoomed box
+        x1,x2,y1,y2 = -2500,2500,-300,-200
+        
+             
+        original_width = round(np.sqrt(self.width)*2)*2
+        
+         
         fig = plt.figure(figsize = (40,40))    
         
         gs_0 = gridspec.GridSpec(2,2, hspace = 0.2, wspace = 0.1, figure = fig)
@@ -151,35 +157,40 @@ class Plot_bridging_2d():
         for i ,t in zip(range(4), self.times):
             gs00 = gridspec.GridSpecFromSubplotSpec(3,3, \
             height_ratios=[0.05,1,0.8], hspace = 0.25 ,subplot_spec=gs_0[i])
-        
-        # Run ModelRun-Class with default or self
+             # Run ModelRun-Class with default or self
             if None is (self.width):
                 mr = ModelRun(100000,0,0,0,t)
             mr = ModelRun(self.width,0,0,0,t,"vtu")
             
            
             ht = mr.compute_hydrostatic_thickness()
-            calc_thickness_bs = ht[1]
+            
+            self.upper=ht[2]
+            self.lower=ht[3]
+            self.new_x = ht[0]
+        
+            # Calculated hydrostatic thickness
+            self.calc_thickness_bs = ht[1]
+            
             
             points = ht[4]
-            x = points[:,0]
-            y = points[:,1]
+            self.x = points[:,0]
+            self.y = points[:,1]
            
             #ht_array =ht[2] 
             sxy = mr.sxy
             # Points for triangulation
-            points = [x,y]
+            points = [self.x,self.y]
             points = np.asarray(points)
             points = points.transpose()
             max_sxy = np.max(sxy)
             min_sxy = np.min(sxy)
             masked_sxy = ma.masked_where(sxy>-10,sxy)
             print(masked_sxy)
-            
-            
+      
             #------------------------------------------------------------------
             ax1 = plt.Subplot(fig,gs00[1,:])
-            im = ax1.tripcolor(x,y,masked_sxy,shading="gouraud",vmin=-0.03,vmax=0.03,cmap = 'RdBu')
+            im = ax1.tripcolor(self.x,self.y,masked_sxy,shading="gouraud",vmin=-0.03,vmax=0.03,cmap = 'RdBu')
             
             # Colorbar definition (extra axis)
             cbar = plt.subplot(gs00[0,:])
@@ -197,7 +208,7 @@ class Plot_bridging_2d():
             points=ht[4]
             x_line = ht[0]
             ax1.plot(x_line,lower,'b-')
-            ax1.plot(x_line,upper,'r-')
+            ax1.plot(x_line,upper,'b-')
 
 
          
@@ -207,27 +218,17 @@ class Plot_bridging_2d():
             
             fig.add_subplot(ax1)
             
-#            # Zoomed in rectangle for better visualisation of channel
-#            axins = zoomed_inset_axes(ax1,1.5,loc='upper right',borderpad=5)
-#            axins.tripcolor(x,y,ht_array,shading='gouraud',vmin=-15,vmax=15,cmap = 'RdBu')
-#            axins.set_xlim(x1,x2)
-#            axins.set_ylim(y1,y2)
-#            plt.yticks(visible=False)
-#            plt.xticks(visible=False)
-#            mark_inset(ax1,axins,loc1=2,loc2=4,fc="none", ec="0.5")
-                
-           
             
+            
+            #------------------------------------------------------------------         
+            # Plot calculated (red) and modelled (blue) hydrostatic thickness 
             #------------------------------------------------------------------
             ax2 = plt.Subplot(fig,gs00[2,:])
-            upper=ht[2]
-            lower=ht[3]
-            #points=ht[4]
-            x = ht[0]
-            ax2.plot(x,lower,'b-', label = 'Modelled thickness')
-            ax2.plot(x,upper,'b')
-            ax2.plot(x,calc_thickness_bs,'r--',label = 'Hydrostatic thickness')
-           # ax2.plot(original,'r--', label = 'Hydrostatic thickness')
+            
+            ax2.plot(self.new_x,self.lower,'b-', label = 'Modelled thickness')
+            ax2.plot(self.new_x,self.upper,'b')
+            ax2.plot(self.new_x,self.calc_thickness_bs,'r--',label = 'Hydrostatic thickness')
+           
             ax2.legend(loc = 'lower right', bbox_to_anchor=(0.55,0.77))
             ax2.grid()
             ax2.set_xlabel('Width [m]', fontdict = font_label)
@@ -235,44 +236,45 @@ class Plot_bridging_2d():
             ax2.minorticks_on()
             ax2.set_ylim([ymin,ymax])
             bottom, top = ax2.get_ylim()
-            ax2.text(ymin,top,"A",fontdict=font_annotation,ha = 'right', va='bottom')
-            ax2.text(ymax,top,"A'",fontdict=font_annotation,ha = 'left', va='bottom')
+            
+            
+           
+            
             fig.add_subplot(ax2)
+            
+            
+            # Zoomed in rectangle for better visualisation of channel
+            axins = zoomed_inset_axes(ax2,1.5,loc='upper right',borderpad=5)
+            axins.plot(self.new_x,self.calc_thickness_bs,'r--')
+            axins.plot(self.new_x,lower,'b-')
+            axins.set_xlim(x1,x2)
+            axins.set_ylim(y1,y2)
+            # Visibility of ticks
+            #plt.yticks(visible=False)
+            #plt.xticks(visible=False)
+            mark_inset(ax2,axins,loc1=3,loc2=4,fc="none", ec="0.5")
            
 
-#            #------------------------------------------------------------------
-#            ax3 = plt.Subplot(fig,gs00[2,1])
-#            lower = c2[0]
-#            upper = c2[1]
-#            original = c2[2]
-#            ax3.plot(lower,'b-')
-#            ax3.plot (upper,'b')
-#            ax3.plot(original,'r--')
-#            
-#            ax3.grid()
-#            ax3.set_ylim([-350,55])
-#            bottom, top = ax3.get_ylim()
-#            ax3.text(ymin,top,"B",fontdict=font_annotation,ha = 'right', va='bottom')
-#            ax3.text(ymax,top,"B'",fontdict=font_annotation,ha = 'left', va='bottom')
-#            fig.add_subplot(ax3)
-#            
-#            #------------------------------------------------------------------
-#            ax4 = plt.Subplot(fig,gs00[2,2])
-#            lower = c3[0]
-#            upper = c3[1]
-#            original = c3[2]
-#            ax4.plot(lower,'b-')
-#            ax4.plot (upper,'b')
-#            ax4.plot(original,'r--')
-#            
-#            ax4.grid()
-#            ax4.set_ylim([-350,55])
-#            bottom, top = ax4.get_ylim()
-#            ax4.text(ymin, top,"C",fontdict=font_annotation,ha = 'right', va='bottom')
-#            ax4.text(ymax, top,"C'",fontdict=font_annotation,ha = 'left', va='bottom')
-#            fig.add_subplot(ax4)
-            
-        
+   
                   
         fig.show()
         
+        
+        
+        
+    def compute_hydrostatic_deviation_2d (self):
+            
+            
+           self.hydrostatic_deviation = self.calc_thickness_bs - self.lower
+           
+           
+           fig1 = plt.figure(figsize = (10,10)) 
+           plt.plot(self.new_x,self.hydrostatic_deviation)
+           plt.ylim(20,-20)
+           
+           
+           fig1.show()
+           return self.hydrostatic_deviation
+            
+            
+            

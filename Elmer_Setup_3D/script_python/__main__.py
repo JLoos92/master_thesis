@@ -114,9 +114,17 @@ class ModelRun():
         # (depending on 2d or 3d case) and a subdirectory list of all runs. 
         #====================================================================== 
         
+        
+        # Dictionary of folder-names (runs)
         dirlist = [item for item in os.listdir(self.res_folder) \
                   if os.path.isdir(os.path.join(self.res_folder,item))]
         self.dirlist = dirlist
+        
+        # List of all widths 
+        self.list_widths = [i.split('Mesh',1)[1] for i in self.dirlist]
+        self.list_widths = [i.split('_',1)[0] for i in self.list_widths]
+        
+        
         
         self.bump_amplitude = bump_amplitude
         self.bump_distribution_x = bump_distribution_x
@@ -158,8 +166,9 @@ class ModelRun():
             
         self.f_name = self.dic_timesteps[self.timestep]
                 
-                
-        print("Timesteps = ", len(self.dic_timesteps))
+        self.num_timesteps = len(self.dic_timesteps)  
+        
+        print("Timesteps = ", self.num_timesteps)
         print(self.f_name)
            
         self.path_timestep = os.path.join(self.run_directory, self.f_name)
