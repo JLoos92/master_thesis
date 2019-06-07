@@ -273,7 +273,7 @@ def plot_correlation_widths_2d(t=None,
         
             
 
-            mr = ModelRun(widths,0,0,0,1,"vtu")
+            mr = ModelRun(widths,0,0,0,50,"vtu")
             
             ht = mr.compute_hydrostatic_thickness()
             
@@ -291,6 +291,7 @@ def plot_correlation_widths_2d(t=None,
    
     plt.xlabel('Channel width [m]',fontdict = font_label)
     plt.ylabel('RMS of hydrostatic deviation [m]',fontdict = font_label)
+    plt.legend(loc = 'upper left')
     
     
     return rms_total  

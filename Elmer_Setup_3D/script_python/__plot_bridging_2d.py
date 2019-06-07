@@ -32,7 +32,7 @@ import matplotlib.ticker as ticker
 from matplotlib.ticker import FormatStrFormatter
 from math import trunc
 import numpy.ma as ma
-
+from scipy.interpolate import griddata
 
 
 
@@ -160,7 +160,7 @@ class Plot_bridging_2d():
              # Run ModelRun-Class with default or self
             if None is (self.width):
                 mr = ModelRun(100000,0,0,0,t)
-            mr = ModelRun(self.width,0,0,0,t,"vtu")
+            mr = ModelRun(150,self.width,0,0,t,"vtu")
             
            
             ht = mr.compute_hydrostatic_thickness()
@@ -172,13 +172,23 @@ class Plot_bridging_2d():
             # Calculated hydrostatic thickness
             self.calc_thickness_bs = ht[1]
             
-            
+            sxy = mr.sxy
             points = ht[4]
             self.x = points[:,0]
             self.y = points[:,1]
+            
+            x = points[:,0]
+            y = points[:,1]
+
+            new_points = x,y
+
+            self.xx,self.yy = np.meshgrid(x,y)
+
+            
+            grid = griddata(new_points,sxy,(self.xx,self.yy),method='nearest')
+            
            
-            #ht_array =ht[2] 
-            sxy = mr.sxy
+            
             # Points for triangulation
             points = [self.x,self.y]
             points = np.asarray(points)
@@ -190,7 +200,7 @@ class Plot_bridging_2d():
       
             #------------------------------------------------------------------
             ax1 = plt.Subplot(fig,gs00[1,:])
-            im = ax1.tripcolor(self.x,self.y,masked_sxy,shading="gouraud",vmin=-0.03,vmax=0.03,cmap = 'RdBu')
+            im = ax1.pcolormesh(self.xx,self.yy,grid,vmin=-0.03,vmax=0.03,cmap = 'RdBu')
             
             # Colorbar definition (extra axis)
             cbar = plt.subplot(gs00[0,:])
@@ -200,7 +210,7 @@ class Plot_bridging_2d():
             + 't = ' + str(t*10) + ', channel width = ' + str(original_width) + 'm \n' + \
             '$\sigma_{xy} max$'+ ' = ' + str(max_sxy.round(4)),labelpad=10, fontdict = font_title)
             
-            ax1.set_xlabel('Width [m]',fontdict = font_label)
+            ax1.set_xlabel('Distance [m]',fontdict = font_label)
             ax1.set_ylabel('Height [m]',fontdict = font_label)
             ax1.minorticks_on()
             upper=ht[2]
@@ -210,12 +220,12 @@ class Plot_bridging_2d():
             ax1.plot(x_line,lower,'b-')
             ax1.plot(x_line,upper,'b-')
 
-
+            
          
             # Delaunay triangulation for grid
-            #delaunay = Delaunay(points)
-            #ax1.triplot(x,y,delaunay.simplices,alpha=0.05)
-            
+#            delaunay = Delaunay(points)
+#            ax1.triplot(self.x,self.y,delaunay.simplices,alpha=0.5)
+#            
             fig.add_subplot(ax1)
             
             
@@ -231,7 +241,7 @@ class Plot_bridging_2d():
            
             ax2.legend(loc = 'lower right', bbox_to_anchor=(0.55,0.77))
             ax2.grid()
-            ax2.set_xlabel('Width [m]', fontdict = font_label)
+            ax2.set_xlabel('Distance [m]', fontdict = font_label)
             ax2.set_ylabel('Height [m]', fontdict = font_label)
             ax2.minorticks_on()
             ax2.set_ylim([ymin,ymax])

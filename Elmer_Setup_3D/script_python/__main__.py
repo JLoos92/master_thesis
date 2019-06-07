@@ -566,7 +566,7 @@ class ModelRun():
             
             self.h_thickness = self.thick_model_2d + self.thick_calc_2d
             
-            return x_new_upper, self.thick_calc_2d_bs,self.upper_model,self.lower_model, self.points
+            return x_new_lower, self.thick_calc_2d_bs,self.upper_model,self.lower_model, self.points
                     
         
         
