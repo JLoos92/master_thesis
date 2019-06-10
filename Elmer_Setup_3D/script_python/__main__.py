@@ -63,9 +63,9 @@ class ModelRun():
              bump_amplitude , 
              bump_distribution_x ,
              bump_distribution_y ,
-             prop ,
+             prop,
              timestep ,
-             vtu_type = None,
+             dimensions = None,
              **kwargs):
         
         
@@ -76,37 +76,53 @@ class ModelRun():
         ----------
         bump_amplitude : int
             height of the bump
+            
         bump_distribution_x : int
             height of the bump
+        
         bump_distribution_y : int
             height of the bump    
+        
         prop : string
-            extra specification e.g. double (two gauss functions)
-         timestep : int
+            extra specification e.g. double (two gauss functions in 3d)
+            or grid extent in 2d
+        
+        timestep : int
             number of timestep
+        
+        dimensions : string
+            2d or 3d
         """
         
         
         
-        self.vtu_type = vtu_type
         
-               
+        
+        # define paths to destination of output       
         self.home_directory = '/Volumes/esd01/docs/jloos/data_small/runs_elmerice_'
         self.sub_mesh_directory = 'Mesh/'
         self.sub_mesh_directory_2d = 'channel2d/'
-
-        # change output directory according to mesh refinement:
         
         
-        if self.vtu_type is None:
+        
+        # change output directory according to dimensions (2d or 3d):
+        self.bump_amplitude = bump_amplitude
+        self.bump_distribution_x = bump_distribution_x
+        self.bump_distribution_y = bump_distribution_y
+        self.prop = prop # extra property e.g. double bump
+        self.timestep = timestep
+        self.dimensions = dimensions
+        
+        if self.dimensions is None:
              self.res_folder = os.path.join(self.home_directory + 'fixed')
             
-        elif self.vtu_type==str("vtu"):            
+        elif self.dimensions==str("2"):            
              self.res_folder = os.path.join(self.home_directory + '2d')
 
         else:
-            raise ValueError('This filetype does not exist in the simulation \
-            folder.')
+            raise ValueError('This filetype does not exist in the simulation '
+            'folder. Check if dimension is set to 2 or  to None for 2d or 3d case ,'
+            'respectively.')
                 
                   
         #======================================================================        
@@ -124,15 +140,6 @@ class ModelRun():
         self.list_widths = [i.split('Mesh',1)[1] for i in self.dirlist]
         self.list_widths = [i.split('_',1)[0] for i in self.list_widths]
         
-        
-        
-        self.bump_amplitude = bump_amplitude
-        self.bump_distribution_x = bump_distribution_x
-        self.bump_distribution_y = bump_distribution_y
-        self.prop = prop # extra property e.g. double bump
-        self.timestep = timestep
-         
-         
          
          
         # create fodername of the run:    
@@ -142,23 +149,23 @@ class ModelRun():
                        self.prop) 
         
         # path to the directory of the model run:
-        if self.vtu_type is None:
+        if self.dimensions is None:
             self.run_directory = os.path.join(self.res_folder,
                                            self.run_folder,
                                            self.sub_mesh_directory) 
     
-        elif self.vtu_type==str("vtu"):
+        elif self.dimensions==str("2"):
              self.run_directory = os.path.join(self.res_folder,
                                            self.run_folder + '/') 
          
     
        
         # sort timesteps after execution (2d or 3d valid)
-        if self.vtu_type is None:
+        if self.dimensions is None:
                 self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
                 
                 
-        elif self.vtu_type==str("vtu"):
+        elif self.dimensions==str("2"):
                 self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
                 
         self.dic_timesteps.sort(key=os.path.getmtime)
@@ -178,17 +185,8 @@ class ModelRun():
         # Define xmlreader (file-input for VTU-path)
         # Create vtu objects, to collect properties, strings, variables etc
         # choose pvtu or vtu (2d or 3d)
-          
-        
-        if self.vtu_type is None:        
-             self.xmlReader = vtk.vtkXMLPUnstructuredGridReader()
-        elif self.vtu_type==str("vtu"):  
-             self.xmlReader = vtk.vtkXMLPUnstructuredGridReader() 
-            
-        else:
-            raise ValueError('VTU reader does not exist. Check file format of \
-            simulation source.')    
-            
+  
+        self.xmlReader = vtk.vtkXMLPUnstructuredGridReader()                            
         self.xmlReader.SetFileName(self.f_name)
         self.xmlReader.Update()
         
@@ -201,7 +199,7 @@ class ModelRun():
         self.Cells =  vtk_to_numpy(self.xmlReader.GetOutput().GetCells().GetData())
         
         # Get outputs specified for 2D - case
-        if self.vtu_type==str("vtu"):
+        if self.dimensions==str("2"):
              self.sxy = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(' sxy'))
              self.fs_upper = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs upper'))
              self.fs_lower = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs lower'))
@@ -449,7 +447,7 @@ class ModelRun():
         # 3D - case 
         #====================================================================== 
         
-        if self.vtu_type is None:
+        if self.dimensions is None:
             
             # Paraneter setup for calculation of hydrostatic thickness
             # !!!!!!!! Must be changed if input.sif file is changed!!!!!!!!
@@ -506,7 +504,7 @@ class ModelRun():
         # 2D - case 
         #====================================================================== 
         
-        elif self.vtu_type is not None:
+        elif self.dimensions is not None:
             
             # Paraneter setup for calculation of hydrostatic thickness
             # !!!!!!!!!! Must be changed if input.sif file is changed!!!!!!!!
@@ -566,7 +564,8 @@ class ModelRun():
             
             self.h_thickness = self.thick_model_2d + self.thick_calc_2d
             
-            return x_new_lower, self.thick_calc_2d_bs,self.upper_model,self.lower_model, self.points
+            return x_new_lower, self.thick_calc_2d_bs,self.upper_model, \
+                self.lower_model, self.points, self.fs_lower, self.fs_upper
                     
         
         

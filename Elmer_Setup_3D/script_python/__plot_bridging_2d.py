@@ -153,6 +153,9 @@ class Plot_bridging_2d():
         gs_0 = gridspec.GridSpec(2,2, hspace = 0.2, wspace = 0.1, figure = fig)
         self.times = [t1, t2, t3, t4]
         
+        
+        self.deviation_list = []
+        
         # 2,2 plots with 3 subplots
         for i ,t in zip(range(4), self.times):
             gs00 = gridspec.GridSpecFromSubplotSpec(3,3, \
@@ -160,7 +163,7 @@ class Plot_bridging_2d():
              # Run ModelRun-Class with default or self
             if None is (self.width):
                 mr = ModelRun(100000,0,0,0,t)
-            mr = ModelRun(150,self.width,0,0,t,"vtu")
+            mr = ModelRun(150,self.width,0,0,t,"2")
             
            
             ht = mr.compute_hydrostatic_thickness()
@@ -266,8 +269,11 @@ class Plot_bridging_2d():
             #plt.xticks(visible=False)
             mark_inset(ax2,axins,loc1=3,loc2=4,fc="none", ec="0.5")
            
-
-   
+            # Calculate peak deviation
+            max_modelled_lower = abs(np.max(self.lower))/100
+            max_calculated_lower = abs(np.max(self.calc_thickness_bs))
+            
+            self.deviation_list.append((max_calculated_lower/max_modelled_lower)-100)
                   
         fig.show()
         
