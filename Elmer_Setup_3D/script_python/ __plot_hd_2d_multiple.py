@@ -40,24 +40,39 @@ class Plot_hydrostatic_deviation_2d_multiple():
     
     
     def __init__(self,
+                 width,
                  **kwargs): 
         
        # self.t = t
         
-        list_widths = ModelRun(200000,0,0,0,20,"vtu").list_widths
-        list_widths.sort(key=int)
-        list_widths = list_widths[20:25]
+        list_widths = ModelRun(150,20000,0,0,20,"2").list_widths
+       
         
         fig1 = plt.figure(figsize = (15,15))
         
         rms_total = []
-        for i in range (ModelRun(20000,0,0,0,20,"vtu").num_timesteps):
-            mr = ModelRun(50000,0,0,0,i,"vtu")
+        rms_total_ex = []
+        
+        
+        
+        for i in range (ModelRun(150,20000,0,0,20,"2").num_timesteps):
+            mr = ModelRun(150,width,0,0,i,"2")
+            mr_extent = ModelRun(150,width,0,'extent',i,"2")
             
             ht = mr.compute_hydrostatic_thickness()
+            ht_extent = mr_extent.compute_hydrostatic_thickness()
             
             
-            # compute deviation
+            # compute deviation extent
+            self.lower_ex = ht_extent[3]
+            self.calc_thickness_bs_ex = ht_extent[1]
+            self.new_x_ex = ht_extent[0]
+            self.hydrostatic_deviation_extent = self.calc_thickness_bs_ex - self.lower_ex
+            rms_ex = np.sqrt(np.mean(self.hydrostatic_deviation_extent**2))
+                   
+            rms_total_ex.append(rms_ex)
+            
+          # compute deviation regular
             self.lower = ht[3]
             self.calc_thickness_bs = ht[1]
             self.new_x = ht[0]
@@ -67,7 +82,8 @@ class Plot_hydrostatic_deviation_2d_multiple():
             rms_total.append(rms)
            
              
-            plt.plot(rms_total)
+            plt.plot(rms_total,'b-')
+            plt.plot(rms_total_ex,'r-')
             
             plt.xlabel('Years * 5')
             plt.ylabel('RMS of hydrostatic deviation [m]')

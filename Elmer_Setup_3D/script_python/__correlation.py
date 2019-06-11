@@ -222,7 +222,8 @@ def compute_correlation_2d(t=None,
 
 
     
-def plot_correlation_widths_2d(t=None, 
+def plot_correlation_widths_2d(amp,
+                               t,                               
                         **kwargs):
 
     '''
@@ -256,11 +257,14 @@ def plot_correlation_widths_2d(t=None,
            }
  
     
-    list_widths = ModelRun(200000,0,0,0,50,"vtu").list_widths
+    list_widths = ModelRun(amp,20000,0,0,t,"2").df_amps_widths
+    list_widths= list_widths[list_widths['Amplitudes'].isin([str(amp)])]
+    list_widths = list_widths['Widths'].tolist()
+    
     list_widths.sort(key=int)
     list_widths = list_widths
    
-    num_timesteps = ModelRun(200000,0,0,0,50,"vtu").num_timesteps
+    num_timesteps = ModelRun(amp,20000,0,0,t,"2").num_timesteps
     original_widths = []
     for i in range(len(list_widths)):
         original_widths_new = int(list_widths[i])
@@ -269,11 +273,11 @@ def plot_correlation_widths_2d(t=None,
     original_widths = np.sqrt(original_widths)*2*2
     fig1 = plt.figure(figsize = (15,15))
     rms_total = []
-    for widths in list_widths:
+    for width in list_widths:
         
             
 
-            mr = ModelRun(widths,0,0,0,50,"vtu")
+            mr = ModelRun(amp,width,0,0,t,"2")
             
             ht = mr.compute_hydrostatic_thickness()
             
@@ -294,4 +298,4 @@ def plot_correlation_widths_2d(t=None,
     plt.legend(loc = 'upper left')
     
     
-    return rms_total  
+    

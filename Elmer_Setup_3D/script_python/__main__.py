@@ -136,17 +136,32 @@ class ModelRun():
                   if os.path.isdir(os.path.join(self.res_folder,item))]
         self.dirlist = dirlist
         
-        # List of all widths 
-        self.list_widths = [i.split('Mesh',1)[1] for i in self.dirlist]
-        self.list_widths = [i.split('_',1)[0] for i in self.list_widths]
         
+        self.list_amps = [i.split('Mesh',1)[1] for i in self.dirlist]
+        self.list_amps = [i.split('_',1)[0] for i in self.list_amps]
+        
+        
+        self.list_widths = [i.split('_',2)[1] for i in self.dirlist]
+        
+        self.df_amps_widths = pd.DataFrame(list(zip(self.list_amps,self.list_widths)),columns=['Amplitudes','Widths']) 
+        self.df_amps_widths =  self.df_amps_widths.sort_values(by=['Amplitudes','Widths'])
          
-         
-        # create fodername of the run:    
-        self.run_folder = 'Mesh{:}_{:}{:}_{:}'.format(self.bump_amplitude,
+        # create fodername of the run for 2d:
+        if self.dimensions == str('2'):
+                self.run_folder = 'Mesh{:}_{:}_{:}_{:}'.format(
+                       self.bump_amplitude,
                        self.bump_distribution_x,
                        self.bump_distribution_y,
                        self.prop) 
+                
+         # create fodername of the run for 3d:
+        self.run_folder = 'Mesh{:}_{:}_{:}_{:}'.format(
+                       self.bump_amplitude,
+                       self.bump_distribution_x,
+                       self.bump_distribution_y,
+                       self.prop)         
+        
+        
         
         # path to the directory of the model run:
         if self.dimensions is None:
@@ -720,11 +735,11 @@ class ModelRun():
         grouped = df.groupby('x')
         grouped_calc = df_calc.groupby('x')
         
-        #Upper and lower boundary
+        # Upper and lower boundary
         lower_boundary = grouped.min()
         upper_boundary = grouped.max()
         
-        #Lower boundary for calculated hydrostatic thickness
+        # Lower boundary for calculated hydrostatic thickness
         original_thickness = grouped_calc.min()
         
         

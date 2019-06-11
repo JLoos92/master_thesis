@@ -56,6 +56,7 @@ class Plot_bridging_2d():
                  t3 = None,
                  t4 = None,
                  width = None,
+                 prop = None,
                  **kwargs): 
                              
                  
@@ -119,19 +120,22 @@ class Plot_bridging_2d():
                 t2 = 50
                 t3 = 100
                 t4 = 200
-                
+        
+        if prop is None:
+            prop = 0        
                 
         self.t1 = t1
         self.t2 = t2
         self.t3 = t2
         self.t4 = t3
         self.width = width
+        self.prop = prop
         
         # Boundaries ax2 plot
         ymin = -350
         ymax = 60
         
-        
+      
         
         #======================================================================
         # Define figure and plot properties
@@ -163,7 +167,7 @@ class Plot_bridging_2d():
              # Run ModelRun-Class with default or self
             if None is (self.width):
                 mr = ModelRun(100000,0,0,0,t)
-            mr = ModelRun(150,self.width,0,0,t,"2")
+            mr = ModelRun(150,self.width,0,self.prop,t,"2")
             
            
             ht = mr.compute_hydrostatic_thickness()
@@ -280,19 +284,19 @@ class Plot_bridging_2d():
         
         
         
-    def compute_hydrostatic_deviation_2d (self):
-            
-            
-           self.hydrostatic_deviation = self.calc_thickness_bs - self.lower
-           
-           
-           fig1 = plt.figure(figsize = (10,10)) 
-           plt.plot(self.new_x,self.hydrostatic_deviation)
-           plt.ylim(20,-20)
-           
-           
-           fig1.show()
-           return self.hydrostatic_deviation
+#    def compute_hydrostatic_deviation_2d (self):
+#            
+#            
+#           self.hydrostatic_deviation = self.calc_thickness_bs - self.lower
+#           
+#           
+#           fig1 = plt.figure(figsize = (10,10)) 
+#           plt.plot(self.new_x,self.hydrostatic_deviation)
+#           plt.ylim(20,-20)
+#           
+#           
+#           fig1.show()
+#           return self.hydrostatic_deviation
             
             
             
