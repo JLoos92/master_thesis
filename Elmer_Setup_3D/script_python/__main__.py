@@ -573,14 +573,27 @@ class ModelRun():
             
             # Calculated thickness and thickness below sea-level
             self.thick_calc_2d = np.divide((self.p_w_2d*corr_fs_upper),(self.p_w_2d-self.p_i_2d)) 
-            self.thick_calc_2d = -1 * self.thick_calc_2d                    
+            self.thick_calc_2d = -1 * self.thick_calc_2d
+
+            # Final calculated hydrostatic thickness                    
             self.thick_calc_2d_bs = self.thick_calc_2d  + self.upper_model
             
             
             self.h_thickness = self.thick_model_2d + self.thick_calc_2d
             
+            
+            # Calculate peak deviation (maximum of modelled and calculated ht)
+            self.deviation_list = []
+            max_modelled_lower = abs(np.max(self.lower_model))/100
+            max_calculated_lower = abs(np.max(self.thick_calc_2d_bs))
+            
+            self.deviation_list = (max_calculated_lower/max_modelled_lower)-100
+            
+            
+            
             return x_new_lower, self.thick_calc_2d_bs,self.upper_model, \
-                self.lower_model, self.points, self.fs_lower, self.fs_upper
+                self.lower_model, self.points, self.fs_lower, self.fs_upper, \
+                self.deviation_list
                     
         
         

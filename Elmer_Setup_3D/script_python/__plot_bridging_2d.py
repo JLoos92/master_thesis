@@ -147,6 +147,7 @@ class Plot_bridging_2d():
 
         # Coordinates for zoomed box
         x1,x2,y1,y2 = -2500,2500,-300,-200
+        xx1,xx2,yy1,yy2 = -2500,2500,0,50
         
              
         original_width = round(np.sqrt(self.width)*2)*2
@@ -227,12 +228,7 @@ class Plot_bridging_2d():
             ax1.plot(x_line,lower,'b-')
             ax1.plot(x_line,upper,'b-')
 
-            
-         
-            # Delaunay triangulation for grid
-#            delaunay = Delaunay(points)
-#            ax1.triplot(self.x,self.y,delaunay.simplices,alpha=0.5)
-#            
+          
             fig.add_subplot(ax1)
             
             
@@ -268,16 +264,31 @@ class Plot_bridging_2d():
             axins.set_ylim(y1,y2)
             axins.minorticks_on()
             axins.grid(which='minor',linestyle = ':', linewidth = '0.5', color = 'black')
+            
             # Visibility of ticks
             #plt.yticks(visible=False)
             #plt.xticks(visible=False)
-            mark_inset(ax2,axins,loc1=3,loc2=4,fc="none", ec="0.5")
-           
-            # Calculate peak deviation
-            max_modelled_lower = abs(np.max(self.lower))/100
-            max_calculated_lower = abs(np.max(self.calc_thickness_bs))
             
-            self.deviation_list.append((max_calculated_lower/max_modelled_lower)-100)
+            # Connection to bounding box
+           #mark_inset(ax2,axins,loc1=3,loc2=4,fc="none", ec="0.5")
+            
+            
+            # Zoomed in rectangle for better visualisation of surface expression
+            axins = zoomed_inset_axes(ax2,1.5,loc='upper left',borderpad=5)            
+            axins.plot(self.new_x,upper,'b-')
+            axins.set_xlim(xx1,xx2)
+            axins.set_ylim(yy1,yy2)
+            axins.minorticks_on()
+            axins.grid(which='minor',linestyle = ':', linewidth = '0.5', color = 'black')
+            
+            # Visibility of ticks
+            #plt.yticks(visible=False)
+            #plt.xticks(visible=False)
+            
+            # Connection to bounding box
+            #mark_inset(ax2,axins,loc1=3,loc2=4,fc="none", ec="0.5")
+           
+
                   
         fig.show()
         
