@@ -33,7 +33,7 @@ import pandas as pd
 
     
 #==============================================================================    
-# Check if volume is mounted, if not mount volume
+# ESD01 fileserver
 #==============================================================================
 
 
@@ -154,7 +154,7 @@ class ModelRun():
                        self.bump_distribution_y,
                        self.prop) 
                 
-         # create fodername of the run for 3d:
+         # create fodername of the run for 2d:
         self.run_folder = 'Mesh{:}_{:}_{:}_{:}'.format(
                        self.bump_amplitude,
                        self.bump_distribution_x,
