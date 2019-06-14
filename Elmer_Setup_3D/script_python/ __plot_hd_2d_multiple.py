@@ -57,7 +57,7 @@ class Plot_hydrostatic_deviation_2d_multiple():
         
         for i in range (ModelRun(150,20000,0,0,20,"2").num_timesteps):
             mr = ModelRun(150,width,0,0,i,"2")
-            mr_extent = ModelRun(150,width,0,'extent',i,"2")
+            mr_extent = ModelRun(150,90000,0,'extent',i,"2")
             
             ht = mr.compute_hydrostatic_thickness()
             ht_extent = mr_extent.compute_hydrostatic_thickness()

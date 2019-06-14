@@ -131,7 +131,7 @@ class ModelRun():
         #====================================================================== 
         
         
-        # Dictionary of folder-names (runs)
+        # Dictionary of folder-names (runs) for
         dirlist = [item for item in os.listdir(self.res_folder) \
                   if os.path.isdir(os.path.join(self.res_folder,item))]
         self.dirlist = dirlist
@@ -146,6 +146,14 @@ class ModelRun():
         self.df_amps_widths = pd.DataFrame(list(zip(self.list_amps,self.list_widths)),columns=['Amplitudes','Widths']) 
         self.df_amps_widths =  self.df_amps_widths.sort_values(by=['Amplitudes','Widths'])
          
+        
+        
+        
+        
+        
+        
+        
+        
         # create fodername of the run for 2d:
         if self.dimensions == str('2'):
                 self.run_folder = 'Mesh{:}_{:}_{:}_{:}'.format(
@@ -185,8 +193,14 @@ class ModelRun():
                 
         self.dic_timesteps.sort(key=os.path.getmtime)
             
-            
+        # Get number of timesteps
+        # while True:
+        #    try:
         self.f_name = self.dic_timesteps[self.timestep]
+            
+        #    except IndexError:
+        #        print('Given value for timestep is not valid. There is probably '
+                          'no folder with given input parameters. Check directory.')
                 
         self.num_timesteps = len(self.dic_timesteps)  
         

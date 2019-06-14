@@ -208,6 +208,7 @@ class Plot_bridging_2d():
       
             #------------------------------------------------------------------
             ax1 = plt.Subplot(fig,gs00[1,:])
+            ax1(frameon=0)
             im = ax1.pcolormesh(self.xx,self.yy,grid,vmin=-0.03,vmax=0.03,cmap = 'RdBu')
             
             # Colorbar definition (extra axis)
@@ -227,7 +228,7 @@ class Plot_bridging_2d():
             x_line = ht[0]
             ax1.plot(x_line,lower,'b-')
             ax1.plot(x_line,upper,'b-')
-
+            
           
             fig.add_subplot(ax1)
             
@@ -242,7 +243,12 @@ class Plot_bridging_2d():
             ax2.plot(self.new_x,self.upper,'b')
             ax2.plot(self.new_x,self.calc_thickness_bs,'r--',label = 'Hydrostatic thickness')
            
-            ax2.legend(loc = 'lower right', bbox_to_anchor=(0.55,0.77))
+            # Legend
+            legend = ax2.legend(loc = 'lower right', bbox_to_anchor=(0.55,0.77))
+            frame = legend.get_frame()
+            frame.set_facecolor('0.9')
+            frame.set_edgecolor('0.9')
+            
             ax2.grid()
             ax2.set_xlabel('Distance [m]', fontdict = font_label)
             ax2.set_ylabel('Height [m]', fontdict = font_label)
@@ -295,19 +301,7 @@ class Plot_bridging_2d():
         
         
         
-#    def compute_hydrostatic_deviation_2d (self):
-#            
-#            
-#           self.hydrostatic_deviation = self.calc_thickness_bs - self.lower
-#           
-#           
-#           fig1 = plt.figure(figsize = (10,10)) 
-#           plt.plot(self.new_x,self.hydrostatic_deviation)
-#           plt.ylim(20,-20)
-#           
-#           
-#           fig1.show()
-#           return self.hydrostatic_deviation
+#
             
             
             

@@ -171,55 +171,6 @@ def compute_correlation_3d(t=None,
    
 
 
-def compute_correlation_2d(t=None, 
-                        **kwargs):
-
-    '''
-    Computes root mean square of the hydrostatic deviation. The hydrostatic de-
-    viation is saved in an 1d array for the 2d simulation case.       
-    '''    
-    
- 
-    
-    list_widths = ModelRun(200000,0,0,0,50,"vtu").list_widths
-    list_widths.sort(key=int)
-    list_widths = list_widths[0:10]
-    num_timesteps = ModelRun(20000,0,0,0,50,"vtu").num_timesteps
-    
-    
-    fig1 = plt.figure(figsize = (15,15))
-    
-    for widths in list_widths:
-        rms_total = []
-        for i in range(1,100):
-            
-            mr = ModelRun(widths,0,0,0,i,"vtu")
-            
-            ht = mr.compute_hydrostatic_thickness()
-            
-            
-            # compute deviation
-            lower = ht[3]
-            calc_thickness_bs = ht[1]
-            
-            hydrostatic_deviation = calc_thickness_bs - lower        
-            rms = np.sqrt(np.mean(hydrostatic_deviation**2))
-                   
-            rms_total.append(rms)
-            
-            plt.plot(rms_total,label = 'Channel width =' + widths)
-   
-    
-    
-    plt.xlabel('Timesteps')
-    plt.ylabel('RMS of hydrostatic deviation [m]')
-    
-    
-    return rms_total
-
-
-
-
 
     
 def plot_correlation_widths_2d(amp,
