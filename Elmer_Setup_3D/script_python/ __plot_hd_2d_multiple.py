@@ -40,8 +40,7 @@ class Plot_hydrostatic_deviation_2d_multiple():
     
     
     def __init__(self,
-                 width,
-                 **kwargs): 
+                 width): 
         
        # self.t = t
         

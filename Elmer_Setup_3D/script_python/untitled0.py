@@ -7,38 +7,21 @@ Created on Wed Jun 12 14:33:32 2019
 """
 
 from __main__ import ModelRun
+import pandas as pd
+from scipy.interpolate import griddata
+
+points = ModelRun(150,20000,0,0,50,"2").Points
+sxy =  ModelRun(150,20000,0,0,50,"2").sxy
+x = points[:,0]
+y = points[:,1]
 
 
 
-hd_list_tight = []
-hd_list_wide = []
-hd_list_ultra_wide = []
-
-# Deviation of max. peaks of the amp.
-
-for i in range(3,200):
-    hd_tight = ModelRun(150,90000,0,0,i,"2").compute_hydrostatic_thickness()
-    hd_wide = ModelRun(150,90000,0,'extent',i,"2").compute_hydrostatic_thickness()
-    #hd_ultra_wide = ModelRun(150,10000,0,0,i,"2").compute_hydrostatic_thickness()
-    
-    ht_tight = hd_tight[7]
-    ht_wide = hd_wide[7]
-    #ht_ultra_wide = hd_ultra_wide[7]
-    
-    hd_list_tight.append(ht_tight)
-    hd_list_wide.append(ht_wide)
-    #hd_list_ultra_wide.append(ht_ultra_wide)
-    
-    
-    
-plt.plot(hd_list_tight,'b-',label='Regular domain')
-plt.plot(hd_list_wide,'r-',label='Extended domain')
-#plt.plot(hd_list_ultra_wide,'r--',label='Regular domain tight')
-plt.legend()
-
-
-
-
+df = pd.DataFrame({'sxy':sxy,'x':x})
+df = df[df.x>0]
+df = df[df.x>5000]
+sxy_array = df.iloc[:,0].values
+rms = np.sqrt(np.mean(sxy_array**2))
 
 
 

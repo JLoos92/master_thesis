@@ -200,7 +200,7 @@ class ModelRun():
             
         #    except IndexError:
         #        print('Given value for timestep is not valid. There is probably '
-                          'no folder with given input parameters. Check directory.')
+        #                  'no folder with given input parameters. Check directory.')
                 
         self.num_timesteps = len(self.dic_timesteps)  
         
@@ -254,13 +254,27 @@ class ModelRun():
         
         
         
-        
-          
-            
-   
+    def get_scalar(self, 
+                   scalar_name):
+         
+         '''
+          This method return the array or scalar as a numpy array. Check
+          ModelRun().list_var_names for possible input.
+         '''   
+         
+         self.scalar_name = scalar_name
+         
+         self.scalar = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(str(self.scalar_name)))
 
-    
-    def cutter(self ,GL=None):
+        
+         return self.scalar
+     
+        
+        
+        
+        
+    def cutter(self ,
+               GL=None):
         
         """
         Method: cutter

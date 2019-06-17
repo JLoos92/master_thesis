@@ -190,7 +190,7 @@ class Plot_bridging_2d():
 
             new_points = x,y
 
-            self.xx,self.yy = np.meshgrid(x,y)
+           
 
             
             grid = griddata(new_points,sxy,(self.xx,self.yy),method='nearest')
