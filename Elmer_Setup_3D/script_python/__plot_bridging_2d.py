@@ -14,23 +14,17 @@ Created on Mon Apr  8 15:29:02 2019
 @author: jloos
 """
 
-from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
-from matplotlib import gridspec
-from matplotlib.colorbar import Colorbar
-from pylab import rcParams
-import numpy as np
-from scipy.spatial.distance import pdist, squareform
-import matplotlib.pyplot as plt
-from numpy import genfromtxt
-import turbulucid
 from __main__ import ModelRun
-from scipy.spatial import Delaunay,ConvexHull
+import __plot_params
+
+
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
 from matplotlib import gridspec
 from matplotlib.colorbar import Colorbar
-import matplotlib.ticker as ticker
-from matplotlib.ticker import FormatStrFormatter
-from math import trunc
+import matplotlib.font_manager
+
+import numpy as np
+import matplotlib.pyplot as plt
 import numpy.ma as ma
 from scipy.interpolate import griddata
 
@@ -84,29 +78,11 @@ class Plot_bridging_2d():
         
         
         #======================================================================
-        # Setup fonts
+        # Setup input
         #======================================================================
         
-
-        font_annotation = {'color':'black',
-                       'size': '17'
-                }    
-       
-        font_title = {'color':'black',
-               'size':'20',
-               'weight':'bold'
-               }
-
-        font_axes = {'color':'black',
-               'size':'14',
-               'weight':'normal'
-               }
-        
-        font_label = {'color':'black',
-               'size':'15',
-               'weight':'normal'
-               }
-        
+        self.width = width
+            
      
         
         #======================================================================
@@ -115,21 +91,24 @@ class Plot_bridging_2d():
        
               
         # Choose default timesteps if timesteps are not given
-        if  None is (t1,t2,t3,t4):
-                t1 = 10
-                t2 = 50
-                t3 = 100
+        if (t1,t2,t3,t4) is None:
+                t1 = 50
+                t2 = 100
+                t3 = 150
                 t4 = 200
-        
+        else:
+                self.t1 = t1
+                self.t2 = t2
+                self.t3 = t2
+                self.t4 = t3        
+                        
+            
+            
         if prop is None:
             prop = 0        
-                
-        self.t1 = t1
-        self.t2 = t2
-        self.t3 = t2
-        self.t4 = t3
-        self.width = width
-        self.prop = prop
+        else:
+            self.prop = prop  
+        
         
         # Boundaries ax2 plot
         ymin = -350
@@ -140,7 +119,8 @@ class Plot_bridging_2d():
         #======================================================================
         # Define figure and plot properties
         #======================================================================
-       
+        # Custom model load from __plot_params
+        plt.rcParams.update(params) 
       
        
         
@@ -190,7 +170,7 @@ class Plot_bridging_2d():
 
             new_points = x,y
 
-           
+            self.xx,self.yy = np.meshgrid(x,y)
 
             
             grid = griddata(new_points,sxy,(self.xx,self.yy),method='nearest')
@@ -208,7 +188,7 @@ class Plot_bridging_2d():
       
             #------------------------------------------------------------------
             ax1 = plt.Subplot(fig,gs00[1,:])
-            ax1(frameon=0)
+            #ax1(frameon=0)
             im = ax1.pcolormesh(self.xx,self.yy,grid,vmin=-0.03,vmax=0.03,cmap = 'RdBu')
             
             # Colorbar definition (extra axis)
@@ -217,10 +197,10 @@ class Plot_bridging_2d():
             orientation = 'horizontal', ticklocation = 'top') 
             cbar.set_label('Bridging stress $\sigma_{xy}$ \n' \
             + 't = ' + str(t*10) + ', channel width = ' + str(original_width) + 'm \n' + \
-            '$\sigma_{xy} max$'+ ' = ' + str(max_sxy.round(4)),labelpad=10, fontdict = font_title)
+            '$\sigma_{xy} max$'+ ' = ' + str(max_sxy.round(4)),labelpad=10)
             
-            ax1.set_xlabel('Distance [m]',fontdict = font_label)
-            ax1.set_ylabel('Height [m]',fontdict = font_label)
+            ax1.set_xlabel('Distance [m]')
+            ax1.set_ylabel('Height [m]')
             ax1.minorticks_on()
             upper=ht[2]
             lower=ht[3]
@@ -250,8 +230,8 @@ class Plot_bridging_2d():
             frame.set_edgecolor('0.9')
             
             ax2.grid()
-            ax2.set_xlabel('Distance [m]', fontdict = font_label)
-            ax2.set_ylabel('Height [m]', fontdict = font_label)
+            ax2.set_xlabel('Distance [m]')
+            ax2.set_ylabel('Height [m]')
             ax2.minorticks_on()
             ax2.set_ylim([ymin,ymax])
             bottom, top = ax2.get_ylim()

@@ -5,15 +5,17 @@ Created on Fri Jun 14 11:14:45 2019
 
 @author: jloos
 """
-
+# Custom modules
 from __main__ import ModelRun
+import __plot_params
+
+#
 import matplotlib.pyplot as plt
 import numpy as np
-import subprocess
 import pandas as pd
 
-def compute_correlation_2d(t=None,
-                           width=None,
+def compute_total_hd_2d(t=None,
+                        width=None,
                         **kwargs):
 
     '''
@@ -33,35 +35,22 @@ def compute_correlation_2d(t=None,
     
     num_timesteps = ModelRun(150,20000,0,'extent',50,"2").num_timesteps
     num_timesteps = num_timesteps -2
-    timesteps = np.arange(0,num_timesteps,1)
+   
     
     
     for width in list_widths:
+        
+        # Define rc_params for figure
+        fig, ax1 = plt.subplots()  
+        
         rms_total = []
         rms_total_extent = []
         time = []
-        original_width = round(np.sqrt(width)*2)*2
-     
-    
-        # Define rc_params for figure
-        fig = plt.figure(figsize = (15,15))        
-        params = {
-                    'legend.fontsize': 15,
-                    'xtick.labelsize': 11,
-                    'ytick.labelsize': 11,
-                    'axes.labelsize':16,
-                    
-                    'font.family': 'serif',
-                    'axes.titlesize': 18,
-                    'axes.titleweight': 'bold'
-                    }
-
-
-
+        original_width = int(round(np.sqrt(width)*2)*2)
     
     
     
-        for i in range(2,200):
+        for i in range(3,200):
             
             # Set up class
             mr = ModelRun(150,width,0,0,i,"2")
@@ -98,32 +87,32 @@ def compute_correlation_2d(t=None,
             
         # Make plot
                            
-        plt.axes(frameon = 0)
-        plt.plot(time,rms_total)
-        plt.plot(time,rms_total_extent)
-        legend = plt.legend(['cw = ' + str(original_width)+' m', 'cw = ' + str(original_width)+' m (extended domain)'],loc=1)
+        #ax1.axes(frameon = 0)
+        ax1.plot(time,rms_total)
+        ax1.plot(time,rms_total_extent)
+        legend = ax1.legend(['cw = ' + str(original_width)+' m', 'cw = ' + str(original_width)+' m (extended domain)'],loc=1)
                 
         
                 
         frame = legend.get_frame()
-        frame.set_facecolor('0.8')
-        frame.set_edgecolor('0.8')
+        frame.set_facecolor('0.7')
+        frame.set_edgecolor('0.7')
         
         
         # Plt properties
         plt.rcParams.update(params) 
         plt.title('RMS of hd with multiple channel widths', y = 1.05)
-        plt.xlim(0,1000)
-        plt.ylim(0,15)       
-        plt.xlabel('Time [a]',labelpad=20)
-        plt.ylabel('RMS of hydrostatic deviation [m]',labelpad=20)
-        plt.grid(linestyle = '--')
+        ax1.set_xlim(0,1000)
+        ax1.set_ylim(0,15)       
+        ax1.set_xlabel('Time [a]',labelpad=20)
+        ax1.set_ylabel('RMS of hydrostatic deviation [m]',labelpad=20)
+        ax1.grid(linestyle = '--')
         
         
         path = str('plots/')
-        fname= str('corr_2d_' + str(original_width) + '.png')
+        fname= str('corr_2d_' + str(original_width) + '.eps')
         
-        fig.savefig(path + fname,dpi=300)
+        fig.savefig(path + fname, format = 'eps', dpi=1000)
     
     
     
@@ -147,14 +136,22 @@ def compute_maxpeak_dev(t=None,
                         **kwargs):   
     
     '''
+      
+    Function: compute_maxpeak_dev 
     
+    Parameters
+    ----------
+    t : int
+        timestep        
     
-    
+    width : kwarg
+        width of a channel
+      
     
     '''
    
-    subprocess.call(["rsync", "-ruvt","plots/*","../../../latex_thesis/figures/"])
-    
+   
+    # Get domain-size
     points = ModelRun(150,20000,0,0,50,"2").Points
     points_extent =  ModelRun(150,20000,0,'extent',50,"2").Points
     
@@ -167,19 +164,7 @@ def compute_maxpeak_dev(t=None,
     for width in list_widths:
         # Define rc_params for figure
         fig, ax1 = plt.subplots()        
-        params = {
-                        'legend.fontsize': 15,
-                        'xtick.labelsize': 12,
-                        'ytick.labelsize': 12,
-                        'axes.labelsize':17,
-                        'text.usetex': False,
-                        'font.family': 'serif',
-                        'axes.titlesize': 18,
-                        'axes.titleweight': 'bold',
-                        'figure.figsize': [15,15],
-                        'figure.frameon':0
-                        
-                        }
+        
     
         hd_list_tight = []
         hd_list_wide = []
@@ -224,6 +209,7 @@ def compute_maxpeak_dev(t=None,
             
         #  Make plot, cut frame, properties defined in rc.params
         original_width = int(round(np.sqrt(width)*2)*2)                   
+        
         #ax1.set_frame_on(frameon = False)
         ax1.plot(time,hd_list_tight,'b-')
         ax1.plot(time,hd_list_wide,'r-')
@@ -232,18 +218,18 @@ def compute_maxpeak_dev(t=None,
         
                 
         frame = legend.get_frame()
-        frame.set_facecolor('0.8')
-        frame.set_edgecolor('0.8')
+        frame.set_facecolor('0.7')
+        frame.set_edgecolor('0.7')
         
         
-        # Plt properties for ax1 and peak dev
+        # Custom model load from __plot_params
         plt.rcParams.update(params) 
         #ax1.title('The maximum peak deviation', y = 1.05)
         ax1.set_xlim(0,1000)
         ax1.set_ylim(0,100)       
         ax1.set_xlabel('Time [a]',labelpad=20)
         ax1.set_ylabel('Max peak deviation [%]',labelpad=20)
-        ax1.grid(linestyle = '--')
+        
         
         # Plt properties for ax2 (bridging)  
         ax2 = ax1.twinx()
@@ -256,15 +242,15 @@ def compute_maxpeak_dev(t=None,
         
         legend_ax2 = ax2.legend(['Bridging (regular domain)','Bridging (extended domain)'],loc=2)
         frame_ax2 = legend_ax2.get_frame()
-        frame_ax2.set_facecolor('0.8')
-        frame_ax2.set_edgecolor('0.8')
+        frame_ax2.set_facecolor('0.7')
+        frame_ax2.set_edgecolor('0.7')
         
         plt.title('Peak deviation and bridging stresses for a channel width of ' + str(original_width) + ' m', y = 1.05)
         
         path = str('plots/')
         fname= str('maxpeak_dev_2d_' + str(original_width) + '.eps')
         
-        fig.savefig(path + fname,format = 'eps',dpi=1000)
+        #fig.savefig(path + fname,format = 'eps',dpi=1000)
     
     
     
