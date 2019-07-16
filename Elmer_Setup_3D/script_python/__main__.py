@@ -137,14 +137,14 @@ class ModelRun():
         self.dirlist = dirlist
         
         
-        self.list_amps = [i.split('Mesh',1)[1] for i in self.dirlist]
-        self.list_amps = [i.split('_',1)[0] for i in self.list_amps]
-        
-        
-        self.list_widths = [i.split('_',2)[1] for i in self.dirlist]
-        
-        self.df_amps_widths = pd.DataFrame(list(zip(self.list_amps,self.list_widths)),columns=['Amplitudes','Widths']) 
-        self.df_amps_widths =  self.df_amps_widths.sort_values(by=['Amplitudes','Widths'])
+#        self.list_amps = [i.split('Mesh',1)[1] for i in self.dirlist]
+#        self.list_amps = [i.split('_',1)[0] for i in self.list_amps]
+#        
+#        
+#        self.list_widths = [i.split('_',2)[1] for i in self.dirlist]
+#        
+#        self.df_amps_widths = pd.DataFrame(list(zip(self.list_amps,self.list_widths)),columns=['Amplitudes','Widths']) 
+#        self.df_amps_widths =  self.df_amps_widths.sort_values(by=['Amplitudes','Widths'])
          
         
         
@@ -163,7 +163,7 @@ class ModelRun():
                        self.prop) 
                 
          # create fodername of the run for 2d:
-        self.run_folder = 'Mesh{:}_{:}_{:}_{:}'.format(
+        self.run_folder = 'Mesh{:}_{:}{:}_{:}'.format(
                        self.bump_amplitude,
                        self.bump_distribution_x,
                        self.bump_distribution_y,
@@ -232,7 +232,7 @@ class ModelRun():
              self.sxy = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(' sxy'))
              self.fs_upper = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs upper'))
              self.fs_lower = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs lower'))
-           
+             self.get_original_width = int(round(np.sqrt(self.bump_distribution_x)*2)*2)
         
         # Check for variables in list
         self.list_var_names = []
@@ -421,7 +421,7 @@ class ModelRun():
          
    
     
-    def selectMaxz(self,x, y, z):
+    def selectMaxz(self,x ,y, z):
         
         """
         Method: selectMinz
@@ -487,7 +487,7 @@ class ModelRun():
         """
         
         #======================================================================        
-        # 3D - case 
+        # 3D  
         #====================================================================== 
         
         if self.dimensions is None:
@@ -506,7 +506,7 @@ class ModelRun():
             self.points = vtk_to_numpy(self.clipped_area.GetOutput().GetPoints().GetData())
             
             
-           
+            # Get Points
             self.x = self.points[:,0]
             self.y = self.points[:,1]
             self.z = self.points[:,2]
@@ -544,7 +544,7 @@ class ModelRun():
         
         
         #======================================================================        
-        # 2D - case 
+        # 2D 
         #====================================================================== 
         
         elif self.dimensions is not None:
@@ -623,10 +623,7 @@ class ModelRun():
                 self.lower_model, self.points, self.fs_lower, self.fs_upper, \
                 self.deviation_list
                     
-        
-        
-        
-        
+       
         
     def cut_and_slice(self, 
                       xcoord,

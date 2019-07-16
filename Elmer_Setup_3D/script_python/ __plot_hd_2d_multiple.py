@@ -24,7 +24,7 @@ import matplotlib.ticker as ticker
 from matplotlib.ticker import FormatStrFormatter
 from math import trunc
 import numpy.ma as ma
-
+from __plot_params import params
 
 
 
@@ -40,23 +40,27 @@ class Plot_hydrostatic_deviation_2d_multiple():
     
     
     def __init__(self,
-                 width): 
+                 width_1,
+                 width_2): 
         
        # self.t = t
         
         list_widths = ModelRun(150,20000,0,0,20,"2").list_widths
        
         
-        fig1 = plt.figure(figsize = (15,15))
-        
+       
+        fig1, ax1 = plt.subplots()  
+        time = []
+        original_width_1 = int(round(np.sqrt(width_1)*2)*2)
+        original_width_2 = int(round(np.sqrt(width_2)*2)*2)
         rms_total = []
         rms_total_ex = []
         
         
         
-        for i in range (ModelRun(150,20000,0,0,20,"2").num_timesteps):
-            mr = ModelRun(150,width,0,0,i,"2")
-            mr_extent = ModelRun(150,90000,0,'extent',i,"2")
+        for i in range (3,100):
+            mr = ModelRun(150,width_1,0,0,i,"2")
+            mr_extent = ModelRun(150,width_2,0,0,i,"2")
             
             ht = mr.compute_hydrostatic_thickness()
             ht_extent = mr_extent.compute_hydrostatic_thickness()
@@ -79,13 +83,42 @@ class Plot_hydrostatic_deviation_2d_multiple():
             rms = np.sqrt(np.mean(self.hydrostatic_deviation**2))
                    
             rms_total.append(rms)
+            time.append(i*5)
            
-             
-            plt.plot(rms_total,'b-')
-            plt.plot(rms_total_ex,'r-')
+            # Make plot
+                           
             
-            plt.xlabel('Years * 5')
-            plt.ylabel('RMS of hydrostatic deviation [m]')
-           
+            ax1.plot(time,rms_total,'g-',linewidth=2)
+            ax1.plot(time,rms_total_ex,'b-',linewidth=2)
+            legend = ax1.legend(['channel width = ' + str(original_width_1)+' m', 'channel width = ' + str(original_width_2)+' m'],loc=1)
+                    
+            
+                    
+            frame = legend.get_frame()
+            frame.set_facecolor('0.7')
+            frame.set_edgecolor('0.7')
+            
+            
+            # Plt properties
+            plt.rcParams.update(params)
+            ax1.spines['top'].set_visible(False)
+            ax1.spines['bottom'].set_visible(False)
+            ax1.spines['right'].set_visible(False)
+            ax1.spines['left'].set_visible(False)
+            ax1.tick_params(direction='in',length=6,width=2)
+            
+            #plt.title('RMS of hd with multiple channel widths', y = 1.05)
+            ax1.set_xlim(0,500)
+            ax1.set_ylim(0,10)       
+            ax1.set_xlabel('Time [a]',labelpad=20)
+            ax1.set_ylabel('RMS of hydrostatic deviation [m]',labelpad=20)
+            ax1.grid(linestyle = '--')
+            
+            
+            path = str('plots/')
+            fname= str('corr_2d_tightvswide' + str(original_width_1)+ str(original_width_2) + '.eps')
+            
+            fig1.savefig(path + fname, format = 'eps', dpi=1000,bbox_inches='tight')
+            
            
         fig1.show()

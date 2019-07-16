@@ -23,7 +23,7 @@ from matplotlib.colorbar import Colorbar
 import matplotlib.ticker as ticker
 from matplotlib.ticker import FormatStrFormatter
 from math import trunc
-
+from __plot_params import params
 
 
 
@@ -83,29 +83,29 @@ class Plot_hydrostatic_deviation():
         
         
         
-        #======================================================================
-        # Setup fonts
-        #======================================================================
-        
-
+#        #======================================================================
+#        # Setup fonts
+#        #======================================================================
+#        
+#
         font_annotation = {'color':'black',
                        'size': '17'
                 }    
-       
-        font_title = {'color':'black',
-               'size':'20',
-               'weight':'bold'
-               }
-
-        font_axes = {'color':'black',
-               'size':'14',
-               'weight':'normal'
-               }
-        
-        font_label = {'color':'black',
-               'size':'15',
-               'weight':'normal'
-               }
+#       
+#        font_title = {'color':'black',
+#               'size':'20',
+#               'weight':'bold'
+#               }
+#
+#        font_axes = {'color':'black',
+#               'size':'14',
+#               'weight':'normal'
+#               }
+#        
+#        font_label = {'color':'black',
+#               'size':'15',
+#               'weight':'normal'
+#               }
         
         
         
@@ -154,13 +154,13 @@ class Plot_hydrostatic_deviation():
         
         fig = plt.figure(figsize = (40,40))    
         
-        gs_0 = gridspec.GridSpec(2,2, hspace = 0.2, wspace = 0.1, figure = fig)
+        gs_0 = gridspec.GridSpec(2,2, hspace = 0.8, wspace = 0.2, figure = fig)
         self.times = [t1, t2, t3, t4]
         
         # 2,2 plots with 3 subplots
         for i ,t in zip(range(4), self.times):
             gs00 = gridspec.GridSpecFromSubplotSpec(3,3, \
-            height_ratios=[0.05,1,0.5], hspace = 0.25 ,subplot_spec=gs_0[i])
+            height_ratios=[0.05,1,0.5], hspace = 0.5 ,subplot_spec=gs_0[i])
         
         # Run ModelRun-Class with default or self
             if None is (self.amp,self.width):
@@ -194,14 +194,18 @@ class Plot_hydrostatic_deviation():
             orientation = 'horizontal', ticklocation = 'top') 
             cbar.set_label('Deviation of hydrostatic equilibrium [m] \n' \
             + 't = ' + str(t) + ', a = ' + str(self.amp) + ', width = ' \
-            + str(self.width) ,labelpad=10, fontdict = font_title)
-            
-            ax1.set_xlabel('Distance from grounding line [m]',fontdict = font_label)
-            ax1.set_ylabel('Along flow direction [m]',fontdict = font_label)
+            + str(self.width) ,labelpad=10)
+            plt.rcParams.update(params)
+            ax1.set_xlabel('Distance from grounding line [m]')
+            ax1.set_ylabel('Along flow direction [m]')
             start,end = ax1.get_xlim()
             ax1.set_xticklabels(list(map(int,(np.arange(start,end, 2500)-GL))))
            
-            
+            ax1.spines['top'].set_visible(False)
+            ax1.spines['bottom'].set_visible(False)
+            ax1.spines['right'].set_visible(False)
+            ax1.spines['left'].set_visible(False)
+            ax1.tick_params(direction='in',length=6,width=2)
          
             # Crosssections
             line_cs1 = ax1.vlines(x=cs1, ymin=ymin, ymax=ymax, color='r')
@@ -243,10 +247,10 @@ class Plot_hydrostatic_deviation():
             ax2.plot(lower,'b-', label = 'Modelled thickness')
             ax2.plot(upper,'b')
             ax2.plot(original,'r--', label = 'Hydrostatic thickness')
-            ax2.legend(loc = 'lower right', bbox_to_anchor=(0.55,0.77))
+            ax2.legend(loc = 'lower right', bbox_to_anchor=(0.65,0.67))
             ax2.grid()
-            ax2.set_xlabel('Width [m]', fontdict = font_label)
-            ax2.set_ylabel('Height [m]', fontdict = font_label)
+            ax2.set_xlabel('Width [m]')
+            ax2.set_ylabel('Height [m]')
             ax2.set_ylim([-350,55])
             bottom, top = ax2.get_ylim()
             ax2.text(ymin,top,"A",fontdict=font_annotation,ha = 'right', va='bottom')
@@ -289,7 +293,10 @@ class Plot_hydrostatic_deviation():
             ax4.text(ymax, top,"C'",fontdict=font_annotation,ha = 'left', va='bottom')
             fig.add_subplot(ax4)
             
-        
+#        path = str('plots/')
+#        fname= str('3d_' + str(self.amp) + str(self.width) + '.eps')
+#        
+#        fig.savefig(path + fname, format = 'eps', dpi=1000)
                   
         fig.show()
         
