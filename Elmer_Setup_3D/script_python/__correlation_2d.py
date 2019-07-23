@@ -287,8 +287,8 @@ def compute_maxpeak_dev(t=None,
         # Custom model load from __plot_params
         plt.rcParams.update(params) 
         #ax1.title('The maximum peak deviation', y = 1.05)
-        ax1.set_xlim(0,1000)
-        ax1.set_ylim(0,100)       
+        ax1.set_xlim(0,t*5)
+        ax1.set_ylim(3,100)       
         ax1.set_xlabel('Time [a]',labelpad=20)
         ax1.set_ylabel('Max peak deviation [%]',labelpad=20)
         
@@ -300,6 +300,7 @@ def compute_maxpeak_dev(t=None,
         ax2.plot(time, sxy_list_extent, 'r--')
         ax2.plot(time, sxy_list_wideextent, 'k--')
         ax2.set_ylabel('$\sigma_{xy}$ [MPa]',labelpad = 20)
+        ax2.set_ylim(0.0010,0.0045)  
         ax2.tick_params('y')
         
         
@@ -311,7 +312,7 @@ def compute_maxpeak_dev(t=None,
         plt.title('Peak deviation and bridging stresses for a channel width of ' + str(original_width) + ' m', y = 1.05)
         
         path = str('plots/')
-        fname= str('maxpeak_dev_2d__all' + str(original_width) + '.eps')
+        fname= str('maxpeak_dev_2d__all' + str(original_width) + '_' + str(t*5) + 'a' + '.eps')
         
         fig.savefig(path + fname, format = 'eps',dpi=1000)
     

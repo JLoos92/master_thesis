@@ -115,13 +115,15 @@ class ModelRun():
         
         if self.dimensions is None:
              self.res_folder = os.path.join(self.home_directory + 'fixed')
-            
+             print('Made ModelRun object for 3D-case')
+             
+             
         elif self.dimensions==str("2"):            
              self.res_folder = os.path.join(self.home_directory + '2d')
-
+             print('Made ModelRun object for 2D-case.')
         else:
             raise ValueError('This filetype does not exist in the simulation '
-            'folder. Check if dimension is set to 2 or  to None for 2d or 3d case ,'
+            'folder. Check if dimension input parameter is set to 2 or to None for 2d or 3d case ,'
             'respectively.')
                 
                   
@@ -163,7 +165,8 @@ class ModelRun():
                        self.prop) 
                 
          # create fodername of the run for 2d:
-        self.run_folder = 'Mesh{:}_{:}{:}_{:}'.format(
+        elif self.dimensions == None: 
+                self.run_folder = 'Mesh{:}_{:}{:}_{:}'.format(
                        self.bump_amplitude,
                        self.bump_distribution_x,
                        self.bump_distribution_y,
@@ -495,7 +498,7 @@ class ModelRun():
             # Paraneter setup for calculation of hydrostatic thickness
             # !!!!!!!! Must be changed if input.sif file is changed!!!!!!!!
             self.p_w = 1000.0 # kg m−3 )
-            self.p_i = 900.0  # ice (ρi =918kgm−3)
+            self.p_i = 900.0  # ice 
             p_a = 2.0         # air (ρa =2kgm−3)
             H_a = 0
             
@@ -569,21 +572,8 @@ class ModelRun():
             
             # Rearrange matrix to fit input shape ()
             self.points = np.delete(self.points, 2, 1)
-            
-            # Using pandas-dataframe
-            #df = pd.DataFrame(self.points,columns=['x','y'])
            
             # Group
-           # grouped = df.groupby('y')
-        
-            #Upper and lower boundary
-            #lower_boundary = grouped.min()
-#            lower_boundary = np.asarray(lower_boundary[0])
-#            lower_boundary = lower_boundary[:,0]
-            
-            #upper_boundary = grouped.max()
-#            upper_boundary = np.asarray(upper_boundary[0])
-#            upper_boundary = upper_boundary[:,0]
             
             ind_fs_lower = np.where(self.fs_lower<0)
             ind_fs_upper = np.where(self.fs_upper>0)

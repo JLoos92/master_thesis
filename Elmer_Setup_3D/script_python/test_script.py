@@ -3,9 +3,12 @@
 Created on Wed Dec 12 15:55:13 2018
 """
 
-from modelrun import ModelRun
+widths = np.arange(10000,100000,10000)
 
-run1 = ModelRun(bump_amplitude=20,
-                bump_distribution=30,
-                bump_location=0,
-                grid_refinement=True)
+org = []
+for i in widths:
+    
+    
+    original_width = int(round(np.sqrt(i)*2)*2)
+    
+    org.append(original_width)

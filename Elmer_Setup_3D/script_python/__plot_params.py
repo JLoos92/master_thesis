@@ -31,14 +31,14 @@ params = {
                         'font.family': 'sans-serif',
                         'axes.titlesize': 30,
                         'axes.titleweight': 'bold',
-                        'figure.figsize': [100,100],
+                        'figure.figsize': [20,20],
                         'figure.frameon':0,
                         'font.sans-serif':'Helvetica',
                         'axes.labelpad':18,
                         'figure.titleweight':'bold',
                         'grid.linestyle': '--',
                         'axes.grid': True,
-                        'lines.linewidth': 6
+                        'lines.linewidth': 2
                         
                         }
 
