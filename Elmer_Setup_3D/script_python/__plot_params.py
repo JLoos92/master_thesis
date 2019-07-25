@@ -25,6 +25,7 @@ params = {
                         'xtick.bottom': True,
                         'xtick.labelbottom':True,
                         'xtick.direction':'in',
+                        'ytick.direction':'in',
                         'ytick.labelsize': 20,
                         'axes.labelsize':25,
                         'text.usetex': False,

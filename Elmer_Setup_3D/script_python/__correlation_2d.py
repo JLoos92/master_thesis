@@ -60,11 +60,6 @@ def compute_total_hd_2d(t=None,
     viation is saved in an 1d array for the 2d simulation case.       
     '''    
     
-    # Import some properties from class    
-    list_widths = ModelRun(150,20000,0,'extent',50,"2").list_widths
-    list_widths.sort(key=int)
-    list_widths = list_widths[0:10]
-    
     # List of widths for extended and tight domain
     list_widths = list(np.arange(10000,100000,10000))
     
@@ -85,9 +80,10 @@ def compute_total_hd_2d(t=None,
         time = []
         original_width = int(round(np.sqrt(width)*2)*2)
     
+        if t is None:
+            t=200
     
-    
-        for i in range(3,200):
+        for i in range(2,t):
             
             # Set up class
             mr = ModelRun(150,width,0,0,i,"2")
@@ -123,10 +119,10 @@ def compute_total_hd_2d(t=None,
           
             
         # Make plot
-                           
+        plt.rcParams.update(params)                    
         #ax1.axes(frameon = 0)
-        ax1.plot(time,rms_total)
-        ax1.plot(time,rms_total_extent)
+        ax1.plot(time,rms_total,'*')
+        ax1.plot(time,rms_total_extent,'*')
         legend = ax1.legend(['cw = ' + str(original_width)+' m', 'cw = ' + str(original_width)+' m (extended domain)'],loc=1)
                 
         
@@ -139,7 +135,7 @@ def compute_total_hd_2d(t=None,
         # Plt properties
         plt.rcParams.update(params) 
         plt.title('RMS of hd with multiple channel widths', y = 1.05)
-        ax1.set_xlim(0,1000)
+        ax1.set_xlim(0,t*5)
         ax1.set_ylim(0,15)       
         ax1.set_xlabel('Time [a]',labelpad=20)
         ax1.set_ylabel('RMS of hydrostatic deviation [m]',labelpad=20)
@@ -147,7 +143,7 @@ def compute_total_hd_2d(t=None,
         
         
         path = str('plots/')
-        fname= str('corr_2d_' + str(original_width) + '.eps')
+        fname= str('corr_2d_' + str(original_width)+ '_' + str(t*5) + '*' + '.eps')
         
         fig.savefig(path + fname, format = 'eps', dpi=1000)
     
