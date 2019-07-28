@@ -20,26 +20,30 @@ print('Plot folder synced.')
 
 
 params = {
-                        'legend.fontsize' : 12,
-                        'xtick.labelsize': 20,
+                        'legend.fontsize' : 6,
+                        'xtick.labelsize': 14,
                         'xtick.bottom': True,
+                        'xtick.top': True,
                         'xtick.labelbottom':True,
                         'xtick.direction':'in',
                         'ytick.direction':'in',
-                        'ytick.labelsize': 20,
-                        'axes.labelsize':25,
+                        'ytick.labelsize': 14,
+                        'axes.labelsize':14,
                         'text.usetex': False,
                         'font.family': 'sans-serif',
                         'axes.titlesize': 30,
                         'axes.titleweight': 'bold',
-                        'figure.figsize': [20,20],
+                        'figure.figsize': [6,6],
                         'figure.frameon':0,
                         'font.sans-serif':'Helvetica',
                         'axes.labelpad':18,
                         'figure.titleweight':'bold',
                         'grid.linestyle': '--',
-                        'axes.grid': True,
-                        'lines.linewidth': 2
+                        'axes.grid': False,
+                        'lines.linewidth': 2,
+                        'xtick.minor.visible': True,
+                        'ytick.minor.visible' : True,
+                        'figure.autolayout' : True
                         
                         }
 
