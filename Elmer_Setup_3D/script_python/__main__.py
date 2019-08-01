@@ -602,18 +602,51 @@ class ModelRun():
             
             # Calculate peak deviation (maximum of modelled and calculated ht)
             self.deviation_list = []
-            max_modelled_lower = abs(np.max(self.lower_model))/100
-            max_calculated_lower = abs(np.max(self.thick_calc_2d_bs))
             
-            self.deviation_list = (max_calculated_lower/max_modelled_lower)-100
+            ht_calc = self.thick_calc_2d_bs
+            ht_model = self.lower_model
+            
+            mht_calc_ind = int(abs(ht_calc.size/2)) 
+            ht_model_ind = int(abs(ht_model.size/2))
+        
+            peak_calc = abs(ht_calc[ht_calc_ind])
+            peak_model = abs(ht_model[ht_model_ind])
+            
+            self.deviation_list = 100-(100/peak_calc*peak_model)
             
             
             
             return x_new_lower, self.thick_calc_2d_bs,self.upper_model, \
                 self.lower_model, self.points, self.fs_lower, self.fs_upper, \
                 self.deviation_list
-                    
-       
+     
+
+
+    #@compute_hydrostatic_thickness               
+    def compute_max_peak_deviation(self):
+        pass
+    
+        '''
+        Method not used yet (April,2019)
+        
+        '''
+        
+        # Calculate peak deviation (maximum of modelled and calculated ht)
+        ht_calc = self.thick_calc_2d_bs
+        ht_model = self.lower_model
+        
+        ht_calc_ind = int(abs(ht_calc.size/2)) 
+        ht_model_ind = int(abs(ht_model.size/2))
+        
+        peak_calc = abs(ht_calc[ht_calc_ind])
+        peak_model = abs(ht_model[ht_model_ind])
+        
+        # absolute difference (peak difference in m)
+        abs_diff = peak_calc-peak_model
+        
+        return abs_diff
+    
+        
         
     def cut_and_slice(self, 
                       xcoord,
@@ -781,9 +814,7 @@ class ModelRun():
   
         
         
-    
-      
-      
+         
       
         
         

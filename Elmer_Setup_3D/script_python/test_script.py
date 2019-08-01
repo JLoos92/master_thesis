@@ -31,11 +31,26 @@ rms_uy_extent = np.sqrt(np.mean(sxy_array_extent**2))
 
 
 
+hd_extended = ModelRun(150,90000,0,0,200,"2").compute_hydrostatic_thickness()
+ht_calc = hd_extended[1]
+ht_model = hd_extended[3]
+
+ht_calc_ind = int(abs(ht_calc.size/2)) 
+ht_model_ind = int(abs(ht_model.size/2))
+
+peak_calc = abs(ht_calc[ht_calc_ind])
+peak_model = abs(ht_model[ht_model_ind])
+
+# absolute difference (peak difference in m)
+abs_diff = peak_calc-peak_model
+
+
+
+hd_extended = ModelRun(150,90000,0,'extent',200,"2")
 
 
 
 
+hd_extended = ModelRun(150,90000,0,0,200,"2").compute_hydrostatic_thickness()
 
-
-
-
+peak = hd_extended[7]

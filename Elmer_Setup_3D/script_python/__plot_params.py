@@ -20,31 +20,58 @@ print('Plot folder synced.')
 
 
 params = {
-                        'legend.fontsize' : 6,
-                        'xtick.labelsize': 14,
+                        'legend.fontsize' : 8,
+                        'xtick.labelsize': 9,
                         'xtick.bottom': True,
                         'xtick.top': True,
                         'xtick.labelbottom':True,
                         'xtick.direction':'in',
                         'ytick.direction':'in',
-                        'ytick.labelsize': 14,
-                        'axes.labelsize':14,
+                        'ytick.labelsize': 9,
+                        'axes.labelsize':8,
                         'text.usetex': False,
                         'font.family': 'sans-serif',
-                        'axes.titlesize': 30,
+                        'axes.titlesize': 14,
                         'axes.titleweight': 'bold',
-                        'figure.figsize': [6,6],
+                        'figure.figsize': [4,4],
                         'figure.frameon':0,
                         'font.sans-serif':'Helvetica',
-                        'axes.labelpad':18,
+                        'axes.labelpad':10,
                         'figure.titleweight':'bold',
                         'grid.linestyle': '--',
                         'axes.grid': False,
-                        'lines.linewidth': 2,
+                        'lines.linewidth': 1.5,
                         'xtick.minor.visible': True,
                         'ytick.minor.visible' : True,
-                        'figure.autolayout' : True
+                        'figure.autolayout' : False     # False for peak deviation
                         
                         }
 
 
+params_bridging_2d = {
+                        'legend.fontsize' : 4,
+                        'xtick.labelsize': 5,
+                        'xtick.bottom': True,
+                        'xtick.top': True,
+                        'xtick.labelbottom':True,
+                        'xtick.direction':'in',
+                        'ytick.direction':'in',
+                        'ytick.labelsize': 5,
+                        'axes.labelsize':8,
+                        'text.usetex': False,
+                        'font.family': 'sans-serif',
+                        'axes.titlesize': 14,
+                        'axes.titleweight': 'bold',
+                        'figure.figsize': [4,4],
+                        'figure.frameon':0,
+                        'font.sans-serif':'Helvetica',
+                        'axes.labelpad':2,
+                        'figure.titleweight':'bold',
+                        'grid.linestyle': '--',
+                        'axes.grid': False,
+                        'lines.linewidth': 1,
+                        'xtick.minor.visible': False,
+                        'ytick.minor.visible' : False,
+                        'figure.autolayout' : False     # False for peak deviation
+                        
+                        }

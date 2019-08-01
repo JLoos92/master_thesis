@@ -6,17 +6,15 @@ Created on Wed Jun 12 14:33:32 2019
 @author: jloos
 """
 
-from __main__ import ModelRun
 import pandas as pd
-from scipy.interpolate import griddata
-
-from __main__ import ModelRun
+from main import ModelRun
 from __plot_params import params
 
 #
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
+from matplotlib.ticker import FormatStrFormatter
+
 
 
 
@@ -34,13 +32,11 @@ def compute_allwidths_hd_2d(t=None,
     # List of widths for extended and tight domain
     list_widths = list(np.arange(5000,10000,1000))
     list_widths_1 = list(np.arange(10000,100000,10000))
-    list_widths_2 = list(np.arange(200000,1000000,100000))
+    list_widths_2 = list(np.arange(200000,900000,100000))
     
-    list_widths.extend(list_widths_1)
+    list_widths_1.extend(list_widths_2)
     
-    list_widths.extend(list_widths_2)
     
-    print(list_widths)
     
     num_timesteps = ModelRun(150,20000,0,'extent',50,"2").num_timesteps
     num_timesteps = num_timesteps -2
@@ -57,7 +53,7 @@ def compute_allwidths_hd_2d(t=None,
         # Hydrostatic deviation
         rms_total = []
         rms_total_extent = []
-        
+        rms_total_wideextent = []
         
         # Velocities
         rms_uy_normal = []
@@ -124,37 +120,55 @@ def compute_allwidths_hd_2d(t=None,
             # Calculate hydrostatic thickness
             ht = mr.compute_hydrostatic_thickness()
             ht_extent = mr_extent.compute_hydrostatic_thickness()
+            ht_wideextent = mr_wideextent.compute_hydrostatic_thickness()
             
             
             
-            # compute deviation reg7ular
+            # compute deviation regular
             lower = ht[3]
             calc_thickness_bs = ht[1]
             
             #extent
             lower_extent = ht_extent[3]
             calc_thickness_bs_extent = ht_extent[1]
+            
+            #wideextent
+            lower_wideextent = ht_wideextent[3]
+            calc_thickness_bs_wideextent = ht_wideextent[1]
 
             
             hydrostatic_deviation = calc_thickness_bs - lower
             hydrostatic_deviation_extent = calc_thickness_bs_extent - lower_extent
+            hydrostatic_deviation_wideextent = calc_thickness_bs_wideextent - lower_wideextent
         
             
             # Adapt ratio of wider domain
-            hydrostatic_deviation_extent = hydrostatic_deviation_extent[166:501]
+            x_extent = ht_extent[0]
+            df_extent = pd.DataFrame({'hd_wide':hydrostatic_deviation_extent,'x_extent':x_extent})
+            df_extent = df_extent[df_extent.x_extent>-10000]
+            df_extent = df_extent[df_extent.x_extent<10000]
+            hd_extent = df_extent.iloc[:,0].values
             
+            # Adapt ratio of wider domain
+            x_wideextent = ht_wideextent[0]
+            df_wideextent = pd.DataFrame({'hd_wide':hydrostatic_deviation_wideextent,'x_wideextent':x_wideextent})
+            df_wideextent = df_wideextent[df_wideextent.x_wideextent>-10000]
+            df_wideextent = df_wideextent[df_wideextent.x_wideextent<10000]
+            hd_wideextent = df_wideextent.iloc[:,0].values
             
             
             
             # Adapt ratio of extra-wide domain
         
             rms = np.sqrt(np.mean(hydrostatic_deviation**2))
-            rms_extent = np.sqrt(np.mean(hydrostatic_deviation_extent**2))
+            rms_extent = np.sqrt(np.mean(hd_extent**2))
+            rms_wideextent = np.sqrt(np.mean(hd_wideextent**2))
             
            
             # Append rms value for timestep i
             rms_total.append(rms)
             rms_total_extent.append(rms_extent)
+            rms_total_wideextent.append(rms_wideextent)
             
             # Append uy values
             rms_uy_normal.append(uy_array_normal)
@@ -170,38 +184,38 @@ def compute_allwidths_hd_2d(t=None,
         rms_total_extent = np.asarray(rms_total_extent)
         
         # Construct an image linearly increasing in y
-        xv, yv = np.meshgrid(np.linspace(np.asarray(widths_new).min(),np.asarray(widths_new).max(),9), np.linspace(0,15,9))
-        zv = yv
+        xv, yv = np.meshgrid(np.linspace(np.asarray(widths_new).min(),np.asarray(widths_new).max(),16), np.linspace(0,15,16))
         
         z_new = abs(np.array([rms_total_extent-rms_total]))
         
-        x_dist, y_dist = np.meshgrid(z_new, np.linspace(0,15,9))
+        x_dist, y_dist = np.meshgrid(z_new, np.linspace(0,15,16))
         
         # Draw the image over the whole plot area
         plt.rcParams.update(params) 
         
         levels = np.linspace(x_dist.min(), x_dist.max(), 100)
-        cs = ax1.contourf(xv,yv,x_dist,levels = levels,cmap='RdYlGn_r', extend = 'both', pad = 20, rotation = 180)
+        cs = ax1.contourf(xv,yv,x_dist,levels = levels,cmap='Blues_r', extend = 'both')
         
         # Erase above the data by filling with white
         ax1.fill_between(widths_new, rms_total, rms_total.min(), color='w')
         ax1.fill_between(widths_new, rms_total_extent, rms_total.max(), color='w')
         
         # Make the line plot over the top
-        ax1.plot(widths_new, rms_total, 'k-', linewidth=2)
-        ax1.plot(widths_new, rms_total_extent,'k--',linewidth=2)
+        ax1.plot(widths_new, rms_total, 'k-', linewidth=1.5)
+        ax1.plot(widths_new, rms_total_extent,'k--',linewidth=1.5)
+        ax1.plot(widths_new, rms_total_wideextent,'k:',linewidth=1.5)
         
-        ax1.set_ylim(rms_total.min(), rms_total.max())
+        ax1.set_ylim(30, 40)
         
-        cax = fig.add_axes([0.20,0.15,0.5,0.02])
-        cbar = plt.colorbar(cs,cax=cax,orientation = 'horizontal')
-        #cbar.set_label('distance') 
-        cbar.set_ticks([50,100])
-        cbar.set_label('Distance', labelpad = 4, fontsize = 10)
-        cax.xaxis.set_label_position('top')
-        
-        ax1.set_xlabel('Channel widths' + ' [m]',labelpad=15)
-        ax1.set_ylabel('RMS of hydrostatic deviation [m]',labelpad=15)
+#        cax = fig.add_axes([0.20,0.15,0.5,0.02])
+#        cbar = plt.colorbar(cs,cax=cax,orientation = 'horizontal',ticks = [50,100])
+#        #cbar.set_label('distance') 
+#        cbar.set_ticks([50,100])
+#        cbar.set_label('Distance [regular and extended]', labelpad = 4, fontsize = 8)
+#        cax.xaxis.set_label_position('top')
+#        
+        ax1.set_xlabel('Channel widths' + ' [m]',labelpad=6)
+        ax1.set_ylabel('RMS of hydrostatic deviation [m]',labelpad=6)
        
      
         ax1.spines['top'].set_visible(True)
@@ -220,34 +234,43 @@ def compute_allwidths_hd_2d(t=None,
         ax2.plot(widths_new, rms_uy_extent, 'r--')
         ax2.plot(widths_new, rms_uy_wideextent, 'r:')
         
+        # Set label and color for ax2 (second y-axis)
         
-        ax2.set_ylabel('Channel - velocity $u_{y}$ [m/a]',labelpad = 15)
-        #ax2.set_ylim(0.3,0.32)  
+        for tl in ax2.get_yticklabels():
+            tl.set_color('r')
+            
         ax2.tick_params('y')
+        ax2.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
         
-        
-        legend_ax2 = ax2.legend(['Velocity(regular domain)','Velocity (extended domain)', 'Velocity (wide extended domain)'],loc=1)
+        legend_ax2 = ax2.legend(['Velocity(regular)','Velocity (extended)', 'Velocity (wide extended)'],loc=1)
         frame_ax2 = legend_ax2.get_frame()
         frame_ax2.set_facecolor('0.7')
         frame_ax2.set_edgecolor('0.7')
         
 
-        legend = ax1.legend(['t = ' + str(t*5)+' a'+ ' regular','t = ' + str(t*5)+' a' + ' extent'],loc=2)
+        legend = ax1.legend(['t = ' + str(t*5)+' a'+ ' regular','t = ' + str(t*5)+' a' + ' extent', 't = ' + str(t*5)+' a' + ' wideextent'],loc=2)
                 
         frame = legend.get_frame()
         frame.set_facecolor('0.7')
         frame.set_edgecolor('0.7')
         ax2.tick_params(direction='in',length=6,width=2)
-        
+        ax2.set_ylabel('Channel - velocity $u_{y}$ [m/a]',labelpad = 10, color = 'r')
 
        
-        path = str('plots/')
-        fname= str('allwidths_corr_2d_alldomains'+ '_' + str(t*5) + '.eps')
+        path = str('plots/allwidths_2d_hd_velo/')
+        fname_eps= str('allwidths_corr_2d_alldomains'+ '_' + str(t*5) + '.pdf')
+        fname_png= str('allwidths_corr_2d_alldomains'+ '_' + str(t*5) + '.png')
         
-        fig.savefig(path + fname, format = 'eps', dpi=1000)
+        fig.savefig(path + fname_eps, format = 'pdf', dpi=1000, bbox_inches = 'tight')
+        fig.savefig(path + fname_png, format = 'png', dpi=1000, bbox_inches = 'tight')
             
             
             
           
     
     return rms_total, rms_total_extent, widths_new
+
+
+if __name__ == '__main__':
+    for i in range (0,200,50):
+        compute_allwidths_hd_2d(t=i)

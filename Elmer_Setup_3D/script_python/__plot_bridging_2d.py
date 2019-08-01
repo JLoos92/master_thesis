@@ -14,19 +14,20 @@ Created on Mon Apr  8 15:29:02 2019
 @author: jloos
 """
 
-from __main__ import ModelRun
-from __plot_params import params
+from main import ModelRun
+from __plot_params import params_bridging_2d
 
 
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
 from matplotlib import gridspec
 from matplotlib.colorbar import Colorbar
 import matplotlib.font_manager
+from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 
 import numpy as np
 import matplotlib.pyplot as plt
 import numpy.ma as ma
-from scipy.interpolate import griddata
+from scipy.interpolate import griddata,interpolate
 
 
 
@@ -120,8 +121,9 @@ class Plot_bridging_2d():
         #======================================================================
         # Define figure and plot properties
         #======================================================================
-        # Custom model load from __plot_params
-        plt.rcParams.update(params) 
+        
+        # Custom params load from __plot_params
+        plt.rcParams.update(params_bridging_2d) 
       
        
         
@@ -131,22 +133,24 @@ class Plot_bridging_2d():
         xx1,xx2,yy1,yy2 = -2500,2500,0,50
         
              
-        self.original_width = int(round(np.sqrt(self.width)*2)*2) 
+        self.original_width = int(round(np.sqrt(self.width)*2)) 
+        nums = ["(a)","(b)","(c)","(d)"]
         
-         
-        fig = plt.figure(figsize = (40,50))    
         
-        gs_0 = gridspec.GridSpec(2,2, hspace = 0.2, wspace = 0.2, figure = fig)
+        fig = plt.figure()    
+        
+        gs_0 = gridspec.GridSpec(2,2, hspace = 0.08, wspace = 0.05, figure = fig)
         self.times = [t1, t2, t3, t4]
         
         
         self.deviation_list = []
         
         # 2,2 plots with 3 subplots
-        for i ,t in zip(range(4), self.times):
-            gs00 = gridspec.GridSpecFromSubplotSpec(3,3, \
-            height_ratios=[0.05,1,0], hspace = 0.10 ,subplot_spec=gs_0[i])
-             # Run ModelRun-Class with default or self
+        for i ,t, num in zip(range(4), self.times, nums):
+            gs00 = gridspec.GridSpecFromSubplotSpec(2,1, \
+            height_ratios=[0.05,1], hspace = 0.02 ,subplot_spec=gs_0[i])
+            
+            # Run ModelRun-Class with default or self
             if None is (self.width):
                 mr = ModelRun(100000,0,0,0,t)
             mr = ModelRun(150,self.width,0,self.prop,t,"2")
@@ -162,25 +166,32 @@ class Plot_bridging_2d():
             self.calc_thickness_bs = ht[1]
             
             if scalar is None:
-                sxy = mr.sxy            
-            else:
+                sxy = mr.sxy
+                cmap = str("bwr")
+                title = str("Bridging $\sigma_{xy}$ [$MPa$]")
+                scalarname = str('bridging')
+            elif scalar is not None:
                 self.scalar=scalar
                 sxy = mr.get_scalar(str(self.scalar))
-                sxy = sxy
+                sxy = abs(sxy[:,1])
+                cmap = str("RdYlBu_r")
+                title = str("Velocity $u_{y}$ [$m\: a^{-1}$]")
+                scalarname = str('velo')
+                
             points = ht[4]
             self.x = points[:,0]
             self.y = points[:,1]
             
             x = points[:,0]
             y = points[:,1]
-    
+            
+         
             new_points = x,y
     
             self.xx,self.yy = np.meshgrid(x,y)
-    
-            
-            grid = griddata(new_points,sxy,(self.xx,self.yy),method='nearest')
-            
+       
+            grid = griddata(new_points,sxy,(self.xx,self.yy),method='cubic')
+            #print(grid)
            
             
             # Points for triangulation
@@ -189,46 +200,99 @@ class Plot_bridging_2d():
             points = points.transpose()
             max_sxy = np.max(sxy)
             min_sxy = np.min(sxy)
-            masked_sxy = ma.masked_where(sxy>-10,sxy)
-            print(masked_sxy)
+            
+            
       
             #------------------------------------------------------------------
             ax1 = plt.Subplot(fig,gs00[1,:])
-            #ax1(frameon=0)
-            im = ax1.pcolormesh(self.xx,self.yy,grid,vmin=-0.03,vmax=0.03,cmap = 'RdBu')
+           
+            im = ax1.pcolormesh(self.xx,self.yy,grid,vmin=0,vmax=0.8,cmap = cmap)
             
-            # Colorbar definition (extra axis)
-            cbar = plt.subplot(gs00[0,:])
-            cbar = Colorbar(ax=cbar, mappable = im, extend = 'both', \
-            orientation = 'horizontal', ticklocation = 'top') 
-            cbar.set_label('Bridging stress $\sigma_{xy}$ \n' \
-            + 't = ' + str(t*5)+ ' a' + ', channel width = ' + str(self.original_width) + 'm \n' + \
-            '$\sigma_{xy} max$'+ ' = ' + str(max_sxy.round(4)) + ' MPa',labelpad=8)
+            # Set labels
+            ax1.set_xlabel('Distance [m]', visible = False)
+            ax1.set_ylabel('Height [m]',visible=False)
+            #ax1.get_yaxis().set_ticklabels([])
+            #ax1.get_xaxis().set_ticklabels([])
+            ax1.set_xticks([-1000,0,1000])
+            ax1.set_yticks([-250,-100,0,50])
             
-            ax1.set_xlabel('Distance [m]')
-            ax1.set_ylabel('Height [m]')
-            ax1.minorticks_on()
+            plt.setp(ax1.get_xticklabels(),fontweight = 'bold')
+            plt.setp(ax1.get_yticklabels(),fontweight = 'bold')
+            
             upper=ht[2]
             lower=ht[3]
             points=ht[4]
             x_line = ht[0]
-            ax1.plot(x_line,lower,'b-',linewidth=5)
-            ax1.plot(x_line,upper,'b-',linewidth=5)
-            ax1.tick_params(direction='in',length=6,width=2)
+            
+            # Plot lines
+            ax1.plot(x_line,lower,'b-',linewidth=1)
+            ax1.fill_between(x_line, lower, lower.min(), color='w')
+            ax1.plot(x_line,upper,'b-',linewidth=1)
+            ax1.fill_between(x_line, upper, upper.max(), color='w')
+            ax1.tick_params(direction='in',length=3,width=1)
             ax1.set_xlim(-2500,2500)
+            ax1.set_ylim(-290,100)
             
+            # Hydrostatic thickness
+            ax1.plot(self.new_x,self.calc_thickness_bs,'r--',linewidth=1)
+            
+            # Legend
+            legend_ax2 = ax1.legend(['Modelled thickness for t=' + str(t*5)+'a','_nolegend_','Hydrostatic thickness'],loc="lower left",bbox_to_anchor=(0.28,0.82))
+            frame_ax2 = legend_ax2.get_frame()
+            frame_ax2.set_facecolor('0.7')
+            frame_ax2.set_edgecolor('0.7')
+            
+            # Colorbar
+            cbar = plt.subplot(gs00[0,:])
+            cbar = Colorbar(ax=cbar, mappable = im, extend = 'both', \
+            orientation = 'horizontal', ticklocation = 'top')
+            cbar.ax.xaxis.set_tick_params(pad=1,size=1.5)
+           
+            cbar.ax.xaxis.set_ticks([sxy.max()])
+            cbar.ax.xaxis.set_major_formatter(FormatStrFormatter('%.3f'))
+            
+            # place text box in upper left in axes coords
+            
+            props = dict(boxstyle='round', facecolor='wheat', alpha=0.7)
+            
+            ax1.text(0.05, 0.95, num, transform=ax1.transAxes, fontsize=7,
+                verticalalignment='top', bbox=props)
+            
+            
+            
+            
+            if i==0:
+                ax1.get_xaxis().set_ticklabels([]) 
+            if i==1:
+                ax1.get_yaxis().set_ticklabels([]) 
+                ax1.get_xaxis().set_ticklabels([]) 
+                
+               
+            if i==1:    
+                ax1.get_xaxis().set_ticklabels([]) 
+            
+            if i==3:    
+                ax1.get_yaxis().set_ticklabels([]) 
+                
+            
+            
+            
+            
+            plt.suptitle(title + ' @ cw = ' + str(self.original_width*2) + 'm', weight='bold', fontsize = 7.5, y = 0.95)
+            fig.text(0.5,0.06, 'Channel-width [m]',ha = 'center',fontsize=8)
+            fig.text(0.05,0.6, 'Shelf-height [m]',ha = 'center',rotation = 'vertical',fontsize=8)
             fig.add_subplot(ax1)
-            
-            
+        
+                 
             
 #            #------------------------------------------------------------------         
 #            # Plot calculated (red) and modelled (blue) hydrostatic thickness 
 #            #------------------------------------------------------------------
 #            ax2 = plt.Subplot(fig,gs00[2,:])
 #            
-#            ax2.plot(self.new_x,self.lower,'b-', label = 'Modelled thickness',linewidth=5)
-#            ax2.plot(self.new_x,self.upper,'b',linewidth=5)
-#            ax2.plot(self.new_x,self.calc_thickness_bs,'r--',label = 'Hydrostatic thickness',linewidth=5)
+#            ax2.plot(self.new_x,self.lower,'b-', label = 'Modelled thickness',linewidth=1)
+#            ax2.plot(self.new_x,self.upper,'b',linewidth=1)
+#            ax2.plot(self.new_x,self.calc_thickness_bs,'r--',label = 'Hydrostatic thickness',linewidth=1)
 #           
 #            # Legend
 #            legend = ax2.legend(loc = 'lower right', bbox_to_anchor=(0.3,0.76))
@@ -242,10 +306,10 @@ class Plot_bridging_2d():
 #            ax2.minorticks_on()
 #            ax2.set_ylim([ymin,ymax])
 #            bottom, top = ax2.get_ylim()
-#            ax2.tick_params(direction='in',length=6,width=2)
-#            
-#           
-#            
+#            ax2.tick_params(direction='in',length=3,width=1)
+            
+           
+            
 #            fig.add_subplot(ax2)
 #            
 #            
@@ -289,11 +353,17 @@ class Plot_bridging_2d():
 #        fname= str('briding_dev_2d__' + str(original_width) + '.eps')
 #        
 #        fig.savefig(path + fname, format = 'eps',dpi=1000)
-        self.fig = fig
-        fig.show()
-            
-    def getfig(self):
+       
+        
+       
+        
         path = str('plots/')
-        fname= str('briding_dev_2d__' + str(self.original_width) + '.eps')
+        fname_png = str('_dev_2d__' + str(self.original_width) + '.png')
+       # fname_pdf = str('briding_dev_2d__' + str(self.original_width) + '.pdf')
     
-        self.fig.savefig(path + fname, format = 'eps',dpi=1000)
+        plt.savefig(path + scalarname + fname_png, format = 'png',dpi=1000, bbox_inches = 'tight')
+        #plt.savefig(path + fname_pdf, format = 'pdf',dpi=1000, bbox_inches = 'tight')
+        
+        plt.show() 
+        
+  

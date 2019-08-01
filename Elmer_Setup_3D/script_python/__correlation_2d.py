@@ -6,14 +6,15 @@ Created on Fri Jun 14 11:14:45 2019
 @author: jloos
 """
 # Custom modules
-from __main__ import ModelRun
+from main import ModelRun
 from __plot_params import params
 
 #
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
+from matplotlib.ticker import MaxNLocator
+from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 
 def compute_rms(width,timestep,extent=None):
             
@@ -195,6 +196,7 @@ def compute_maxpeak_dev(t=None,
     
      # List of widths for extended and tight domain
     list_widths = list(np.arange(20000,100000,10000))
+    list_widths = [50000]
     
     for width in list_widths:
         # Define rc_params for figure
@@ -268,11 +270,11 @@ def compute_maxpeak_dev(t=None,
         original_width = int(round(np.sqrt(width)*2)*2)                   
         
         #ax1.set_frame_on(frameon = False)
-        ax1.plot(time,hd_list_tight,'b-')
-        ax1.plot(time,hd_list_wide,'r-')
-        ax1.plot(time,hd_list_extrawide,'k-')
-        legend = ax1.legend(['cw = ' + str(original_width)+' m (regular domain)', 'cw = ' + str(original_width)+' m (extended domain)', 'cw = ' + str(original_width)+' m (wide extended domain)'],loc=1)
-                
+        ax1.plot(time,hd_list_tight,'k-')
+        #ax1.plot(time,hd_list_wide,'k--')
+        #ax1.plot(time,hd_list_extrawide,'k:')
+        #legend = ax1.legend(['cw = ' + str(original_width)+' m (regular domain)', 'cw = ' + str(original_width)+' m (extended domain)', 'cw = ' + str(original_width)+' m (wide extended domain)'],loc=2)
+        legend = ax1.legend(['cw = ' + str(original_width)+' m (regular domain)'],loc=2)        
         
                 
         frame = legend.get_frame()
@@ -283,34 +285,47 @@ def compute_maxpeak_dev(t=None,
         # Custom model load from __plot_params
         plt.rcParams.update(params) 
         #ax1.title('The maximum peak deviation', y = 1.05)
-        ax1.set_xlim(0,t*5)
-        ax1.set_ylim(3,100)       
-        ax1.set_xlabel('Time [a]',labelpad=20)
-        ax1.set_ylabel('Max peak deviation [%]',labelpad=20)
+        ax1.set_xlim(15,t*5)
+        ax1.set_ylim(10,35)       
+        ax1.set_xlabel('Time [a]',labelpad=10)
+        ax1.set_ylabel('Max peak deviation [%]',labelpad=15)
         
         
         # Plt properties for ax2 (bridging)  
         ax2 = ax1.twinx()
         
-        ax2.plot(time, sxy_list, 'b--')
-        ax2.plot(time, sxy_list_extent, 'r--')
-        ax2.plot(time, sxy_list_wideextent, 'k--')
-        ax2.set_ylabel('$\sigma_{xy}$ [MPa]',labelpad = 20)
+        ax2.plot(time, sxy_list, 'b-')
+        #ax2.plot(time, sxy_list_extent, 'b--')
+        #ax2.plot(time, sxy_list_wideextent, 'b:')
+        ax2.set_ylabel('$\sigma_{xy}$ [MPa]',labelpad = 15, color = 'b')
+        
+        for tl in ax2.get_yticklabels():
+            tl.set_color('b')
+            
         ax2.set_ylim(0.0010,0.0045)  
         ax2.tick_params('y')
         
         
-        legend_ax2 = ax2.legend(['Bridging (regular domain)','Bridging (extended domain)','Bridging (wide extended domain)'],loc=2)
+        ax2.yaxis.set_major_formatter(FormatStrFormatter('%.3f'))
+        
+        ax1.yaxis.set_major_locator(MaxNLocator(prune='both'))
+        ax2.yaxis.set_major_locator(MaxNLocator(prune='both'))
+        
+        
+        #legend_ax2 = ax2.legend(['Bridging (regular domain)','Bridging (extended domain)','Bridging (wide extended domain)'],loc=1)
+        legend_ax2 = ax2.legend(['Bridging (regular domain)'],loc=1)
         frame_ax2 = legend_ax2.get_frame()
         frame_ax2.set_facecolor('0.7')
         frame_ax2.set_edgecolor('0.7')
         
-        plt.title('Peak deviation and bridging stresses for a channel width of ' + str(original_width) + ' m', y = 1.05)
+        #plt.title('Peak deviation and bridging stresses for a channel width of ' + str(original_width) + ' m', y = 1.05)
         
         path = str('plots/')
-        fname= str('maxpeak_dev_2d__all' + str(original_width) + '_' + str(t*5) + 'a' + '.eps')
+        fname_eps = str('maxpeak_dev_2d__all' + str(original_width) + '_' + str(t*5) + 'a' + '.eps')
+        fname_png = str('maxpeak_dev_2d__all' + str(original_width) + '_' + str(t*5) + 'a' + '.png')
         
-        fig.savefig(path + fname, format = 'eps',dpi=1000)
+        fig.savefig(path + fname_eps, format = 'eps',dpi=1000,bbox_inches = 'tight') 
+        fig.savefig(path + fname_png, format = 'png',dpi=1000,bbox_inches = 'tight') 
     
     
     
