@@ -8,7 +8,7 @@ Created on Wed Jun 12 14:33:32 2019
 
 import pandas as pd
 from main import ModelRun
-from __plot_params import params
+from __plot_params import params_vertical
 
 #
 import matplotlib.pyplot as plt
@@ -20,7 +20,10 @@ from matplotlib.ticker import FormatStrFormatter
 
 
 
-def compute_allwidths_hd_2d(t=None,
+def compute_allwidths_hd_2d(t1=None,
+                            t2=None,
+                            t3=None,
+                            t4=None,
                         **kwargs):
 
     '''
@@ -42,12 +45,19 @@ def compute_allwidths_hd_2d(t=None,
     num_timesteps = num_timesteps -2
    
     
-    times = [t]
+    nums = ["(a)","(b)","(c)","(d)"]
+    times = [t1, t2,t3,t4]
+    # place text box in upper left in axes coords      
+    props = dict(boxstyle='round', facecolor='wheat')
     
     # Define rc_params for figure
-    fig, ax1 = plt.subplots()  
+    nrow = 1; ncol = 4;
+    fig, ax = plt.subplots(nrows=nrow, ncols=ncol,sharey = True, squeeze = False, constrained_layout=True)
     
-    for i in times:
+    plt.subplots_adjust(bottom=0.1,wspace=0)
+    
+    
+    for ax1,num,t in zip(ax.reshape(-1),nums,times): 
         
         
         # Hydrostatic deviation
@@ -60,6 +70,9 @@ def compute_allwidths_hd_2d(t=None,
         rms_uy_extent = []
         rms_uy_wideextent = []
         
+        peak = []
+        peak_extent = []
+        peak_wideextent = []
         
         time = []
         widths_new = []
@@ -73,9 +86,9 @@ def compute_allwidths_hd_2d(t=None,
             widths_new.append(original_width)
             
             # Set up class
-            mr = ModelRun(150,width,0,0,i,"2")
-            mr_extent = ModelRun(150,width,0,'extent',i,'2')
-            mr_wideextent = ModelRun(150,width,0,'wideextent',i,'2')
+            mr = ModelRun(150,width,0,0,t,"2")
+            mr_extent = ModelRun(150,width,0,'extent',t,'2')
+            mr_wideextent = ModelRun(150,width,0,'wideextent',t,'2')
             
             # Get velocities for y
             uy_normal = mr.get_scalar('velocity')
@@ -175,6 +188,11 @@ def compute_allwidths_hd_2d(t=None,
             rms_uy_extent.append(uy_array_extent)
             rms_uy_wideextent.append(uy_array_wideextent)
             
+            # Append peak deviation
+            peak.append(ht[8])
+            peak_extent.append(ht_extent[8])
+            peak_wideextent.append(ht_wideextent[8])
+            
             
           
       
@@ -191,10 +209,10 @@ def compute_allwidths_hd_2d(t=None,
         x_dist, y_dist = np.meshgrid(z_new, np.linspace(0,15,16))
         
         # Draw the image over the whole plot area
-        plt.rcParams.update(params) 
+        plt.rcParams.update(params_vertical) 
         
         levels = np.linspace(x_dist.min(), x_dist.max(), 100)
-        cs = ax1.contourf(xv,yv,x_dist,levels = levels,cmap='Blues_r', extend = 'both')
+        #cs = ax1.contourf(xv,yv,x_dist,levels = levels,cmap='Blues_r', extend = 'both')
         
         # Erase above the data by filling with white
         ax1.fill_between(widths_new, rms_total, rms_total.min(), color='w')
@@ -205,18 +223,18 @@ def compute_allwidths_hd_2d(t=None,
         ax1.plot(widths_new, rms_total_extent,'k--',linewidth=1.5)
         ax1.plot(widths_new, rms_total_wideextent,'k:',linewidth=1.5)
         
-        ax1.set_ylim(30, 40)
         
-#        cax = fig.add_axes([0.20,0.15,0.5,0.02])
-#        cbar = plt.colorbar(cs,cax=cax,orientation = 'horizontal',ticks = [50,100])
-#        #cbar.set_label('distance') 
-#        cbar.set_ticks([50,100])
-#        cbar.set_label('Distance [regular and extended]', labelpad = 4, fontsize = 8)
-#        cax.xaxis.set_label_position('top')
-#        
-        ax1.set_xlabel('Channel widths' + ' [m]',labelpad=6)
-        ax1.set_ylabel('RMS of hydrostatic deviation [m]',labelpad=6)
-       
+        
+        ax1.text(0.39, 0.95, num + '  t = ' + str(t*5) + 'a', transform=ax1.transAxes, 
+                verticalalignment='top', bbox=props, weight='bold',fontsize=8.5)  
+        ax1.set_ylim(0, 8)
+        ax1.set_yticks([1,3,5,7])
+        ax1.set_xticks([500,1500])
+
+
+        
+        plt.setp(ax1.get_xticklabels(),fontweight = 'bold')
+        plt.setp(ax1.get_yticklabels(),fontweight = 'bold')
      
         ax1.spines['top'].set_visible(True)
         ax1.spines['bottom'].set_visible(True)
@@ -230,9 +248,9 @@ def compute_allwidths_hd_2d(t=None,
            # Plt properties for ax2 (bridging)  
         ax2 = ax1.twinx()
         
-        ax2.plot(widths_new, rms_uy_normal, 'r-')
-        ax2.plot(widths_new, rms_uy_extent, 'r--')
-        ax2.plot(widths_new, rms_uy_wideextent, 'r:')
+        ax2.plot(widths_new, peak, 'r-')
+        ax2.plot(widths_new, peak_extent, 'r--')
+        ax2.plot(widths_new, peak_wideextent, 'r:')
         
         # Set label and color for ax2 (second y-axis)
         
@@ -241,36 +259,50 @@ def compute_allwidths_hd_2d(t=None,
             
         ax2.tick_params('y')
         ax2.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-        
-        legend_ax2 = ax2.legend(['Velocity(regular)','Velocity (extended)', 'Velocity (wide extended)'],loc=1)
-        frame_ax2 = legend_ax2.get_frame()
-        frame_ax2.set_facecolor('0.7')
-        frame_ax2.set_edgecolor('0.7')
-        
 
-        legend = ax1.legend(['t = ' + str(t*5)+' a'+ ' regular','t = ' + str(t*5)+' a' + ' extent', 't = ' + str(t*5)+' a' + ' wideextent'],loc=2)
-                
-        frame = legend.get_frame()
-        frame.set_facecolor('0.7')
-        frame.set_edgecolor('0.7')
+        
+        
+        
         ax2.tick_params(direction='in',length=6,width=2)
-        ax2.set_ylabel('Channel - velocity $u_{y}$ [m/a]',labelpad = 10, color = 'r')
-
-       
-        path = str('plots/allwidths_2d_hd_velo/')
-        fname_eps= str('allwidths_corr_2d_alldomains'+ '_' + str(t*5) + '.pdf')
-        fname_png= str('allwidths_corr_2d_alldomains'+ '_' + str(t*5) + '.png')
         
-        fig.savefig(path + fname_eps, format = 'pdf', dpi=1000, bbox_inches = 'tight')
-        fig.savefig(path + fname_png, format = 'png', dpi=1000, bbox_inches = 'tight')
+        ax2.set_yticks([1,10,20,30])
+        ax2.set_ylim(0,35)
+        ax2.set_yticklabels([])
+       
+        fig.add_subplot(ax1)
+        
+        
+        
+        
+    ax[0][0].set_ylabel('RMS of hydrostatic deviation [m]') 
+    legend = ax[0][3].legend(['regular domain','extended "" ', 'wide-extended "" '],loc="lower center",bbox_to_anchor=[0.52,0.65])                
+    frame = legend.get_frame()
+    frame.set_facecolor('0.7')
+    frame.set_edgecolor('0.7')
+    ax2.axes.get_yaxis().set_visible(True)
+    ax2.set_yticks([0,10,20,30])
+    ax2.set_yticklabels([0,10,20,30])
+    ax2.set_xticks([500,1500])
+    ax2.set_yticks([0,10,20,30])
+    ax2.set_ylabel('Channel peak deviation [m]',visible = True, color= 'r')
+    plt.setp(ax2.get_yticklabels(),fontweight = 'bold',color='r')
+    #fig.suptitle('Widths vs. deviation @ multiple domains' + ' ', weight='bold', fontsize = 12,y=0.94)    
+    fig.text(0.39,0,'Channel widths [m]',va = 'center',fontsize=11)
+     
+        
+        
+        
+        
+    path = str('plots/allwidths_2d_hd_velo/')
+    fname_eps= str('TESTallwidths_corr_2d_alldomains'+ '_' + str(t*5) + '.pdf')
+    fname_png= str('TESTallwidths_corr_2d_alldomains'+ '_' + str(t*5) + '.png')
+        
+    fig.savefig(path + fname_eps, format = 'pdf', dpi=1000,bbox_inches='tight')
+    fig.savefig(path + fname_png, format = 'png', dpi=1000,bbox_inches='tight')
             
             
             
           
     
     return rms_total, rms_total_extent, widths_new
-
-
-if __name__ == '__main__':
-    for i in range (0,200,50):
-        compute_allwidths_hd_2d(t=i)
+    

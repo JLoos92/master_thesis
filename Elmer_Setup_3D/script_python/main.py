@@ -25,7 +25,8 @@ from tempfile import TemporaryFile
 import glob
 from scipy.interpolate import interp1d
 import pandas as pd
-
+import os 
+os.environ["PATH"] += os.pathsep + '/Library/TeX/texbin'
 
 
  
@@ -230,6 +231,12 @@ class ModelRun():
         self.Points = vtk_to_numpy(self.xmlReader.GetOutput().GetPoints().GetData())
         self.Cells =  vtk_to_numpy(self.xmlReader.GetOutput().GetCells().GetData())
         
+        self.x = self.Points[:,0]
+        self.y = self.Points[:,1]
+        self.z = self.Points[:,2]
+        
+        
+        
         # Get outputs specified for 2D - case
         if self.dimensions==str("2"):
              self.sxy = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(' sxy'))
@@ -258,23 +265,123 @@ class ModelRun():
         
         
     def get_scalar(self, 
-                   scalar_name):
+                   scalar_name,
+                   ):
          
          '''
           This method return the array or scalar as a numpy array. Check
           ModelRun().list_var_names for possible input.
+          
          '''   
          
          self.scalar_name = scalar_name
          
          self.scalar = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(str(self.scalar_name)))
+         
 
         
          return self.scalar
      
+     
+        
+      
+    def get_scalar_real(self,
+                        scalar_name
+                        ):
+        '''
+        
+        '''
+        
+        self.scalar_name = scalar_name
+         
+        self.scalar = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(str(self.scalar_name)))
         
         
+        neg = 2687
+        pos = 2688       
+        y_cells = 16
+        x_half_cells = 167
         
+        # Split domain to filter ghost cells
+        x_neg = self.x[:neg]
+        x_pos = self.x[pos:]
+        y_neg = self.y[:neg]
+        y_pos = self.y[pos:]
+        
+        x_neg_ind = np.argwhere(x_neg>=0)
+        x_neg_new = np.delete(x_neg,x_neg_ind)
+        y_neg_new = np.delete(y_neg,x_neg_ind)
+        
+        
+        x_neg_mat = x_neg_new.reshape(y_cells,x_half_cells)
+        x_pos_mat = x_pos.reshape(y_cells,x_half_cells)
+        
+        y_neg_mat = y_neg_new.reshape(y_cells,x_half_cells)
+        y_pos_mat = y_pos.reshape(y_cells,x_half_cells)
+         
+
+        # Return
+        x_mat = np.append(x_neg_mat,x_pos_mat,axis=1)
+        y_mat = np.append(y_neg_mat,y_pos_mat,axis=1)
+        
+        if self.scalar.shape == self.x.shape:
+            
+            sxy_neg = self.scalar[:neg]
+            sxy_pos = self.scalar[pos:]
+            
+            # Deleted for neg            
+            sxy_neg_new = np.delete(sxy_neg,x_neg_ind)
+            
+            sxy_neg_mat = sxy_neg_new.reshape(y_cells,x_half_cells)
+            sxy_pos_mat = sxy_pos.reshape(y_cells,x_half_cells)
+            
+            
+            # Return
+            
+            scalar_mat = np.append(sxy_neg_mat,sxy_pos_mat,axis=1)
+            
+            return x_mat,y_mat,scalar_mat
+        
+        elif self.scalar.shape == self.Points.shape:
+            
+            self.scalar_x = self.scalar[:,0]
+            self.scalar_y = self.scalar[:,1]
+            self.scalar_z = self.scalar[:,2]
+            
+            sxy_neg_x = self.scalar_x[:neg]
+            sxy_pos_x = self.scalar_x[pos:]
+            
+            sxy_neg_y = self.scalar_y[:neg]
+            sxy_pos_y = self.scalar_y[pos:]
+            
+            sxy_neg_z = self.scalar_z[:neg]
+            sxy_pos_z = self.scalar_z[pos:]
+            
+            
+            # Deleted for neg            
+            sxy_neg_new_x = np.delete(sxy_neg_x,x_neg_ind)
+            sxy_neg_new_y = np.delete(sxy_neg_y,x_neg_ind)
+            sxy_neg_new_z = np.delete(sxy_neg_z,x_neg_ind)
+            
+            sxy_neg_mat_x = sxy_neg_new_x.reshape(y_cells,x_half_cells)
+            sxy_pos_mat_x = sxy_pos_x.reshape(y_cells,x_half_cells)
+            
+            sxy_neg_mat_y = sxy_neg_new_y.reshape(y_cells,x_half_cells)
+            sxy_pos_mat_y = sxy_pos_y.reshape(y_cells,x_half_cells)
+            
+            sxy_neg_mat_z = sxy_neg_new_z.reshape(y_cells,x_half_cells)
+            sxy_pos_mat_z = sxy_pos_z.reshape(y_cells,x_half_cells)
+            
+            # Return            
+            scalar_mat_x = np.append(sxy_neg_mat_x,sxy_pos_mat_x,axis=1)
+            scalar_mat_y = np.append(sxy_neg_mat_y,sxy_pos_mat_y,axis=1)
+            scalar_mat_z = np.append(sxy_neg_mat_z,sxy_pos_mat_z,axis=1)
+            
+            return x_mat,y_mat,scalar_mat_x,scalar_mat_y,scalar_mat_z
+            
+            
+            
+            
         
     def cutter(self ,
                GL=None):
@@ -534,7 +641,7 @@ class ModelRun():
             self.x_corr = xy_zmax[0] 
             self.y_corr = xy_zmax[1]
             
-            # Calculation of real hydrostatic thickniss, modelled thickniss and
+            # Calculation of real hydrostatic thickniss, modelled thickness and
             # deviation of hydrostatic equilibrium
             self.thick_model = -self.zs_new+self.zb_new       
             self.thick_calc = np.divide((self.p_w*self.zs_new),(self.p_w-self.p_i))                
@@ -620,11 +727,17 @@ class ModelRun():
             
             peak = np.where(self.thick_calc_2d_bs==self.thick_calc_2d_bs.min())
             hd_peak = hydrostatic_deviation[peak]
+            self.hd_abut = 100-(100/self.thick_calc_2d_bs[peak]*self.lower_model[peak])
             
+            # Get indices of flank 
+            hd_flank = np.max(hydrostatic_deviation)
+            hd_flank_ind = np.where(hydrostatic_deviation == np.max(hydrostatic_deviation))
+            
+            self.deviation_list_flank = abs(100-(100/self.thick_calc_2d_bs[hd_flank_ind]*self.lower_model[hd_flank_ind]))
             
             return x_new_lower, self.thick_calc_2d_bs,self.upper_model, \
                 self.lower_model, self.points, self.fs_lower, self.fs_upper, \
-                self.deviation_list,hd_peak
+                self.deviation_list,self.deviation_list,self.hd_abut, -peak_model
      
 
 

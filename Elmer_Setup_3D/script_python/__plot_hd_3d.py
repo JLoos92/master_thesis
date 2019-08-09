@@ -15,7 +15,7 @@ from scipy.spatial.distance import pdist, squareform
 import matplotlib.pyplot as plt
 from numpy import genfromtxt
 import turbulucid
-from __main__ import ModelRun
+from main import ModelRun
 from scipy.spatial import Delaunay,ConvexHull
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
 from matplotlib import gridspec
@@ -23,7 +23,7 @@ from matplotlib.colorbar import Colorbar
 import matplotlib.ticker as ticker
 from matplotlib.ticker import FormatStrFormatter
 from math import trunc
-from __plot_params import params
+from __plot_params import params_3d,params_horizontal
 
 
 
@@ -82,35 +82,7 @@ class Plot_hydrostatic_deviation():
         """
         
         
-        
-#        #======================================================================
-#        # Setup fonts
-#        #======================================================================
-#        
-#
-        font_annotation = {'color':'black',
-                       'size': '17'
-                }    
-#       
-#        font_title = {'color':'black',
-#               'size':'20',
-#               'weight':'bold'
-#               }
-#
-#        font_axes = {'color':'black',
-#               'size':'14',
-#               'weight':'normal'
-#               }
-#        
-#        font_label = {'color':'black',
-#               'size':'15',
-#               'weight':'normal'
-#               }
-        
-        
-        
-        
-        
+
         
         #======================================================================
         # Define variables for input
@@ -145,6 +117,11 @@ class Plot_hydrostatic_deviation():
         ymax = 5000
         GL = 1056000
         
+        # Colors
+        orange = '#D55E00'
+        blue = '#396AB1'    
+        red = '#CC2529'
+        wheat = '#948B3D'
         
         
         
@@ -152,15 +129,16 @@ class Plot_hydrostatic_deviation():
         # Define figure and plot properties
         #======================================================================
         
-        fig = plt.figure(figsize = (40,40))    
+        fig = plt.figure()    
         
-        gs_0 = gridspec.GridSpec(2,2, hspace = 0.8, wspace = 0.2, figure = fig)
-        self.times = [t1, t2, t3, t4]
-        
+        gs_0 = gridspec.GridSpec(1,1, wspace = 0, figure = fig)
+        self.times = [t1]
+        plt.rcParams.update(params_3d)
+        fig.tight_layout()
         # 2,2 plots with 3 subplots
         for i ,t in zip(range(4), self.times):
             gs00 = gridspec.GridSpecFromSubplotSpec(3,3, \
-            height_ratios=[0.05,1,0.5], hspace = 0.5 ,subplot_spec=gs_0[i])
+            height_ratios=[0.05,0.8,0.5],subplot_spec=gs_0[i])
         
         # Run ModelRun-Class with default or self
             if None is (self.amp,self.width):
@@ -194,18 +172,22 @@ class Plot_hydrostatic_deviation():
             orientation = 'horizontal', ticklocation = 'top') 
             cbar.set_label('Deviation of hydrostatic equilibrium [m] \n' \
             + 't = ' + str(t) + ', a = ' + str(self.amp) + ', width = ' \
-            + str(self.width) ,labelpad=10)
-            plt.rcParams.update(params)
+            + str(self.width) ,labelpad=0.5)
+            cbar.ax.tick_params(direction='in',length=1,width=1)
+            
+            
             ax1.set_xlabel('Distance from grounding line [m]')
-            ax1.set_ylabel('Along flow direction [m]')
+            ax1.set_ylabel('Across flow direction [m]')
             start,end = ax1.get_xlim()
             ax1.set_xticklabels(list(map(int,(np.arange(start,end, 2500)-GL))))
-           
+
+#            ax1.set_xticklabels([6000,10000,12000,15000])
+#            ax1.set_yticklabels([-5000,0,5000])
             ax1.spines['top'].set_visible(False)
             ax1.spines['bottom'].set_visible(False)
             ax1.spines['right'].set_visible(False)
             ax1.spines['left'].set_visible(False)
-            ax1.tick_params(direction='in',length=6,width=2)
+            #ax1.tick_params(direction='in',length=3,width=1)
          
             # Crosssections
             line_cs1 = ax1.vlines(x=cs1, ymin=ymin, ymax=ymax, color='r')
@@ -214,89 +196,104 @@ class Plot_hydrostatic_deviation():
             
             #s,e = yaxis = ax1.get_ylim()
             
-            ax1.text(cs1,-5000,"A",fontdict=font_annotation,ha = 'center', va='top')
-            ax1.text(cs1,5000,"A'",fontdict=font_annotation,ha = 'center', va='bottom')
-            ax1.text(cs2,-5000,"B",fontdict=font_annotation,ha = 'center', va='top')
-            ax1.text(cs2,5000,"B'",fontdict=font_annotation,ha = 'center', va='bottom')
-            ax1.text(cs3,-5000,"C",fontdict=font_annotation,ha = 'center', va='top')
-            ax1.text(cs3,5000,"C'",fontdict=font_annotation,ha = 'center', va='bottom')
+            ax1.text(cs1,-5000,"A",ha = 'center', va='bottom')
+            ax1.text(cs1,5000,"A'",ha = 'center', va='top')
+            ax1.text(cs2,-5000,"B",ha = 'center', va='bottom')
+            ax1.text(cs2,5000,"B'",ha = 'center', va='top')
+            ax1.text(cs3,-5000,"C",ha = 'center', va='bottom')
+            ax1.text(cs3,5000,"C'",ha = 'center', va='top')
             
+            plt.setp(ax1.get_xticklabels(),fontweight = 'bold')
+            plt.setp(ax1.get_yticklabels(),fontweight = 'bold')
             
             # Delaunay triangulation for grid
             delaunay = Delaunay(points)
             ax1.triplot(x,y,delaunay.simplices,alpha=0.05)
+            ax1.set_yticks([-4000,-2000,0,2000,4000])
+            ax1.set_ylim(-5000,5000)
+            ax1.set_xlim(1060000,1079000)
+            #ax1.autoscale_view('tight')
+            plt.subplots_adjust(hspace=0.42)
             
             fig.add_subplot(ax1)
             
-            # Zoomed in rectangle for better visualisation of channel
-            axins = zoomed_inset_axes(ax1,1.5,loc='upper right',borderpad=5)
-            axins.tripcolor(x,y,ht_array,shading='gouraud',vmin=-15,vmax=15,cmap = 'RdBu')
-            axins.set_xlim(x1,x2)
-            axins.set_ylim(y1,y2)
-            plt.yticks(visible=False)
-            plt.xticks(visible=False)
-            mark_inset(ax1,axins,loc1=2,loc2=4,fc="none", ec="0.5")
+#            # Zoomed in rectangle for better visualisation of channel
+#            axins = zoomed_inset_axes(ax1,1.5,loc='upper right',borderpad=5)
+#            axins.tripcolor(x,y,ht_array,shading='gouraud',vmin=-15,vmax=15,cmap = 'RdBu')
+#            axins.set_xlim(x1,x2)
+#            axins.set_ylim(y1,y2)
+#            plt.yticks(visible=False)
+#            plt.xticks(visible=False)
+#            mark_inset(ax1,axins,loc1=2,loc2=4,fc="none", ec="0.5")
                 
            
             
             #------------------------------------------------------------------
             ax2 = plt.Subplot(fig,gs00[2,0])
-            lower = c1[0]
-            upper = c1[1]
+            upper = c1[0]
+            lower = c1[1]
             original = c1[2]
-            ax2.plot(lower,'b-', label = 'Modelled thickness')
-            ax2.plot(upper,'b')
-            ax2.plot(original,'r--', label = 'Hydrostatic thickness')
-            ax2.legend(loc = 'lower right', bbox_to_anchor=(0.65,0.67))
-            ax2.grid()
-            ax2.set_xlabel('Width [m]')
-            ax2.set_ylabel('Height [m]')
-            ax2.set_ylim([-350,55])
+            ax2.plot(lower,'k-')
+            #ax2.plot(upper,'b')
+            ax2.plot(original,linestyle = '--', color = blue)
+#            legend_ax2 = ax2.legend(['Modelled thickness','Hydrostatic thickness'],loc="upper right", prop=dict(weight='bold'))
+#            frame_ax2 = legend_ax2.get_frame()
+#            frame_ax2.set_facecolor('0.7')
+#            frame_ax2.set_edgecolor('0.7')
+            
+            ax2.set_ylabel('Shelf elevation [m]')
+            ax2.set_xlim(-5000,5000)
+            ax2.set_ylim([-350,-150])
             bottom, top = ax2.get_ylim()
-            ax2.text(ymin,top,"A",fontdict=font_annotation,ha = 'right', va='bottom')
-            ax2.text(ymax,top,"A'",fontdict=font_annotation,ha = 'left', va='bottom')
+            ax2.text(ymin,top,"A",ha = 'right', va='bottom')
+            ax2.text(ymax,top,"A'",ha = 'left', va='bottom')
+            ax2.set_xticks([-4000,0,4000])
             fig.add_subplot(ax2)
-           
-#            a
-            
-            
+
             
             #------------------------------------------------------------------
             ax3 = plt.Subplot(fig,gs00[2,1])
-            lower = c2[0]
-            upper = c2[1]
+            upper = c2[0]
+            lower = c2[1]
             original = c2[2]
-            ax3.plot(lower,'b-')
-            ax3.plot (upper,'b')
-            ax3.plot(original,'r--')
+            ax3.plot(lower,'k-')
+            #ax3.plot (upper,'b')
+            ax3.plot(original,linestyle = '--', color = blue)
             
-            ax3.grid()
-            ax3.set_ylim([-350,55])
+            ax3.set_xlim(-5000,5000)
+            ax3.set_ylim([-350,-150])
             bottom, top = ax3.get_ylim()
-            ax3.text(ymin,top,"B",fontdict=font_annotation,ha = 'right', va='bottom')
-            ax3.text(ymax,top,"B'",fontdict=font_annotation,ha = 'left', va='bottom')
+            ax3.set_xlabel('Width [m]')
+            ax3.text(ymin,top,"B",ha = 'right', va='bottom')
+            ax3.text(ymax,top,"B'",ha = 'left', va='bottom')
+            ax3.axes.get_yaxis().set_visible(False)
+            ax3.set_xticks([-4000,0,4000])
             fig.add_subplot(ax3)
             
             #------------------------------------------------------------------
             ax4 = plt.Subplot(fig,gs00[2,2])
-            lower = c3[0]
-            upper = c3[1]
+            upper = c3[0]
+            lower = c3[1]
             original = c3[2]
-            ax4.plot(lower,'b-')
-            ax4.plot (upper,'b')
-            ax4.plot(original,'r--')
+            ax4.plot(lower,'k-')
+            #ax4.plot (upper,'b')
+            ax4.plot(original,linestyle = '--', color = blue)
             
-            ax4.grid()
-            ax4.set_ylim([-350,55])
+            ax4.set_xlim(-5000,5000)
+            ax4.set_ylim([-350,-150])
             bottom, top = ax4.get_ylim()
-            ax4.text(ymin, top,"C",fontdict=font_annotation,ha = 'right', va='bottom')
-            ax4.text(ymax, top,"C'",fontdict=font_annotation,ha = 'left', va='bottom')
+            ax4.text(ymin, top,"C",ha = 'right', va='bottom')
+            ax4.text(ymax, top,"C", ha = 'left', va='bottom')
+            ax4.axes.get_yaxis().set_visible(False)
+            ax4.set_xticks([-4000,0,4000])
             fig.add_subplot(ax4)
             
-#        path = str('plots/')
-#        fname= str('3d_' + str(self.amp) + str(self.width) + '.eps')
-#        
-#        fig.savefig(path + fname, format = 'eps', dpi=1000)
+        path = str('plots/')
+        fname= str('3d_' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.png')
+        fname_pdf = str('3d_' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.pdf')
+        
+        fig.savefig(path + fname, format = 'png', dpi=1000)
+        fig.savefig(path + fname_pdf, format = 'pdf', dpi=1000)
                   
-        fig.show()
+        plt.show()
         
