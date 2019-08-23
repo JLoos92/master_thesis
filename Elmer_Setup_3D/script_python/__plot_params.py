@@ -166,7 +166,7 @@ params_profile = {
                         }
 
 params_horizontal = {
-                        'legend.fontsize' : 4,
+                        'legend.fontsize' : 6,
                         'font.size':6.5,
                         'font.weight': 'bold',
                         'xtick.labelsize': 6.5,
@@ -188,19 +188,12 @@ params_horizontal = {
                         'figure.titlesize':6.5,
                         'grid.linestyle': '--',
                         'axes.grid': False,
-                        'lines.linewidth': 1.5,
+                        'lines.linewidth': 1,
                         'xtick.minor.visible': False,
                         'ytick.minor.visible' : False,
-                        'figure.constrained_layout.use' : True,
-                        #'text.latex.preamble' :[
-                        #    r'\usepackage{tgheros}',    # helvetica font
-                        #    r'\usepackage{sansmath}',   # math-font matching  helvetica
-                        #    r'\sansmath'                # actually tell tex to use it!
-                        #    r'\usepackage{siunitx}',    # micro symbols
-                        #    r'\sisetup{detect-all}',    # force siunitx to use the fonts
-                       # ]  
-                         # False for peak deviation                        
+                        'figure.constrained_layout.use' : True                      
                         }
+
 params_horizontal_single = {
                         'legend.fontsize' : 9,
                         'font.size':11,

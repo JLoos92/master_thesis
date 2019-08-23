@@ -103,7 +103,8 @@ def hd_line_plot_2d(t1 = None,
 
             # Set labels
             #ax.set_xlabel('Channel width [m]', visible = False)
-           
+            
+
 
             ax.set_xticks([-original_width,0,original_width])
             ax.set_yticks([-250,-200,-100,-50])
@@ -124,14 +125,15 @@ def hd_line_plot_2d(t1 = None,
             ax.tick_params(direction='in',length=4,width=2)
             ax.set_xlim(-1500,1500)
             ax.set_ylim(-290,0)
-             
+            
+            
+
             
             # Hydrostatic thickness
             ax.plot(new_x,calc_thickness_bs, linestyle = "--", color = blue ,linewidth=1.5)
             
             # Legend
-            legend_ax2 = ax.legend(['Modelled thickness','Hydrostatic thickness'],loc="upper right", prop=dict(weight='bold'))
-            #legend_ax2 = ax.legend(['Surface (zs)'],loc="upper right", prop=dict(weight='bold'))
+            legend_ax2 = ax.legend(['Modelled thickness','Hydrostatic thickness'],loc="center right", prop=dict(weight='bold'))
             frame_ax2 = legend_ax2.get_frame()
             frame_ax2.set_facecolor('0.7')
             frame_ax2.set_edgecolor('0.7')
@@ -161,13 +163,17 @@ def hd_line_plot_2d(t1 = None,
             plt.setp(axs.get_yticklabels(),fontweight = 'bold',color= red)
             
             axs.plot(x_line, hydrostatic_deviation, linestyle = ':', color = red)
-            
+            # Legend
+            legend_ax2 = ax.legend(['Modelled thickness','Hydrostatic thickness'],bbox_to_anchor=[0.8,0.3],loc="center", prop=dict(weight='bold'))
+            frame_ax2 = legend_ax2.get_frame()
+            frame_ax2.set_facecolor('0.7')
+            frame_ax2.set_edgecolor('0.7')
 
 
             title = str('Hydrostatic deviation')
             title_upper = str('Upper model-domain (zs)')
             
-            ax.text(0.04, 0.92, num + '  t = ' + str(t*5) + 'a', transform=ax.transAxes, 
+            ax.text(0.04, 0.92, num + '  t = ' + str(t*5) + 'a\n @ cw = ' + str(original_width*2) + 'm', transform=ax.transAxes, 
                 verticalalignment='top', bbox=props, weight='bold')
             
             # Spines in subplot
@@ -184,9 +190,32 @@ def hd_line_plot_2d(t1 = None,
     # Set legend downer off
     ax1[1][0].get_legend().remove()    
     
-    fig.suptitle(title + ' @ cw = ' + str(original_width*2) + 'm', y = 1.01)
+    #fig.suptitle(title + ' @ cw = ' + str(original_width*2) + 'm', y = 1.01)
     
     
+    ax1[1][0].annotate('Channel peak deviation',xy=(0,-242),xytext=(0,-50),va='bottom',ha='center',
+                        arrowprops=dict(facecolor='black',shrink=0.01,width=0.5,headwidth=4,headlength=3.2))
+    
+    ax1[1][0].vlines(-original_width,-290,-50,linewidth=0.5)
+    ax1[1][0].vlines(original_width,-290,-50,linewidth=0.5)
+    ax1[1][0].vlines(-original_width,-20,0,linewidth=0.5)
+    ax1[1][0].vlines(original_width,-20,0,linewidth=0.5)
+    
+    ax1[0][0].vlines(-original_width,-290,-55,linewidth=0.5)
+    ax1[0][0].vlines(original_width,-290,-55,linewidth=0.5)
+    ax1[0][0].vlines(-original_width,-30,0,linewidth=0.5)
+    ax1[0][0].vlines(original_width,-30,0,linewidth=0.5)
+    
+    
+    ax1[0][0].text(0,-120,'ICD',ha='center')
+    ax1[1][0].text(-1000,-200,'OCD',ha='center')
+    ax1[1][0].text(1000,-200,'OCD',ha='center')
+    
+    ax1[0][0].annotate('',xy=(-420,-85),xytext=(420,-85),
+                        arrowprops=dict(facecolor='black',arrowstyle='<->'))
+    ax1[0][0].text(0,-55,' Channel abutment deviation',ha='center')
+    ax1[0][0].annotate('Outer peak deviation',xy=(-780,-168),xytext=(-780,-230),va='bottom',ha='center',
+                        arrowprops=dict(facecolor='black',shrink=0.01,width=0.4,headwidth=3,headlength=3))
     plt.xlabel('Channel width [m]')
     ax_common.set_ylabel('Shelf elevation [m]',labelpad=12)
     

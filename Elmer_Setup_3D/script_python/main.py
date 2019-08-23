@@ -25,6 +25,7 @@ from tempfile import TemporaryFile
 import glob
 from scipy.interpolate import interp1d
 import pandas as pd
+
 import os 
 os.environ["PATH"] += os.pathsep + '/Library/TeX/texbin'
 
@@ -55,7 +56,7 @@ class ModelRun():
     
     """
     Class ModelRun:
-    Here description
+    
     """
 
     
@@ -433,18 +434,7 @@ class ModelRun():
         self.clipData.SetClipFunction(self.plane_shelf_end)
         self.clipData.SetInputConnection(self.clipData_shelf.GetOutputPort())
         self.clipData.Update()
-        
-        
-        #self.clipData = self.clipData.GetOutput()
-       # self.dict_var_clipped = self.clipData.SetInputConnection(self.xmlReader.GetOutputPort().GetPointArrayName())
-        #self.out = vtk_to_numpy(self.cutter.GetOutput().GetPointData().GetArray(self.var))
-        #Check for arrays
-       # for i in range(self.narrays):
-    
-           
-           # self.dict_var[self.clipData.GetPointArrayName(i)] = self.clipData.GetOutput().GetPointData().GetArray(i)
-        
-       
+            
         
         return self.clipData
         
@@ -527,9 +517,7 @@ class ModelRun():
         # Make tuples of the groupings of x,y and the corresponding min Z values
         return (x_sorted[cut_idx], y_sorted[cut_idx]), minZ.tolist()
     
-         # Function to find min-values of z_s
-         
-   
+
     
     def selectMaxz(self,x ,y, z):
         

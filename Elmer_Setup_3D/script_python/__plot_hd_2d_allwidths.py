@@ -8,16 +8,14 @@ Created on Wed Jun 12 14:33:32 2019
 
 import pandas as pd
 from main import ModelRun
-from __plot_params import params_vertical
+from __plot_params import params_vertical,params_horizontal
 
 #
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import FormatStrFormatter
-
-
-
-
+import os 
+os.environ["PATH"] += os.pathsep + '/Library/TeX/texbin'
 
 
 def compute_allwidths_hd_2d(t1=None,
@@ -33,7 +31,7 @@ def compute_allwidths_hd_2d(t1=None,
     
     
     # List of widths for extended and tight domain
-    list_widths = list(np.arange(5000,10000,1000))
+
     list_widths_1 = list(np.arange(10000,100000,10000))
     list_widths_2 = list(np.arange(200000,900000,100000))
     
@@ -55,7 +53,8 @@ def compute_allwidths_hd_2d(t1=None,
     fig, ax = plt.subplots(nrows=nrow, ncols=ncol,sharey = True, squeeze = False, constrained_layout=True)
     
     plt.subplots_adjust(bottom=0.1,wspace=0)
-    
+    # Draw the image over the whole plot area
+    plt.rcParams.update(params_horizontal) 
     
     for ax1,num,t in zip(ax.reshape(-1),nums,times): 
         
@@ -208,8 +207,7 @@ def compute_allwidths_hd_2d(t1=None,
         
         x_dist, y_dist = np.meshgrid(z_new, np.linspace(0,15,16))
         
-        # Draw the image over the whole plot area
-        plt.rcParams.update(params_vertical) 
+        
         
         levels = np.linspace(x_dist.min(), x_dist.max(), 100)
         #cs = ax1.contourf(xv,yv,x_dist,levels = levels,cmap='Blues_r', extend = 'both')
@@ -219,14 +217,14 @@ def compute_allwidths_hd_2d(t1=None,
         ax1.fill_between(widths_new, rms_total_extent, rms_total.max(), color='w')
         
         # Make the line plot over the top
-        ax1.plot(widths_new, rms_total, 'k-', linewidth=1.5)
-        ax1.plot(widths_new, rms_total_extent,'k--',linewidth=1.5)
-        ax1.plot(widths_new, rms_total_wideextent,'k:',linewidth=1.5)
+        ax1.plot(widths_new, rms_total, 'k-', linewidth=1)
+        ax1.plot(widths_new, rms_total_extent,'k--',linewidth=1)
+        ax1.plot(widths_new, rms_total_wideextent,'k:',linewidth=1)
         
         
         
-        ax1.text(0.39, 0.95, num + '  t = ' + str(t*5) + 'a', transform=ax1.transAxes, 
-                verticalalignment='top', bbox=props, weight='bold',fontsize=8.5)  
+        ax1.text(0.2, 0.95, num + '  t = ' + str(t*5) + 'a', transform=ax1.transAxes, 
+                verticalalignment='top', bbox=props, weight='bold')  
         ax1.set_ylim(0, 8)
         ax1.set_yticks([1,3,5,7])
         ax1.set_xticks([500,1500])
@@ -240,7 +238,7 @@ def compute_allwidths_hd_2d(t1=None,
         ax1.spines['bottom'].set_visible(True)
         ax1.spines['right'].set_visible(True)
         ax1.spines['left'].set_visible(True)
-        ax1.tick_params(direction='in',length=6,width=2)
+        ax1.tick_params(direction='in',length=3,width=1)
 
 
         # Make twinx velocity plot
@@ -248,9 +246,9 @@ def compute_allwidths_hd_2d(t1=None,
            # Plt properties for ax2 (bridging)  
         ax2 = ax1.twinx()
         
-        ax2.plot(widths_new, peak, 'r-')
-        ax2.plot(widths_new, peak_extent, 'r--')
-        ax2.plot(widths_new, peak_wideextent, 'r:')
+        ax2.plot(widths_new, peak, 'r-', linewidth = 1)
+        ax2.plot(widths_new, peak_extent, 'r--', linewidth = 1)
+        ax2.plot(widths_new, peak_wideextent, 'r:', linewidth = 1)
         
         # Set label and color for ax2 (second y-axis)
         
@@ -263,31 +261,31 @@ def compute_allwidths_hd_2d(t1=None,
         
         
         
-        ax2.tick_params(direction='in',length=6,width=2)
+        ax2.tick_params(direction='in',length=3,width=1)
         
         ax2.set_yticks([1,10,20,30])
         ax2.set_ylim(0,35)
         ax2.set_yticklabels([])
-       
+        ax2.grid(False)
         fig.add_subplot(ax1)
         
         
         
         
     ax[0][0].set_ylabel('RMS of hydrostatic deviation [m]') 
-    legend = ax[0][3].legend(['regular domain','extended "" ', 'wide-extended "" '],loc="lower center",bbox_to_anchor=[0.52,0.65])                
+    legend = ax[0][2].legend(['regular','extended', 'wide-extended'],loc="lower center",bbox_to_anchor=[0.52,0.65],fontsize = 5)                
     frame = legend.get_frame()
     frame.set_facecolor('0.7')
     frame.set_edgecolor('0.7')
     ax2.axes.get_yaxis().set_visible(True)
-    ax2.set_yticks([0,10,20,30])
+    ax2.set_yticks([1,10,20,30])
     ax2.set_yticklabels([0,10,20,30])
     ax2.set_xticks([500,1500])
     ax2.set_yticks([0,10,20,30])
     ax2.set_ylabel('Channel peak deviation [m]',visible = True, color= 'r')
     plt.setp(ax2.get_yticklabels(),fontweight = 'bold',color='r')
     #fig.suptitle('Widths vs. deviation @ multiple domains' + ' ', weight='bold', fontsize = 12,y=0.94)    
-    fig.text(0.39,0,'Channel widths [m]',va = 'center',fontsize=11)
+    fig.text(0.39,0,'Channel widths [m]',va = 'center',fontsize=6.5)
      
         
         
@@ -299,10 +297,6 @@ def compute_allwidths_hd_2d(t1=None,
         
     fig.savefig(path + fname_eps, format = 'pdf', dpi=1000,bbox_inches='tight')
     fig.savefig(path + fname_png, format = 'png', dpi=1000,bbox_inches='tight')
-            
-            
-            
-          
     
-    return rms_total, rms_total_extent, widths_new
+    plt.show()
     

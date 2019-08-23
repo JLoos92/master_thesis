@@ -25,6 +25,8 @@ from matplotlib.ticker import FormatStrFormatter
 from math import trunc
 from __plot_params import params_3d,params_horizontal
 
+import os 
+os.environ["PATH"] += os.pathsep + '/Library/TeX/texbin'
 
 
 
@@ -36,7 +38,7 @@ class Plot_hydrostatic_deviation():
     """
     Class Plot_hydrostatic_deviation:
         
-    Plots the hydrostatic deviation at four timesteps which are defined by
+    Plots the hydrostatic deviation at four timesteps which are defined by 
     t1 - t4. The amplitude of the bedrock bump in the 3D-case is not changed
     and will remain at 250m, whereas the hydrostatic deviation is a function of
     the channel width, the user can change the width of the bump for this spec-
@@ -52,9 +54,6 @@ class Plot_hydrostatic_deviation():
     
     def __init__(self,
                  t1 = None,
-                 t2 = None,
-                 t3 = None,
-                 t4 = None,
                  amp = None,
                  width = None,
                  **kwargs): 
@@ -90,17 +89,12 @@ class Plot_hydrostatic_deviation():
        
               
         # Choose default timesteps if timesteps are not given
-        if  None is (t1,t2,t3,t4):
+        if  None is (t1):
                 t1 = 10
-                t2 = 50
-                t3 = 100
-                t4 = 200
+                
                 
                 
         self.t1 = t1
-        self.t2 = t2
-        self.t3 = t2
-        self.t4 = t3
         self.amp = amp
         self.width = width
         
@@ -115,6 +109,8 @@ class Plot_hydrostatic_deviation():
         # Boundaries for model domain
         ymin = -5000
         ymax = 5000
+        ymin_2 = -2000
+        ymax_2 = 2000
         GL = 1056000
         
         # Colors
@@ -133,7 +129,7 @@ class Plot_hydrostatic_deviation():
         
         gs_0 = gridspec.GridSpec(1,1, wspace = 0, figure = fig)
         self.times = [t1]
-        plt.rcParams.update(params_3d)
+        plt.rcParams.update(params_horizontal)
         fig.tight_layout()
         # 2,2 plots with 3 subplots
         for i ,t in zip(range(4), self.times):
@@ -170,19 +166,20 @@ class Plot_hydrostatic_deviation():
             cbar = plt.subplot(gs00[0,:])
             cbar = Colorbar(ax=cbar, mappable = im, extend = 'both', \
             orientation = 'horizontal', ticklocation = 'top') 
-            cbar.set_label('Deviation of hydrostatic equilibrium [m] \n' \
-            + 't = ' + str(t) + ', a = ' + str(self.amp) + ', width = ' \
-            + str(self.width) ,labelpad=0.5)
-            cbar.ax.tick_params(direction='in',length=1,width=1)
+            cbar.set_label('Hydrostatic dev. [m]',labelpad=0)
+            cbar.ax.tick_params(direction='in',length=1,width=1,pad=0)
             
             
             ax1.set_xlabel('Distance from grounding line [m]')
             ax1.set_ylabel('Across flow direction [m]')
             start,end = ax1.get_xlim()
-            ax1.set_xticklabels(list(map(int,(np.arange(start,end, 2500)-GL))))
-
-#            ax1.set_xticklabels([6000,10000,12000,15000])
-#            ax1.set_yticklabels([-5000,0,5000])
+            #ax1.set_xticklabels(list(map(int,(np.arange(start,end, 2500)-GL))))
+            ax1.xaxis.tick_top()
+            #ax1.xaxis.set_major_locator(ticker.MaxNLocator(3))
+            ax1.xaxis.set_tick_params(pad=0)
+            ax1.set_xticks([cs1,cs2,cs3])
+            ax1.set_xticklabels([cs1-GL,cs2-GL,cs3-GL])
+            
             ax1.spines['top'].set_visible(False)
             ax1.spines['bottom'].set_visible(False)
             ax1.spines['right'].set_visible(False)
@@ -215,78 +212,101 @@ class Plot_hydrostatic_deviation():
             #ax1.autoscale_view('tight')
             plt.subplots_adjust(hspace=0.42)
             
+            
+            # place text box in upper left in axes coords      
+            props = dict(boxstyle='round', facecolor='wheat')
+            ax1.text(0.2, 0.92,'(b) t = ' + str(t1) + 'a\n @ cw = ' + str(self.width*2) + 'm', transform=ax1.transAxes, 
+                     verticalalignment='top', bbox=props,weight='bold')
+            
+            
             fig.add_subplot(ax1)
             
-#            # Zoomed in rectangle for better visualisation of channel
-#            axins = zoomed_inset_axes(ax1,1.5,loc='upper right',borderpad=5)
-#            axins.tripcolor(x,y,ht_array,shading='gouraud',vmin=-15,vmax=15,cmap = 'RdBu')
-#            axins.set_xlim(x1,x2)
-#            axins.set_ylim(y1,y2)
-#            plt.yticks(visible=False)
-#            plt.xticks(visible=False)
-#            mark_inset(ax1,axins,loc1=2,loc2=4,fc="none", ec="0.5")
-                
-           
-            
+         
             #------------------------------------------------------------------
             ax2 = plt.Subplot(fig,gs00[2,0])
             upper = c1[0]
-            lower = c1[1]
-            original = c1[2]
-            ax2.plot(lower,'k-')
+            lower_2 = c1[1]
+            original_2 = c1[2]
+            ax2.plot(lower_2,'k-')
             #ax2.plot(upper,'b')
-            ax2.plot(original,linestyle = '--', color = blue)
+            ax2.plot(original_2,linestyle = '--', color = blue)
 #            legend_ax2 = ax2.legend(['Modelled thickness','Hydrostatic thickness'],loc="upper right", prop=dict(weight='bold'))
 #            frame_ax2 = legend_ax2.get_frame()
 #            frame_ax2.set_facecolor('0.7')
 #            frame_ax2.set_edgecolor('0.7')
             
             ax2.set_ylabel('Shelf elevation [m]')
-            ax2.set_xlim(-5000,5000)
+            ax2.set_xlim(-2000,2000)
             ax2.set_ylim([-350,-150])
+            ax2.set_yticklabels([-300,-250,-200])
             bottom, top = ax2.get_ylim()
-            ax2.text(ymin,top,"A",ha = 'right', va='bottom')
-            ax2.text(ymax,top,"A'",ha = 'left', va='bottom')
-            ax2.set_xticks([-4000,0,4000])
+            ax2.text(ymin_2,top,"A",ha = 'right', va='bottom')
+            ax2.text(ymax_2,top,"A'",ha = 'left', va='bottom')
+            ax2.set_xticks([-1500,0,1500])
             fig.add_subplot(ax2)
 
             
             #------------------------------------------------------------------
             ax3 = plt.Subplot(fig,gs00[2,1])
             upper = c2[0]
-            lower = c2[1]
-            original = c2[2]
-            ax3.plot(lower,'k-')
+            lower_3 = c2[1]
+            original_3 = c2[2]
+            ax3.plot(lower_3,'k-')
             #ax3.plot (upper,'b')
-            ax3.plot(original,linestyle = '--', color = blue)
+            ax3.plot(original_3,linestyle = '--', color = blue)
             
-            ax3.set_xlim(-5000,5000)
+            ax3.set_xlim(-2000,2000)
             ax3.set_ylim([-350,-150])
+            ax3.set_yticks([-300,-250,-200])
             bottom, top = ax3.get_ylim()
             ax3.set_xlabel('Width [m]')
-            ax3.text(ymin,top,"B",ha = 'right', va='bottom')
-            ax3.text(ymax,top,"B'",ha = 'left', va='bottom')
+            ax3.text(ymin_2,top,"B",ha = 'right', va='bottom')
+            ax3.text(ymax_2,top,"B'",ha = 'left', va='bottom')
             ax3.axes.get_yaxis().set_visible(False)
-            ax3.set_xticks([-4000,0,4000])
+            ax3.set_xticks([-1500,0,1500])
             fig.add_subplot(ax3)
             
             #------------------------------------------------------------------
             ax4 = plt.Subplot(fig,gs00[2,2])
             upper = c3[0]
-            lower = c3[1]
-            original = c3[2]
-            ax4.plot(lower,'k-')
+            lower_4 = c3[1]
+            original_4 = c3[2]
+            ax4.plot(lower_4,'k-')
             #ax4.plot (upper,'b')
-            ax4.plot(original,linestyle = '--', color = blue)
+            ax4.plot(original_4,linestyle = '--', color = blue)
             
-            ax4.set_xlim(-5000,5000)
+            ax4.set_xlim(-2000,2000)
             ax4.set_ylim([-350,-150])
+            ax3.set_yticks([-300,-250,-200])
             bottom, top = ax4.get_ylim()
-            ax4.text(ymin, top,"C",ha = 'right', va='bottom')
-            ax4.text(ymax, top,"C", ha = 'left', va='bottom')
+            ax4.text(ymin_2, top,"C",ha = 'right', va='bottom')
+            ax4.text(ymax_2, top,"C", ha = 'left', va='bottom')
             ax4.axes.get_yaxis().set_visible(False)
-            ax4.set_xticks([-4000,0,4000])
+            ax4.set_xticks([-1500,0,1500])
+            
             fig.add_subplot(ax4)
+            #------------------------------------------------------------------
+            
+            ax4_twin = ax4.twinx()
+            ax4_twin.plot(original_4-lower_4,color=red,linestyle=':')
+            ax4_twin.set_ylim(-15,15)
+            ax4_twin.set_yticks([-10,-5,0,5,10])
+            ax4_twin.set_ylabel('HD [m]',color=red)
+            
+            ax3_twin = ax3.twinx()
+            ax3_twin.plot(original_3-lower_3,color=red,linestyle=':')
+            ax3_twin.set_yticks([-10,-5,0,5,10])
+            ax3_twin.set_yticklabels([])
+            ax3_twin.set_ylim(-15,15)
+            
+            ax2_twin = ax2.twinx()
+            ax2_twin.plot(original_2-lower_2,color=red,linestyle=':')
+            ax2_twin.set_yticks([-10,-5,0,5,10])
+            ax2_twin.set_yticklabels([])
+            ax2_twin.set_ylim(-15,15)
+             
+            plt.setp(ax4_twin.get_yticklabels(),color=red)
+            
             
         path = str('plots/')
         fname= str('3d_' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.png')
