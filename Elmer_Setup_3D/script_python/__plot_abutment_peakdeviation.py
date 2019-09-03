@@ -52,6 +52,7 @@ def compute_abutment_peakdeviation(t_end=None,
     nums = ["(a)","(b)","(c)","(d)","(e)","(f)"]
     
     orange = '#D55E00'
+    red = '#CC2529'
     fig, axs = plt.subplots(1,1, sharex=True, sharey = True) 
     time = [t_end]
     
@@ -101,7 +102,7 @@ def compute_abutment_peakdeviation(t_end=None,
     
     axs.set_ylabel('Channel peak deviation [\%]')    
     axs.set_xlabel('Time [a]')    
-    legend = axs.legend(['cw = ' + str(original_width(width_1)),'cw = ' + str(original_width(width_2))],loc='upper right')                
+    legend = axs.legend(['cw = ' + str(original_width(width_1)),'cw = ' + str(original_width(width_2))],loc='upper left')                
     frame = legend.get_frame()
     frame.set_facecolor('0.7')
     frame.set_edgecolor('0.7')   
@@ -110,8 +111,12 @@ def compute_abutment_peakdeviation(t_end=None,
     ax1.plot(times,abutment_narrow,'r-')
     ax1.plot(times,abutment_wide,'r:')
     ax1.set_ylim(0,22)
-    ax1.set_ylabel('Channel abutment deviation [\%]')   
-    
+    ax1.set_ylabel('Channel abutment deviation [\%]',color=red)   
+    plt.setp(ax1.get_yticklabels(),color=red)
+    legend_1 = ax1.legend(['cw = ' + str(original_width(width_1)),'cw = ' + str(original_width(width_2))],loc='upper right')                
+    frame = legend_1.get_frame()
+    frame.set_facecolor('0.7')
+    frame.set_edgecolor('0.7')   
         
       
     

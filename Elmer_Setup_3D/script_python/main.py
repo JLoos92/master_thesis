@@ -93,7 +93,7 @@ class ModelRun():
             number of timestep
         
         dimensions : string
-            2d or 3d
+            2-D or 3-D
         """
         
         
@@ -780,28 +780,46 @@ class ModelRun():
         
         
         """
-        # Set xcoord and variable for cut and slice method 
         
+        # Set xcoord and variable for cut and slice method         
         self.xcoord = xcoord
         self.var = var
+        self.levels = 19
         
-        #Cutter1
         
+        # Arange plane to cut
         self.line=vtk.vtkPlane()
         self.line.SetOrigin(self.xcoord,0,0)
         self.line.SetNormal(1,0,0)
         
-        self.clipped_area = self.cutter()
-        self.cutter = vtk.vtkCutter()   
-        self.cutter.SetCutFunction(self.line)
-        self.cutter.SetInputConnection(self.clipped_area.GetOutputPort())
-        self.cutter.Update()
-        self.line_points = vtk_to_numpy(self.cutter.GetOutput().GetPoints().GetData())
+        self.clipped_area_3D = self.cutter()
+        # Get cutter
+        self.cutter_3D = vtk.vtkCutter()   
+        self.cutter_3D.SetCutFunction(self.line)
+        self.cutter_3D.SetInputConnection(self.clipped_area_3D.GetOutputPort())
+        self.cutter_3D.Update()
+        self.line_points = vtk_to_numpy(self.cutter_3D.GetOutput().GetPoints().GetData())
         
-        self.out = vtk_to_numpy(self.cutter.GetOutput().GetPointData().GetArray(self.var))
+        # Write numpy array
+        self.out = vtk_to_numpy(self.cutter_3D.GetOutput().GetPointData().GetArray(self.var))
+        
+        df = pd.DataFrame({'y':self.line_points[:,1],'z':self.line_points[:,2],'scalar':self.out})
+        df = df.sort_values(by=['y','z'])
+        
+        
+        mat_sorted = df.values
+        
+        y_sort = mat_sorted[:,0]
+        z_sort = mat_sorted[:,1]
+        sxy_sort = mat_sorted[:,2]
+        
+        self.y_mat = np.flipud(y_sort.reshape(int(y_sort.size/self.levels),self.levels).T)
+        self.z_mat = np.flipud(z_sort.reshape(int(y_sort.size/self.levels),self.levels).T)
+        self.scalar_mat = np.flipud(sxy_sort.reshape(int(y_sort.size/self.levels),self.levels).T)        
+        
 
 
-        return self.out, self.line_points
+        return self.out, self.line_points,self.y_mat,self.z_mat,self.scalar_mat
 
 
         

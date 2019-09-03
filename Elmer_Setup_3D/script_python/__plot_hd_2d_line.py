@@ -107,7 +107,7 @@ def hd_line_plot_2d(t1 = None,
 
 
             ax.set_xticks([-original_width,0,original_width])
-            ax.set_yticks([-250,-200,-100,-50])
+            ax.set_yticks([-250,-200,-100,-50,0,50])
             #ax.set_yticks([10,20,30,40])
             plt.setp(ax.get_xticklabels(),fontweight = 'bold')
             plt.setp(ax.get_yticklabels(),fontweight = 'bold')
@@ -119,12 +119,13 @@ def hd_line_plot_2d(t1 = None,
             
             # Plot lines
             ax.plot(x_line,lower,'k-',linewidth=1.5)
+            ax.plot(x_line,upper,'k-',linewidth=1.5,label='_nolegend_')
             ax.fill_between(x_line, lower, lower.min(), color='w')
             #ax.plot(x_line,upper,'b-',linewidth=1)
             ax.fill_between(x_line, upper, upper.max(), color='w')
             ax.tick_params(direction='in',length=4,width=2)
             ax.set_xlim(-1500,1500)
-            ax.set_ylim(-290,0)
+            ax.set_ylim(-290,50)
             
             
 
@@ -245,7 +246,7 @@ def hd_line_plot_2d(t1 = None,
     fname_png = str('wideline_dev_2d_' + str(original_width*2) + '.png')
     fname_pdf = str('wideline_dev_2d_' + str(original_width*2) + '.pdf')
 
-    
+#    
     plt.savefig(path + fname_png, format = 'png',dpi=1000,bbox_inches = 'tight')
     plt.savefig(path + fname_pdf, format = 'pdf',dpi=1000,bbox_inches = 'tight')       
         

@@ -24,6 +24,7 @@ import matplotlib.ticker as ticker
 from matplotlib.ticker import FormatStrFormatter
 from math import trunc
 from __plot_params import params_3d,params_horizontal
+import matplotlib.tri as tri
 
 import os 
 os.environ["PATH"] += os.pathsep + '/Library/TeX/texbin'
@@ -107,8 +108,8 @@ class Plot_hydrostatic_deviation():
         x1,x2,y1,y2 = cs1,cs2,-200,200
         
         # Boundaries for model domain
-        ymin = -5000
-        ymax = 5000
+        ymin = -2000
+        ymax = 2000
         ymin_2 = -2000
         ymax_2 = 2000
         GL = 1056000
@@ -139,7 +140,7 @@ class Plot_hydrostatic_deviation():
         # Run ModelRun-Class with default or self
             if None is (self.amp,self.width):
                 mr = ModelRun(250,150,150,0,t)
-            mr = ModelRun(self.amp,self.width,self.width,0,t)
+            mr = ModelRun(self.amp,self.width,self.width,'new',t)
             
             ht = mr.compute_hydrostatic_thickness()
             c1 = mr.compute_concavehull(cs1)
@@ -193,12 +194,12 @@ class Plot_hydrostatic_deviation():
             
             #s,e = yaxis = ax1.get_ylim()
             
-            ax1.text(cs1,-5000,"A",ha = 'center', va='bottom')
-            ax1.text(cs1,5000,"A'",ha = 'center', va='top')
-            ax1.text(cs2,-5000,"B",ha = 'center', va='bottom')
-            ax1.text(cs2,5000,"B'",ha = 'center', va='top')
-            ax1.text(cs3,-5000,"C",ha = 'center', va='bottom')
-            ax1.text(cs3,5000,"C'",ha = 'center', va='top')
+            ax1.text(cs1,-2000,"A",ha = 'center', va='top')
+            ax1.text(cs1,2000,"A'",ha = 'center', va='bottom')
+            ax1.text(cs2,-2000,"B",ha = 'center', va='top')
+            ax1.text(cs2,2000,"B'",ha = 'center', va='bottom')
+            ax1.text(cs3,-2000,"C",ha = 'center', va='top')
+            ax1.text(cs3,2000,"C'",ha = 'center', va='bottom')
             
             plt.setp(ax1.get_xticklabels(),fontweight = 'bold')
             plt.setp(ax1.get_yticklabels(),fontweight = 'bold')
@@ -224,12 +225,18 @@ class Plot_hydrostatic_deviation():
          
             #------------------------------------------------------------------
             ax2 = plt.Subplot(fig,gs00[2,0])
+            cutted = mr.cut_and_slice(cs1,' syz')
+
             upper = c1[0]
             lower_2 = c1[1]
+            
             original_2 = c1[2]
             ax2.plot(lower_2,'k-')
+            
             #ax2.plot(upper,'b')
             ax2.plot(original_2,linestyle = '--', color = blue)
+            ax2.pcolormesh(cutted[2],cutted[3],cutted[4],shading='gouraud',cmap = "bwr",vmin=-0.005,vmax=0.005)
+            
 #            legend_ax2 = ax2.legend(['Modelled thickness','Hydrostatic thickness'],loc="upper right", prop=dict(weight='bold'))
 #            frame_ax2 = legend_ax2.get_frame()
 #            frame_ax2.set_facecolor('0.7')
@@ -237,8 +244,8 @@ class Plot_hydrostatic_deviation():
             
             ax2.set_ylabel('Shelf elevation [m]')
             ax2.set_xlim(-2000,2000)
-            ax2.set_ylim([-350,-150])
-            ax2.set_yticklabels([-300,-250,-200])
+            ax2.set_ylim([-350,-50])
+            ax2.set_yticks([-250,-150,-50])
             bottom, top = ax2.get_ylim()
             ax2.text(ymin_2,top,"A",ha = 'right', va='bottom')
             ax2.text(ymax_2,top,"A'",ha = 'left', va='bottom')
@@ -248,16 +255,20 @@ class Plot_hydrostatic_deviation():
             
             #------------------------------------------------------------------
             ax3 = plt.Subplot(fig,gs00[2,1])
+            cutted = mr.cut_and_slice(cs2,' syz')
+            
+            
             upper = c2[0]
             lower_3 = c2[1]
             original_3 = c2[2]
             ax3.plot(lower_3,'k-')
             #ax3.plot (upper,'b')
             ax3.plot(original_3,linestyle = '--', color = blue)
+            ax3.pcolormesh(cutted[2],cutted[3],cutted[4],shading='gouraud',cmap = "bwr",vmin=-0.005,vmax=0.005)
             
             ax3.set_xlim(-2000,2000)
-            ax3.set_ylim([-350,-150])
-            ax3.set_yticks([-300,-250,-200])
+            ax3.set_ylim([-350,-50])
+            ax3.set_yticks([-250,-150,-50])
             bottom, top = ax3.get_ylim()
             ax3.set_xlabel('Width [m]')
             ax3.text(ymin_2,top,"B",ha = 'right', va='bottom')
@@ -268,16 +279,20 @@ class Plot_hydrostatic_deviation():
             
             #------------------------------------------------------------------
             ax4 = plt.Subplot(fig,gs00[2,2])
+            cutted = mr.cut_and_slice(cs3,' syz')
+           
+            
             upper = c3[0]
             lower_4 = c3[1]
             original_4 = c3[2]
             ax4.plot(lower_4,'k-')
             #ax4.plot (upper,'b')
             ax4.plot(original_4,linestyle = '--', color = blue)
+            ax4.pcolormesh(cutted[2],cutted[3],cutted[4],shading='gouraud',cmap = "bwr",vmin=-0.005,vmax=0.005)
             
             ax4.set_xlim(-2000,2000)
-            ax4.set_ylim([-350,-150])
-            ax3.set_yticks([-300,-250,-200])
+            ax4.set_ylim([-350,-50])
+            ax3.set_yticks([-250,-150,-50])
             bottom, top = ax4.get_ylim()
             ax4.text(ymin_2, top,"C",ha = 'right', va='bottom')
             ax4.text(ymax_2, top,"C", ha = 'left', va='bottom')
@@ -309,8 +324,8 @@ class Plot_hydrostatic_deviation():
             
             
         path = str('plots/')
-        fname= str('3d_' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.png')
-        fname_pdf = str('3d_' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.pdf')
+        fname= str('3d_bridging' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.png')
+        fname_pdf = str('3d_bridging' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.pdf')
         
         fig.savefig(path + fname, format = 'png', dpi=1000)
         fig.savefig(path + fname_pdf, format = 'pdf', dpi=1000)
