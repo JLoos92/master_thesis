@@ -127,7 +127,19 @@ class ModelRun():
             raise ValueError('This filetype does not exist in the simulation '
             'folder. Check if dimension input parameter is set to 2 or to None for 2d or 3d case ,'
             'respectively.')
-                
+        
+
+
+        
+        #======================================================================  
+        # Paraneter setup for calculation of hydrostatic thickness
+        # !!!!!!!! Must be changed if input.sif file is changed!!!!!!!!
+        #====================================================================== 
+        
+        self.p_w = 1000.0 # kg m−3 )
+        self.p_i = 900.0  # ice 
+        self.p_a = 2.0    # air (ρa =2kgm−3)
+        self.H_a = 0      # firn corrections              
                   
         #======================================================================        
         # The following segment provides a dictionary of all .pvtu or vtu files
@@ -150,14 +162,7 @@ class ModelRun():
 #        self.df_amps_widths = pd.DataFrame(list(zip(self.list_amps,self.list_widths)),columns=['Amplitudes','Widths']) 
 #        self.df_amps_widths =  self.df_amps_widths.sort_values(by=['Amplitudes','Widths'])
          
-        
-        
-        
-        
-        
-        
-        
-        
+      
         # create fodername of the run for 2d:
         if self.dimensions == str('2'):
                 self.run_folder = 'Mesh{:}_{:}_{:}_{:}'.format(
@@ -594,8 +599,8 @@ class ModelRun():
             # !!!!!!!! Must be changed if input.sif file is changed!!!!!!!!
             self.p_w = 1000.0 # kg m−3 )
             self.p_i = 900.0  # ice 
-            p_a = 2.0         # air (ρa =2kgm−3)
-            H_a = 0
+            self.p_a = 2.0    # air (ρa =2kgm−3)
+            self.H_a = 0      # firn corrections      
             
             #self.cutter = self.clipData
             self.clipped_area = self.cutter()
@@ -610,17 +615,17 @@ class ModelRun():
             self.z = self.points[:,2]
     
             # Function to find min-values of z_b       
-            zmin = self.selectMinz(self.x,self.y,self.z)
-            zmax = self.selectMaxz(self.x,self.y,self.z)
+            self.zmin = self.selectMinz(self.x,self.y,self.z)
+            self.zmax = self.selectMaxz(self.x,self.y,self.z)
     
-            zs = zmax[1]
+            zs = self.zmax[1]
             zs = np.asarray(zs)
-            xy_zmax = zmax[0]
+            xy_zmax = self.zmax[0]
            
             
-            zb = zmin[1]
+            zb = self.zmin[1]
             zb = np.asarray(zb)
-            xy_zmin = zmin[0]
+            xy_zmin = self.zmin[0]
             
     
             self.zb_new = zb
@@ -793,6 +798,7 @@ class ModelRun():
         self.line.SetNormal(1,0,0)
         
         self.clipped_area_3D = self.cutter()
+        
         # Get cutter
         self.cutter_3D = vtk.vtkCutter()   
         self.cutter_3D.SetCutFunction(self.line)
@@ -819,14 +825,13 @@ class ModelRun():
         
 
 
-        return self.out, self.line_points,self.y_mat,self.z_mat,self.scalar_mat
+        return self.out, self.line_points, self.y_mat, self.z_mat, self.scalar_mat
 
 
         
  
     def compute_concavehull(self,
                             xcoord):
-       # pass
         
         """
         Method: compute_concavehull 
@@ -881,6 +886,7 @@ class ModelRun():
         self.line_h.SetOrigin(self.xcoord,0,0)
         self.line_h.SetNormal(1,0,0)
         
+        #Clipped area
         self.clipped_area = self.cutter()
         self.cutter_line = vtk.vtkCutter()   
         self.cutter_line.SetCutFunction(self.line_h)
@@ -931,11 +937,32 @@ class ModelRun():
         
         self.hull_panda = upper_boundary,lower_boundary,original_thickness
         
-        # Add function for smoothing concave hull
+        
             
                
         
         return upper_boundary, lower_boundary, original_thickness
+    
+    
+    
+    
+    def compute_melt_rate(self):
+        
+        self.a_smb = 0.3 # m/a
+        self.clipped_area = self.cutter()
+        self.zs = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('zs'))
+        self.u  = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('velocity'))
+        self.ux = self.u[:,0]
+        print(self.ux.shape)
+        print(self.zs.shape)
+        self.melt = self.a_smb-((self.zs*self.ux)/(1-(self.p_i/self.p_w)))
+        
+        
+        return self.melt
+        
+        
+    
+    
   
         
         
