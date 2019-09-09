@@ -124,7 +124,7 @@ class ModelRun():
              self.res_folder = os.path.join(self.home_directory + '2d')
              print('Made ModelRun object for 2D-case.')
         else:
-            raise ValueError('This filetype does not exist in the simulation '
+            raise ValueError('This filetype does not exist in the simulation'
             'folder. Check if dimension input parameter is set to 2 or to None for 2d or 3d case ,'
             'respectively.')
         
@@ -410,7 +410,7 @@ class ModelRun():
         
         # Change for cut plane in x direction ()
         if GL is None:
-            self.GL = 1060000
+            self.GL = 1056000
         elif GL is not None:
             self.GL = GL
         
@@ -947,6 +947,7 @@ class ModelRun():
     
     
     def compute_melt_rate(self):
+        pass
         
         self.a_smb = 0.3 # m/a
         self.clipped_area = self.cutter()
@@ -959,6 +960,81 @@ class ModelRun():
         
         
         return self.melt
+    
+    
+    def compute_second_invariant(self):
+        
+        '''
+        '''
+        
+        
+        if self.dimensions is None:
+            
+            self.clipped_area = self.cutter()
+            self.sxx = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('sxx'))
+            self.syy = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray(' syy'))
+            self.szz = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('szz'))
+        
+            self.j_2 = 1/2*((self.sxx**2)+(self.syy**2)+(self.szz**2))
+            
+            
+            # pick surface and bottom coordinates
+            self.fs_upper = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('zs'))
+    
+            self.points = vtk_to_numpy(self.clipped_area.GetOutput().GetPoints().GetData())
+            self.ind_fs = np.where(self.fs_upper!=0)
+            
+            self.x = self.points[:,0]
+            self.y = self.points[:,1]
+            
+            self.x_upper = self.x[self.ind_fs]
+            self.y_upper = self.y[self.ind_fs]
+            self.j_2_upper = self.j_2[self.ind_fs]
+            
+             
+             
+             
+        
+        return self.x_upper,self.y_upper,self.j_2_upper
+    
+    
+    
+    
+    
+    
+    def get_top_scalar(self,scalar_name):
+        
+        '''
+        '''
+        
+       
+        
+        self.clipped_area = self.cutter()
+        self.scalar = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray(str(scalar_name)))
+        
+        if scalar_name == str('velocity'):
+            self.scalar = self.scalar[:,1]
+            
+        
+        # pick surface and bottom coordinates
+        self.fs_upper = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('zs'))
+
+        self.points = vtk_to_numpy(self.clipped_area.GetOutput().GetPoints().GetData())
+        self.ind_fs = np.where(self.fs_upper!=0)
+        
+        self.x = self.points[:,0]
+        self.y = self.points[:,1]
+        
+        self.x_upper = self.x[self.ind_fs]
+        self.y_upper = self.y[self.ind_fs]
+        self.scalar_top = self.scalar[self.ind_fs]
+        
+             
+             
+             
+        
+        return self.x_upper,self.y_upper,self.scalar_top
+        
         
         
     

@@ -60,13 +60,13 @@ def profile_derivative_2d(t1 = None,
     nrow = 2; ncol = 1;
     fig, axsi = plt.subplots(nrow,ncol,sharex = True, squeeze = False, constrained_layout=True)
     
-    
     ax1 = axsi[0][0]
     ax2 = axsi[1][0]
     
     plt.subplots_adjust(hspace=0.1)
-
     
+    
+
     
      # Custom params load from __plot_params
     plt.rcParams.update(params_horizontal) 
@@ -94,10 +94,9 @@ def profile_derivative_2d(t1 = None,
     calc_thickness_bs = ht[1]
     
 
-    
     hydrostatic_deviation = calc_thickness_bs - lower
     
-    ax1.plot(lower)
+
     ax1.plot(x_mat[x_prof,:],scalar_mat[x_prof,:],linestyle = '-',linewidth = 1, color = 'black')
     
 
@@ -140,13 +139,13 @@ def profile_derivative_2d(t1 = None,
     title = str('Bridging profile vs. dev. of hydrostatic eq.')
     
     
-    axs.text(0.02, 0.95, str('(b.1)') + '  t = ' + str(t1*5) + 'a\n @ cw = ' + str(original_width*2) + 'm', transform=axs.transAxes,
+    axs.text(0.02, 0.95, str('(a.1)') + '  t = ' + str(t1*5) + 'a\n @ cw = ' + str(original_width*2) + 'm', transform=axs.transAxes,
         verticalalignment='top', bbox=props,weight='bold')
-    ax2.text(0.02, 0.95, str('(b.2)'), transform=ax2.transAxes,
+    ax2.text(0.02, 0.85, str('(a.2)'), transform=ax2.transAxes,
         verticalalignment='top', bbox=props,weight='bold')
        
     ax2.set_xlabel('Across flow distance [m]') 
-    ax2.set_ylabel('$\\frac{dy}{dx}$') 
+    ax2.set_ylabel('$\\frac{dy}{dx}\:[]$') 
     
     
     # Calculate first diravitive
@@ -158,11 +157,19 @@ def profile_derivative_2d(t1 = None,
     gf = ndimage.gaussian_filter1d(scalar_mat[x_prof,:],sigma = 1, order=1,mode='wrap') /dx
     
     
+    ax_upper = fig.add_subplot(212)
+    ax_upper.plot(x_line,upper)
+    ax_upper.set_axis_off()
+    legend_ax_upper = ax_upper.legend(['$z_{s}$'], loc= "upper right")
+    frame_ax_upper = legend_ax_upper.get_frame()
+    frame_ax_upper.set_facecolor('0.7')
+    frame_ax_upper.set_edgecolor('0.7')
+    
     
     
     
     #dydx = np.append(dydx,1)
-    ax2.plot(x_mat[x_prof,:],-gf,color = 'black',linestyle=':',linewidth = 1)    
+    ax2.plot(x_mat[x_prof,:],-gf,color = 'black',linestyle=':',linewidth = 1) 
     
     
     ax2.set_xticks([-1500,-1000,0,1000,1500])
@@ -172,14 +179,12 @@ def profile_derivative_2d(t1 = None,
     #ax2.set_xticklabels([])
     ax2.tick_params(direction='in',length=3,width=1)
     
-   
-    legend_ax3 = ax2.legend(['$\\frac{d}{dx} f(x)$'],loc="upper right", prop=dict(weight='bold'))
+    legend_ax3 = ax2.legend(['$\\frac{d}{dx} f(x)$'],loc="lower right", prop=dict(weight='bold'))
     frame_ax3 = legend_ax3.get_frame()
     frame_ax3.set_facecolor('0.7')
     frame_ax3.set_edgecolor('0.7')
-    
-   
-    
+
+  
     ax3 = ax2.twinx()
     ax3.plot(x_line, hydrostatic_deviation, linestyle= '-', color = red,linewidth=1)
     #ax3.set_ylim(-40,40)
@@ -189,7 +194,7 @@ def profile_derivative_2d(t1 = None,
     #fig.suptitle(title + ' @ cw = ' + str(original_width*2) + 'm', weight='bold', fontsize = 7, y = 0.95)
     ax3.tick_params(direction='in',length=3,width=1)
     ax3.grid(False)
-   
+    
     fig.text(1,0.5,'Hydrostatic dev. [m]',va = 'center',rotation = 'vertical',color=red)
 
    
@@ -325,7 +330,7 @@ def profile_multiple_derivative_2d(t1 = None,
            
         
         ax3 = ax2.twinx()
-         ax3.set_yticklabels([])
+        ax3.set_yticklabels([])
         ax3.plot(x_line, hydrostatic_deviation, linestyle= '-',linewidth=0.5)
 #        
         
@@ -348,8 +353,8 @@ def profile_multiple_derivative_2d(t1 = None,
     # Save figures    
     path = str('plots/Final_plots/')
        
-    fname_png = str('multiple_profile_deviation_dev_2d_' + str(original_width*2) + '.png')
-    fname_pdf = str('multiple_profile_deviation_dev_2d_' + str(original_width*2) + '.pdf')
+    fname_png = str('multiple_profile_deviation_dev_2d_upper' + str(original_width*2) + '.png')
+    fname_pdf = str('multiple_profile_deviation_dev_2d_upper' + str(original_width*2) + '.pdf')
 
     
     plt.savefig(path + fname_png, format = 'png',dpi=1000,bbox_inches='tight')

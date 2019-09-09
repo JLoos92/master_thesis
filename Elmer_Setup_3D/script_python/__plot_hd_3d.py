@@ -6,9 +6,11 @@ Created on Mon Apr  8 15:29:02 2019
 @author: jloos
 """
 
-from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
+from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset, inset_axes
 from matplotlib import gridspec
 from matplotlib.colorbar import Colorbar
+import matplotlib.ticker as ticker
+from matplotlib.ticker import MaxNLocator
 from pylab import rcParams
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
@@ -25,6 +27,7 @@ from matplotlib.ticker import FormatStrFormatter
 from math import trunc
 from __plot_params import params_3d,params_horizontal
 import matplotlib.tri as tri
+
 
 import os 
 os.environ["PATH"] += os.pathsep + '/Library/TeX/texbin'
@@ -134,8 +137,8 @@ class Plot_hydrostatic_deviation():
         fig.tight_layout()
         # 2,2 plots with 3 subplots
         for i ,t in zip(range(4), self.times):
-            gs00 = gridspec.GridSpecFromSubplotSpec(3,3, \
-            height_ratios=[0.05,0.8,0.5],subplot_spec=gs_0[i])
+            gs00 = gridspec.GridSpecFromSubplotSpec(2,3, \
+            height_ratios=[0.8,0.5],subplot_spec=gs_0[i],hspace=0.7)
         
         # Run ModelRun-Class with default or self
             if None is (self.amp,self.width):
@@ -147,6 +150,18 @@ class Plot_hydrostatic_deviation():
             c2 = mr.compute_concavehull(cs2)
             c3 = mr.compute_concavehull(cs3)
            
+            j_2_all = mr.compute_second_invariant()
+            scalar = mr.get_top_scalar('velocity')
+            
+            scalar_x = scalar[0]
+            scalar_y = scalar[1]
+            scalar_uy = scalar[2]
+            
+            
+            
+            j2_x = j_2_all[0]
+            j2_y = j_2_all[1]
+            j2 =   j_2_all[2]
             
             x = ht[0]
             y = ht[1]
@@ -160,22 +175,19 @@ class Plot_hydrostatic_deviation():
             
             
             #------------------------------------------------------------------
-            ax1 = plt.Subplot(fig,gs00[1,:])
-            im = ax1.tripcolor(x,y,ht_array,shading='gouraud',vmin=-15,vmax=15,cmap = 'RdBu')
+            cmap_ht = 'RdBu'
+            cmap_j2 = 'jet'
+            cmap_uy = "RdBu"
             
-            # Colorbar definition (extra axis)
-            cbar = plt.subplot(gs00[0,:])
-            cbar = Colorbar(ax=cbar, mappable = im, extend = 'both', \
-            orientation = 'horizontal', ticklocation = 'top') 
-            cbar.set_label('Hydrostatic dev. [m]',labelpad=0)
-            cbar.ax.tick_params(direction='in',length=1,width=1,pad=0)
+            ax1 = plt.Subplot(fig,gs00[0,:])
+            im = ax1.tripcolor(j2_x,j2_y,j2,shading='gouraud',cmap = cmap_j2)
             
             
             ax1.set_xlabel('Distance from grounding line [m]')
             ax1.set_ylabel('Across flow direction [m]')
             start,end = ax1.get_xlim()
             #ax1.set_xticklabels(list(map(int,(np.arange(start,end, 2500)-GL))))
-            ax1.xaxis.tick_top()
+            ax1.xaxis.tick_bottom()
             #ax1.xaxis.set_major_locator(ticker.MaxNLocator(3))
             ax1.xaxis.set_tick_params(pad=0)
             ax1.set_xticks([cs1,cs2,cs3])
@@ -209,14 +221,14 @@ class Plot_hydrostatic_deviation():
             ax1.triplot(x,y,delaunay.simplices,alpha=0.05)
             ax1.set_yticks([-4000,-2000,0,2000,4000])
             ax1.set_ylim(-5000,5000)
-            ax1.set_xlim(1060000,1079000)
+            ax1.set_xlim(1056000,1079000)
             #ax1.autoscale_view('tight')
             plt.subplots_adjust(hspace=0.42)
             
             
             # place text box in upper left in axes coords      
             props = dict(boxstyle='round', facecolor='wheat')
-            ax1.text(0.2, 0.92,'(b) t = ' + str(t1) + 'a\n @ cw = ' + str(self.width*2) + 'm', transform=ax1.transAxes, 
+            ax1.text(0.2, 0.92,'t = ' + str(t1) + 'a\n @ cw = ' + str(self.width*2) + 'm', transform=ax1.transAxes, 
                      verticalalignment='top', bbox=props,weight='bold')
             
             
@@ -224,7 +236,7 @@ class Plot_hydrostatic_deviation():
             
          
             #------------------------------------------------------------------
-            ax2 = plt.Subplot(fig,gs00[2,0])
+            ax2 = plt.Subplot(fig,gs00[1,0])
             cutted = mr.cut_and_slice(cs1,' syz')
 
             upper = c1[0]
@@ -254,7 +266,7 @@ class Plot_hydrostatic_deviation():
 
             
             #------------------------------------------------------------------
-            ax3 = plt.Subplot(fig,gs00[2,1])
+            ax3 = plt.Subplot(fig,gs00[1,1])
             cutted = mr.cut_and_slice(cs2,' syz')
             
             
@@ -264,13 +276,15 @@ class Plot_hydrostatic_deviation():
             ax3.plot(lower_3,'k-')
             #ax3.plot (upper,'b')
             ax3.plot(original_3,linestyle = '--', color = blue)
-            ax3.pcolormesh(cutted[2],cutted[3],cutted[4],shading='gouraud',cmap = "bwr",vmin=-0.005,vmax=0.005)
+           
+            im_3 = ax3.pcolormesh(cutted[2],cutted[3],cutted[4],shading='gouraud',cmap = "bwr",vmin=-0.005,vmax=0.005)
             
+                       
             ax3.set_xlim(-2000,2000)
             ax3.set_ylim([-350,-50])
             ax3.set_yticks([-250,-150,-50])
             bottom, top = ax3.get_ylim()
-            ax3.set_xlabel('Width [m]')
+            ax3.set_xlabel('Across flow direction [m]')
             ax3.text(ymin_2,top,"B",ha = 'right', va='bottom')
             ax3.text(ymax_2,top,"B'",ha = 'left', va='bottom')
             ax3.axes.get_yaxis().set_visible(False)
@@ -278,7 +292,7 @@ class Plot_hydrostatic_deviation():
             fig.add_subplot(ax3)
             
             #------------------------------------------------------------------
-            ax4 = plt.Subplot(fig,gs00[2,2])
+            ax4 = plt.Subplot(fig,gs00[1,2])
             cutted = mr.cut_and_slice(cs3,' syz')
            
             
@@ -321,11 +335,54 @@ class Plot_hydrostatic_deviation():
             ax2_twin.set_ylim(-15,15)
              
             plt.setp(ax4_twin.get_yticklabels(),color=red)
-            
-            
+        
+        
+        #2D colorbars
+        axin_2 = inset_axes(ax2,width='80%',height='10%',loc=9,bbox_to_anchor=(0,0.23,1,1),bbox_transform=ax2.transAxes)    
+        cbar_2 = Colorbar(ax=axin_2, mappable = im_3, extend = 'both', \
+            orientation = 'horizontal', ticklocation = 'top',ticks=[-0.005,0.005])   
+        cbar_2.ax.tick_params(direction='in',length=1.5,width=0.5,pad=0.2)
+        
+        
+        axin_3 = inset_axes(ax3,width='80%',height='10%',loc=9,bbox_to_anchor=(0,0.23,1,1),bbox_transform=ax3.transAxes)    
+        cbar_3 = Colorbar(ax=axin_3, mappable = im_3, extend = 'both', \
+            orientation = 'horizontal', ticklocation = 'top',ticks=[-0.005,0.005])           
+        cbar_3.ax.tick_params(direction='in',length=1.5,width=0.5,pad=0.2)
+        
+        axin_4 = inset_axes(ax4,width='80%',height='10%',loc=9,bbox_to_anchor=(0,0.23,1,1),bbox_transform=ax4.transAxes)    
+        cbar_4 = Colorbar(ax=axin_4, mappable = im_3, extend = 'both', \
+            orientation = 'horizontal', ticklocation = 'top',ticks=[-0.005,0.005])          
+        cbar_4.ax.tick_params(direction='in',length=1.5,width=0.5,pad=0.2)
+        
+        
+        
+        
+        
+        cbar_4.set_label('$\sigma_{xy}$ [MPa]',labelpad=0)
+        cbar_3.set_label('$\sigma_{xy}$ [MPa]',labelpad=0)
+        cbar_2.set_label('$\sigma_{xy}$ [MPa]',labelpad=0)
+        
+        
+        #3D colorbar
+        title_uy = "Velocity $u_{y}$ [$m\: a^{-1}$]"
+        title_ht = 'Hydrostatic dev. [m]'
+        title_j2 = 'Effective stress [MPa]'
+        
+        axin = inset_axes(ax1,width='100%',height='10%',loc=9,bbox_to_anchor=(0,0.15,1,1),bbox_transform=ax1.transAxes)    
+        cbar = Colorbar(ax=axin, mappable = im, extend = 'both', \
+        orientation = 'horizontal', ticklocation = 'top',ticks=MaxNLocator(3)) 
+        cbar.set_label(title_j2,labelpad=0.1)
+        cbar.ax.tick_params(direction='in',length=1,width=1,pad=0)
+        
+        
+        
+        
+        
+        
+        
         path = str('plots/')
-        fname= str('3d_bridging' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.png')
-        fname_pdf = str('3d_bridging' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.pdf')
+        fname= str('3d_bridging_j2' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.png')
+        fname_pdf = str('3d_bridging_j2' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.pdf')
         
         fig.savefig(path + fname, format = 'png', dpi=1000)
         fig.savefig(path + fname_pdf, format = 'pdf', dpi=1000)

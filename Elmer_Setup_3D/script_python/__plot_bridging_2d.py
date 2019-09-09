@@ -46,7 +46,7 @@ def scalar_grid_plot(t1 = None,
             t2 = 100
 
     if dim is not None:
-        dim = str('y')         
+        dim = str('j2')         
         print(dim)
     if prop is None:
         prop = 0        
@@ -123,6 +123,26 @@ def scalar_grid_plot(t1 = None,
                 vmin = -0.3
                 scalarname = str('velo_y')
                 title = str("Velocity $u_{y}$ [$m\: a^{-1}$]")
+                
+                
+     #   elif dim is str('j2'):     
+            cmap = str("RdYlBu")                
+            
+            scalar_real_sxx = mr.get_scalar_real('sxx')
+            scalar_real_syy = mr.get_scalar_real(' syy')
+            
+            x_mat = scalar_real_sxx[0]
+            y_mat = scalar_real_sxx[1]
+            
+            sxx_mat = scalar_real_sxx[2] 
+            syy_mat = scalar_real_syy[2]
+            
+            scalar_mat = 1/2*((sxx_mat**2)+(syy_mat**2))
+            
+            vmax = 2
+            vmin = -2
+            scalarname = str('Second invariant')
+            title = str("Effective stress [$MPa$]")
                 
                 
             # Get boundaries
@@ -264,8 +284,8 @@ def scalar_grid_plot(t1 = None,
        
     # Save figure   
     path = str('plots/Final_plots/scalar_2d/')
-    fname_png = str('TEST_dev_2d__' + str(original_width*2) + '.png')
-    fname_pdf = str('TEST_dev_2d__' + str(original_width*2) + '.pdf')
+    fname_png = str('j2_dev_2d__' + str(original_width*2) + '.png')
+    fname_pdf = str('j2_dev_2d__' + str(original_width*2) + '.pdf')
 
     plt.savefig(path + str(scalarname) + fname_png, format = 'png',dpi=1000,bbox_inches='tight')
     plt.savefig(path + str(scalarname) + fname_pdf, format = 'pdf',dpi=1000,bbox_inches='tight')

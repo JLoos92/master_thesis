@@ -38,12 +38,12 @@ def compute_correlation_3d(t=None,
     # Defines region of interest
     x1 = 1060000
     x2 = 1080000
-    y1 = -100 
-    y2 = 100
+    y1 = -5000 
+    y2 = 5000
     
     
     # Width of bedrock bumps: x2 (gauss-function)
-    runs = [50,75,100,125,150,200,225,250,275,300,400,450,475,500,600]
+    runs = [100,125,150,200,225,250,275,300,400,450,475,500,600]
     
     runs = np.asarray(runs)
     real_width = runs * 2
@@ -59,7 +59,7 @@ def compute_correlation_3d(t=None,
     
     orange = '#D55E00'
     fig, axs = plt.subplots(1,4, sharex=True, sharey = True) 
-    times = [50, 100, 150, 200]
+    times = [30,70,100,200]
     
      # Custom model load from __plot_params
     plt.rcParams.update(params_horizontal)
@@ -162,6 +162,7 @@ def compute_correlation_3d(t=None,
                  verticalalignment='top', bbox=props,weight='bold')
         
         ax1.plot(real_width,hd_array_rms,'k-')
+        ax1.grid(True)
         
         fig.add_subplot(ax1)
     
@@ -181,7 +182,7 @@ def compute_correlation_3d(t=None,
     
     plt.show()
     
-   
+    return hd_array_rms
 
 
 

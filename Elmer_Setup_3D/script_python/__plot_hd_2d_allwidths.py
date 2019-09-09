@@ -225,10 +225,10 @@ def compute_allwidths_hd_2d(t1=None,
         
         ax1.text(0.2, 0.95, num + '  t = ' + str(t*5) + 'a', transform=ax1.transAxes, 
                 verticalalignment='top', bbox=props, weight='bold')  
-        ax1.set_ylim(0, 8)
-        ax1.set_yticks([1,3,5,7])
+        ax1.set_ylim(0, 10)
+        ax1.set_yticks([2,4,6,8])
         ax1.set_xticks([500,1500])
-
+        
 
         
         plt.setp(ax1.get_xticklabels(),fontweight = 'bold')
@@ -239,16 +239,15 @@ def compute_allwidths_hd_2d(t1=None,
         ax1.spines['right'].set_visible(True)
         ax1.spines['left'].set_visible(True)
         ax1.tick_params(direction='in',length=3,width=1)
-
-
-        # Make twinx velocity plot
-        
-           # Plt properties for ax2 (bridging)  
+        ax1.xaxis.grid(True)
+        # twinx plot for peak deviation
         ax2 = ax1.twinx()
         
         ax2.plot(widths_new, peak, 'r-', linewidth = 1)
         ax2.plot(widths_new, peak_extent, 'r--', linewidth = 1)
         ax2.plot(widths_new, peak_wideextent, 'r:', linewidth = 1)
+        ax2.plot(widths_new, peak, 'r*', linewidth = 1)
+       
         
         # Set label and color for ax2 (second y-axis)
         
@@ -263,28 +262,33 @@ def compute_allwidths_hd_2d(t1=None,
         
         ax2.tick_params(direction='in',length=3,width=1)
         
-        ax2.set_yticks([1,10,20,30])
-        ax2.set_ylim(0,35)
+        ax2.set_yticks([2,8,16,24,32])
+        ax2.set_ylim(0,40)
         ax2.set_yticklabels([])
-        ax2.grid(False)
+        ax2.grid()
         fig.add_subplot(ax1)
         
         
         
         
     ax[0][0].set_ylabel('RMS of hydrostatic deviation [m]') 
-    legend = ax[0][2].legend(['regular','extended', 'wide-extended'],loc="lower center",bbox_to_anchor=[0.52,0.65],fontsize = 5)                
+    legend = ax[0][2].legend(['regular','extended', 'wide-extended'],loc="lower center",bbox_to_anchor=[0.52,0.65],fontsize = 4)                
     frame = legend.get_frame()
     frame.set_facecolor('0.7')
     frame.set_edgecolor('0.7')
     ax2.axes.get_yaxis().set_visible(True)
-    ax2.set_yticks([1,10,20,30])
-    ax2.set_yticklabels([0,10,20,30])
+    
+    ax2.set_yticklabels([2,8,16,24,32])
     ax2.set_xticks([500,1500])
-    ax2.set_yticks([0,10,20,30])
+    ax2.set_yticks([2,8,16,24,32])
     ax2.set_ylabel('Channel peak deviation [m]',visible = True, color= 'r')
     plt.setp(ax2.get_yticklabels(),fontweight = 'bold',color='r')
-    #fig.suptitle('Widths vs. deviation @ multiple domains' + ' ', weight='bold', fontsize = 12,y=0.94)    
+    
+    legend2 = ax2.legend(['regular','extended', 'wide-extended'],loc="lower center",bbox_to_anchor=[0.52,0.65],fontsize = 4)                
+    frame = legend2.get_frame()
+    frame.set_facecolor('0.7')
+    frame.set_edgecolor('0.7')
+ 
     fig.text(0.39,0,'Channel widths [m]',va = 'center',fontsize=6.5)
      
         
