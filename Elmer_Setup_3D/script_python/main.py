@@ -5,7 +5,6 @@ Created on Fri Dec 21 12:57:13 2018
 
 @author: Schmulius
 
-This class holds this main properties of the modelpath
 """
 import os
 import math
@@ -35,7 +34,7 @@ os.environ["PATH"] += os.pathsep + '/Library/TeX/texbin'
 
     
 #==============================================================================    
-# ESD01 fileserver
+# Mount Server where input data is located
 #==============================================================================
 
 
@@ -55,7 +54,13 @@ else:
 class ModelRun():
     
     """
-    Class ModelRun:
+    This class is build upon the VTK library. This class can extract data
+    from parallel .vtu file-format. The input is user-defined and describes 
+    the filename syntax. Multiple methods can be applied, such as cutting the
+    domain, compute hydrostatic thickness, extracting scalar-data or top and 
+    botton surface points of a concave hull.
+    
+    Absolute path's, file-name syntax etc. can easily replaced and changed.
     
     """
 
@@ -63,10 +68,10 @@ class ModelRun():
     
     def __init__(self, 
              bump_amplitude , 
-             bump_distribution_x ,
-             bump_distribution_y ,
+             bump_dist_x ,
+             bump_dist_y ,
              prop,
-             timestep ,
+             timestep,
              dimensions = None,
              **kwargs):
         
@@ -77,21 +82,25 @@ class ModelRun():
         Parameters
         ----------
         bump_amplitude : int
-            height of the bump
+            height of the channel
             
-        bump_distribution_x : int
-            height of the bump
+        bump_dist_x : int
+            half-width of channel in x-direction
         
-        bump_distribution_y : int
-            height of the bump    
+        bump_dist_y : int
+            half-width of channel in y-direction
+            (only for 3-D, 2-D = 0)
         
         prop : string
             extra specification e.g. double (two gauss functions in 3d)
-            or grid extent in 2d
+            or grid extent in 2d; extent or wideextent
         
         timestep : int
             number of timestep
-        
+            (note: this is only the output interval of the .sif main-file; for
+            the 2-D case: every 5 years; timestep must be multiplied by 5 to
+            obtain real timestep)
+            
         dimensions : string
             2-D or 3-D
         """
@@ -100,7 +109,11 @@ class ModelRun():
         
         
         
-        # define paths to destination of output       
+        #======================================================================        
+        # Define path for destination folder
+        # for e.g. can be changed for 2
+        #======================================================================
+        
         self.home_directory = '/Volumes/esd01/docs/jloos/data_small/runs_elmerice_'
         self.sub_mesh_directory = 'Mesh/'
         self.sub_mesh_directory_2d = 'channel2d/'
@@ -109,17 +122,16 @@ class ModelRun():
         
         # change output directory according to dimensions (2d or 3d):
         self.bump_amplitude = bump_amplitude
-        self.bump_distribution_x = bump_distribution_x
-        self.bump_distribution_y = bump_distribution_y
-        self.prop = prop # extra property e.g. double bump
+        self.bump_dist_x = bump_dist_x
+        self.bump_dist_y = bump_dist_y
+        self.prop = prop 
         self.timestep = timestep
         self.dimensions = dimensions
         
         if self.dimensions is None:
-             self.res_folder = os.path.join(self.home_directory + 'fixed')
-             print('Made ModelRun object for 3D-case')
-             
-             
+             self.res_folder = os.path.join(self.home_directory + '3d')
+             print('Made ModelRun object for 3D-case.')
+                          
         elif self.dimensions==str("2"):            
              self.res_folder = os.path.join(self.home_directory + '2d')
              print('Made ModelRun object for 2D-case.')
@@ -136,11 +148,13 @@ class ModelRun():
         # !!!!!!!! Must be changed if input.sif file is changed!!!!!!!!
         #====================================================================== 
         
-        self.p_w = 1000.0 # kg m−3 )
+        self.p_w = 1000.0 # kg m−3 
         self.p_i = 900.0  # ice 
-        self.p_a = 2.0    # air (ρa =2kgm−3)
-        self.H_a = 0      # firn corrections              
+        self.p_a = 2.0    # air (ρa = 2kgm−3) -not used
+        self.h_a = 0      # firn corrections  -not used            
                   
+        
+        
         #======================================================================        
         # The following segment provides a dictionary of all .pvtu or vtu files
         # (depending on 2d or 3d case) and a subdirectory list of all runs. 
@@ -152,36 +166,26 @@ class ModelRun():
                   if os.path.isdir(os.path.join(self.res_folder,item))]
         self.dirlist = dirlist
         
-        
-#        self.list_amps = [i.split('Mesh',1)[1] for i in self.dirlist]
-#        self.list_amps = [i.split('_',1)[0] for i in self.list_amps]
-#        
-#        
-#        self.list_widths = [i.split('_',2)[1] for i in self.dirlist]
-#        
-#        self.df_amps_widths = pd.DataFrame(list(zip(self.list_amps,self.list_widths)),columns=['Amplitudes','Widths']) 
-#        self.df_amps_widths =  self.df_amps_widths.sort_values(by=['Amplitudes','Widths'])
-         
-      
+          
         # create fodername of the run for 2d:
         if self.dimensions == str('2'):
                 self.run_folder = 'Mesh{:}_{:}_{:}_{:}'.format(
                        self.bump_amplitude,
-                       self.bump_distribution_x,
-                       self.bump_distribution_y,
+                       self.bump_dist_x,
+                       self.bump_dist_y,
                        self.prop) 
                 
          # create fodername of the run for 2d:
         elif self.dimensions == None: 
                 self.run_folder = 'Mesh{:}_{:}{:}_{:}'.format(
                        self.bump_amplitude,
-                       self.bump_distribution_x,
-                       self.bump_distribution_y,
+                       self.bump_dist_x,
+                       self.bump_dist_y,
                        self.prop)         
         
         
         
-        # path to the directory of the model run:
+        # path to the directory of model run:
         if self.dimensions is None:
             self.run_directory = os.path.join(self.res_folder,
                                            self.run_folder,
@@ -200,25 +204,20 @@ class ModelRun():
                 
         elif self.dimensions==str("2"):
                 self.dic_timesteps = glob.glob(self.run_directory + '*pvtu')
-                
+         
+        # total number of timesteps    
         self.dic_timesteps.sort(key=os.path.getmtime)
-            
+           
         # Get number of timesteps
-        # while True:
-        #    try:
-        self.f_name = self.dic_timesteps[self.timestep]
-            
-        #    except IndexError:
-        #        print('Given value for timestep is not valid. There is probably '
-        #                  'no folder with given input parameters. Check directory.')
-                
-        self.num_timesteps = len(self.dic_timesteps)  
-        
+        self.f_name = self.dic_timesteps[self.timestep]                
+        self.num_timesteps = len(self.dic_timesteps)          
         print("Timesteps = ", self.num_timesteps)
         print(self.f_name)
-           
+        
+        
+        # path to .pvtu
         self.path_timestep = os.path.join(self.run_directory, self.f_name)
-        self.dict_var = {}
+        
         
         
         # Define xmlreader (file-input for VTU-path)
@@ -237,6 +236,7 @@ class ModelRun():
         self.Points = vtk_to_numpy(self.xmlReader.GetOutput().GetPoints().GetData())
         self.Cells =  vtk_to_numpy(self.xmlReader.GetOutput().GetCells().GetData())
         
+        # Get points
         self.x = self.Points[:,0]
         self.y = self.Points[:,1]
         self.z = self.Points[:,2]
@@ -248,7 +248,7 @@ class ModelRun():
              self.sxy = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(' sxy'))
              self.fs_upper = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs upper'))
              self.fs_lower = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray('fs lower'))
-             self.get_original_width = int(round(np.sqrt(self.bump_distribution_x)*2)*2)
+             self.get_original_width = int(round(np.sqrt(self.bump_dist_x)*2)*2)
         
         # Check for variables in list
         self.list_var_names = []
@@ -257,7 +257,9 @@ class ModelRun():
              self.list_var_names.append(self.name)
             
             
-            # Dictionary for variables
+            # Dictionary for variables 
+            # 1. var_names with memory location
+            # 2. only the numeration of the variables
              self.dict_var_names = {}
              self.dict_var_values = {}
             
@@ -271,30 +273,57 @@ class ModelRun():
         
         
     def get_scalar(self, 
-                   scalar_name,
-                   ):
+                   scalar_name):
+       
+        ''' 
+        Method: get_scalar
+        ----------
+        This methods extracts scalar from the ModelRun object.
+        Type .dict_var_names to find suitable inputs.
+        
+        Parameters
+        ----------
+        scalar_name : 'string' 
+        
+        Returns:
+        ----------
+        Tuple (float): numpy.ndarray of scalar (for velocity e.g. three columns
+        (x, y, z))
+        
+        '''
+        
+        
+        
+        
+        self.scalar_name = scalar_name
          
-         '''
-          This method return the array or scalar as a numpy array. Check
-          ModelRun().list_var_names for possible input.
-          
-         '''   
-         
-         self.scalar_name = scalar_name
-         
-         self.scalar = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(str(self.scalar_name)))
+        self.scalar = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(str(self.scalar_name)))
          
 
         
-         return self.scalar
+        return self.scalar
      
      
         
       
     def get_scalar_real(self,
-                        scalar_name
-                        ):
-        '''
+                        scalar_name):
+
+        ''' 
+        Method: get_scalar_real
+        ----------
+        This methods extracts scalar from the ModelRun object and arranges 
+        the numpy. Deletes ghost-cells.
+        
+        
+        Parameters
+        ----------
+        scalar_name : 'string' 
+        
+        Returns:
+        ----------
+        Tuple (float): numpy.ndarray of scalar with x,y points + scalar
+        if multidimensional: x,y scalars are returned (e.g. velocities)
         
         '''
         
@@ -303,6 +332,13 @@ class ModelRun():
         self.scalar = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(str(self.scalar_name)))
         
         
+        # for two partitions
+        num_part = 2
+        
+        # half of Point size + each connecting point of vertical layer (15):
+        # total layers = 16 (y-cells)
+       
+                
         neg = 2687
         pos = 2688       
         y_cells = 16
@@ -326,7 +362,7 @@ class ModelRun():
         y_pos_mat = y_pos.reshape(y_cells,x_half_cells)
          
 
-        # Return
+
         x_mat = np.append(x_neg_mat,x_pos_mat,axis=1)
         y_mat = np.append(y_neg_mat,y_pos_mat,axis=1)
         
@@ -342,8 +378,7 @@ class ModelRun():
             sxy_pos_mat = sxy_pos.reshape(y_cells,x_half_cells)
             
             
-            # Return
-            
+            # Return            
             scalar_mat = np.append(sxy_neg_mat,sxy_pos_mat,axis=1)
             
             return x_mat,y_mat,scalar_mat
@@ -364,7 +399,7 @@ class ModelRun():
             sxy_pos_z = self.scalar_z[pos:]
             
             
-            # Deleted for neg            
+            # Deleted for negative values            
             sxy_neg_new_x = np.delete(sxy_neg_x,x_neg_ind)
             sxy_neg_new_y = np.delete(sxy_neg_y,x_neg_ind)
             sxy_neg_new_z = np.delete(sxy_neg_z,x_neg_ind)
@@ -385,7 +420,51 @@ class ModelRun():
             
             return x_mat,y_mat,scalar_mat_x,scalar_mat_y,scalar_mat_z
             
+    
+    
+    def get_top_scalar(self,
+                       scalar_name):
+        
+        ''' 
+        Method: get_top_scalar
+        ----------
+        This methods extracts scalar from the ModelRun object and get's
+        the top surface points
+        
+        
+        Parameters
+        ----------
+        scalar_name : 'string' 
+        
+        Returns:
+        ----------
+        Tuple (float): numpy.ndarray of scalar with x,y points + scalar
+        '''
+        
+       
+        
+        self.clipped_area = self.cutter()
+        self.scalar = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray(str(scalar_name)))
+        
+        if scalar_name == str('velocity'):
+            self.scalar = self.scalar[:,1]
             
+        
+        # pick surface and bottom coordinates
+        self.fs_upper = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('zs'))
+
+        self.points = vtk_to_numpy(self.clipped_area.GetOutput().GetPoints().GetData())
+        self.ind_fs = np.where(self.fs_upper!=0)
+        
+        self.x = self.points[:,0]
+        self.y = self.points[:,1]
+        
+        self.x_upper = self.x[self.ind_fs]
+        self.y_upper = self.y[self.ind_fs]
+        self.scalar_top = self.scalar[self.ind_fs]
+        
+      
+        return self.x_upper,self.y_upper,self.scalar_top        
             
             
         
@@ -394,15 +473,19 @@ class ModelRun():
         
         """
         Method: cutter
-        
-        Parameters
         ----------
-        -
-        
         This method performes cutting for given run (default is cutting plane normal
         in yz with origin at GL. Further methods and functions relate to the original vtk-class 
         or the ModelRun-class).
         Cutting provides also profile-lines for extracting intercepting values of given array.
+        
+        Parameters
+        ----------
+        GL : 'int' 
+        
+        Returns:
+        ----------
+        Tuple (float): object of new cutted domain
         
         """
         
@@ -410,7 +493,7 @@ class ModelRun():
         
         # Change for cut plane in x direction ()
         if GL is None:
-            self.GL = 1056000
+            self.GL = 1060000
         elif GL is not None:
             self.GL = GL
         
@@ -428,8 +511,7 @@ class ModelRun():
         self.clipData_shelf.SetInputConnection(self.xmlReader.GetOutputPort())
         self.clipData_shelf.Update()
         
-        # create plane to cut; end of shelf is cut due to boundary and mesh-
-        # refinement adjustment for plotting
+        # create plane to cut; end of shelf is cut 
         self.plane_shelf_end = vtk.vtkPlane()
         self.plane_shelf_end.SetOrigin(1079000,0,0)
         self.plane_shelf_end.SetNormal(-1,0,0)
@@ -480,7 +562,10 @@ class ModelRun():
 
  
                   
-    def selectMinz(self, x, y, z):
+    def selectMinz(self,
+                   x,
+                   y,
+                   z):
         
         """
         Method: selectMinz
@@ -524,7 +609,10 @@ class ModelRun():
     
 
     
-    def selectMaxz(self,x ,y, z):
+    def selectMaxz(self,
+                   x,
+                   y,
+                   z):
         
         """
         Method: selectMinz
@@ -544,7 +632,7 @@ class ModelRun():
         
         Returns:
         ----------
-        Tuple(float): x(sorted), y (sorted), max z (sorted)
+        Tuple(float): x (sorted), y (sorted), max z (sorted)
         
         """
         
@@ -582,15 +670,29 @@ class ModelRun():
         ----------
         -
         
-        Returns:
+        Returns for 3-D:
         ----------
-        Tuple(float): x-coordinates, y-coordinates, hydrostatic thickness
+        Tuple(float): x-coordinates, y-coordinates, hydrostatic thickness,
+        modelled thickness
         
+        Returns for 2-D:
+        ----------
+        Tuple(float): 
+            
+        0. x-line coordinates
+        1. calculated hydrostatic thickness
+        2. upper surface
+        3. lower surface 
+        4. all points
+        5. matrix of fs_lower output
+        6. matrix of fs_upper output
+        7. relative deviation of channel peak
+        8. relative deviation of channel abutment
         
         """
         
         #======================================================================        
-        # 3D  
+        # 3-D set-up  
         #====================================================================== 
         
         if self.dimensions is None:
@@ -647,10 +749,12 @@ class ModelRun():
         
         
         #======================================================================        
-        # 2D 
+        # 2-D set-up 
         #====================================================================== 
         
         elif self.dimensions is not None:
+            
+            
             
             # Paraneter setup for calculation of hydrostatic thickness
             # !!!!!!!!!! Must be changed if input.sif file is changed!!!!!!!!
@@ -673,8 +777,7 @@ class ModelRun():
             # Rearrange matrix to fit input shape ()
             self.points = np.delete(self.points, 2, 1)
            
-            # Group
-            
+            # Group           
             ind_fs_lower = np.where(self.fs_lower<0)
             ind_fs_upper = np.where(self.fs_upper>0)
             
@@ -697,7 +800,7 @@ class ModelRun():
             self.thick_calc_2d_bs = self.thick_calc_2d  + self.upper_model
             
             
-            self.h_thickness = self.thick_model_2d + self.thick_calc_2d
+            #self.h_thickness = self.thick_model_2d + self.thick_calc_2d
             
             
             # Calculate peak deviation (maximum of modelled and calculated ht)
@@ -715,14 +818,14 @@ class ModelRun():
             self.deviation_list = 100-(100/peak_calc*peak_model)
             
             
-            # Channel abutsment
+            # hydrostatic deviation
             hydrostatic_deviation = self.thick_calc_2d_bs - self.lower_model
             
+            # Relative deviation
             peak = np.where(self.thick_calc_2d_bs==self.thick_calc_2d_bs.min())
-            hd_peak = hydrostatic_deviation[peak]
             self.hd_abut = 100-(100/self.thick_calc_2d_bs[peak]*self.lower_model[peak])
             
-            # Get indices of flank 
+            # Get indices of channel-flank 
             hd_flank = np.max(hydrostatic_deviation)
             hd_flank_ind = np.where(hydrostatic_deviation == np.max(hydrostatic_deviation))
             
@@ -730,36 +833,10 @@ class ModelRun():
             
             return x_new_lower, self.thick_calc_2d_bs,self.upper_model, \
                 self.lower_model, self.points, self.fs_lower, self.fs_upper, \
-                self.deviation_list,self.deviation_list,self.hd_abut, -peak_model
+                self.deviation_list,self.hd_abut 
      
 
-
-    #@compute_hydrostatic_thickness               
-    def compute_max_peak_deviation(self):
-        pass
-    
-        '''
-        Method not used yet (April,2019)
-        
-        '''
-        
-        # Calculate peak deviation (maximum of modelled and calculated ht)
-        ht_calc = self.thick_calc_2d_bs
-        ht_model = self.lower_model
-        
-        ht_calc_ind = int(abs(ht_calc.size/2)) 
-        ht_model_ind = int(abs(ht_model.size/2))
-        
-        peak_calc = abs(ht_calc[ht_calc_ind])
-        peak_model = abs(ht_model[ht_model_ind])
-        
-        # absolute difference (peak difference in m)
-        abs_diff = peak_calc-peak_model
-        
-        return abs_diff
-    
-        
-        
+   
     def cut_and_slice(self, 
                       xcoord,
                       var):
@@ -847,7 +924,7 @@ class ModelRun():
         
         Returns:
         ----------
-        Tuple (float): x, z arrays for concave hull
+        Tuple (float): upper boundary, lower boundary, modelled thickness
         
         """     
         
@@ -936,36 +1013,30 @@ class ModelRun():
         
         
         self.hull_panda = upper_boundary,lower_boundary,original_thickness
-        
-        
-            
-               
-        
+       
         return upper_boundary, lower_boundary, original_thickness
     
     
-    
-    
-    def compute_melt_rate(self):
-        pass
-        
-        self.a_smb = 0.3 # m/a
-        self.clipped_area = self.cutter()
-        self.zs = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('zs'))
-        self.u  = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('velocity'))
-        self.ux = self.u[:,0]
-        print(self.ux.shape)
-        print(self.zs.shape)
-        self.melt = self.a_smb-((self.zs*self.ux)/(1-(self.p_i/self.p_w)))
-        
-        
-        return self.melt
-    
-    
+      
     def compute_second_invariant(self):
         
-        '''
-        '''
+        """
+        Method: compute_second_invariant
+        ----------
+        This method compute the second invariant (all principal stresses) of
+        the deviatoric stress tensor (for 3-D = 3 principal stresses)
+        
+        Parameters
+        ----------
+        -
+        
+        
+        Returns:
+        ----------
+        Tuple (float): upper x-coordinates, upper y-coordinates, second invariant
+        
+        """     
+
         
         
         if self.dimensions is None:
@@ -974,7 +1045,9 @@ class ModelRun():
             self.sxx = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('sxx'))
             self.syy = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray(' syy'))
             self.szz = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('szz'))
-        
+            
+            
+            # compute second invariant of deviatoric stress tensor
             self.j_2 = 1/2*((self.sxx**2)+(self.syy**2)+(self.szz**2))
             
             
@@ -997,50 +1070,7 @@ class ModelRun():
         
         return self.x_upper,self.y_upper,self.j_2_upper
     
-    
-    
-    
-    
-    
-    def get_top_scalar(self,scalar_name):
-        
-        '''
-        '''
-        
-       
-        
-        self.clipped_area = self.cutter()
-        self.scalar = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray(str(scalar_name)))
-        
-        if scalar_name == str('velocity'):
-            self.scalar = self.scalar[:,1]
-            
-        
-        # pick surface and bottom coordinates
-        self.fs_upper = vtk_to_numpy(self.clipped_area.GetOutput().GetPointData().GetArray('zs'))
 
-        self.points = vtk_to_numpy(self.clipped_area.GetOutput().GetPoints().GetData())
-        self.ind_fs = np.where(self.fs_upper!=0)
-        
-        self.x = self.points[:,0]
-        self.y = self.points[:,1]
-        
-        self.x_upper = self.x[self.ind_fs]
-        self.y_upper = self.y[self.ind_fs]
-        self.scalar_top = self.scalar[self.ind_fs]
-        
-             
-             
-             
-        
-        return self.x_upper,self.y_upper,self.scalar_top
-        
-        
-        
-    
-    
-  
-        
         
          
       

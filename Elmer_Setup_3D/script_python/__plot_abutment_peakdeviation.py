@@ -88,8 +88,8 @@ def compute_abutment_peakdeviation(t_end=None,
         peak_narrow.append(hd_n)
         peak_wide.append(hd_w)
         
-        abutment_narrow.append(ht_narrow[9])
-        abutment_wide.append(ht_wide[9])
+        abutment_narrow.append(ht_narrow[8])
+        abutment_wide.append(ht_wide[8])
         
         times.append(t*5)
         

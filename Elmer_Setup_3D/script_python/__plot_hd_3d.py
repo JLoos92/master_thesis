@@ -150,7 +150,7 @@ class Plot_hydrostatic_deviation():
             c2 = mr.compute_concavehull(cs2)
             c3 = mr.compute_concavehull(cs3)
            
-            j_2_all = mr.compute_second_invariant()
+#            j_2_all = mr.compute_second_invariant()
             scalar = mr.get_top_scalar('velocity')
             
             scalar_x = scalar[0]
@@ -159,10 +159,10 @@ class Plot_hydrostatic_deviation():
             
             
             
-            j2_x = j_2_all[0]
-            j2_y = j_2_all[1]
-            j2 =   j_2_all[2]
-            
+#            j2_x = j_2_all[0]
+#            j2_y = j_2_all[1]
+#            j2 =   j_2_all[2]
+#            
             x = ht[0]
             y = ht[1]
             ht_array =ht[2] 
@@ -180,7 +180,7 @@ class Plot_hydrostatic_deviation():
             cmap_uy = "RdBu"
             
             ax1 = plt.Subplot(fig,gs00[0,:])
-            im = ax1.tripcolor(j2_x,j2_y,j2,shading='gouraud',cmap = cmap_j2)
+            im = ax1.tripcolor(x,y,ht_array,shading='gouraud',cmap = cmap_ht,vmin = -15,vmax=15)
             
             
             ax1.set_xlabel('Distance from grounding line [m]')
@@ -200,28 +200,28 @@ class Plot_hydrostatic_deviation():
             #ax1.tick_params(direction='in',length=3,width=1)
          
             # Crosssections
-            line_cs1 = ax1.vlines(x=cs1, ymin=ymin, ymax=ymax, color='r')
-            line_cs2 = ax1.vlines(x=cs2, ymin=ymin, ymax=ymax, color='r')
-            line_cs3 = ax1.vlines(x=cs3, ymin=ymin, ymax=ymax, color='r')
+            line_cs1 = ax1.vlines(x=cs1, ymin=ymin, ymax=ymax, color='r',linewidth=0.5)
+            line_cs2 = ax1.vlines(x=cs2, ymin=ymin, ymax=ymax, color='r',linewidth=0.5)
+            line_cs3 = ax1.vlines(x=cs3, ymin=ymin, ymax=ymax, color='r',linewidth=0.5)
             
             #s,e = yaxis = ax1.get_ylim()
             
-            ax1.text(cs1,-2000,"A",ha = 'center', va='top')
-            ax1.text(cs1,2000,"A'",ha = 'center', va='bottom')
-            ax1.text(cs2,-2000,"B",ha = 'center', va='top')
-            ax1.text(cs2,2000,"B'",ha = 'center', va='bottom')
-            ax1.text(cs3,-2000,"C",ha = 'center', va='top')
-            ax1.text(cs3,2000,"C'",ha = 'center', va='bottom')
+            ax1.text(cs1,1800,"A",ha = 'center', va='top')
+            ax1.text(cs1,-1800,"A'",ha = 'center', va='bottom')
+            ax1.text(cs2,1800,"B",ha = 'center', va='top')
+            ax1.text(cs2,-1800,"B'",ha = 'center', va='bottom')
+            ax1.text(cs3,1800,"C",ha = 'center', va='top')
+            ax1.text(cs3,-1800,"C'",ha = 'center', va='bottom')
             
             plt.setp(ax1.get_xticklabels(),fontweight = 'bold')
             plt.setp(ax1.get_yticklabels(),fontweight = 'bold')
             
             # Delaunay triangulation for grid
             delaunay = Delaunay(points)
-            ax1.triplot(x,y,delaunay.simplices,alpha=0.05)
-            ax1.set_yticks([-4000,-2000,0,2000,4000])
-            ax1.set_ylim(-5000,5000)
-            ax1.set_xlim(1056000,1079000)
+            ax1.triplot(x,y,delaunay.simplices,alpha=0.05,linewidth=0.3)
+            ax1.set_yticks([-2000,-1000,0,1000,2000])
+            ax1.set_ylim(-2000,2000)
+            ax1.set_xlim(1060000,1079000)
             #ax1.autoscale_view('tight')
             plt.subplots_adjust(hspace=0.42)
             
@@ -247,8 +247,8 @@ class Plot_hydrostatic_deviation():
             
             #ax2.plot(upper,'b')
             ax2.plot(original_2,linestyle = '--', color = blue)
-            ax2.pcolormesh(cutted[2],cutted[3],cutted[4],shading='gouraud',cmap = "bwr",vmin=-0.005,vmax=0.005)
-            
+            ax2.pcolormesh(cutted[2],cutted[3],cutted[4],shading='gouraud',cmap = "bwr")
+            print(np.max(cutted[4]))
 #            legend_ax2 = ax2.legend(['Modelled thickness','Hydrostatic thickness'],loc="upper right", prop=dict(weight='bold'))
 #            frame_ax2 = legend_ax2.get_frame()
 #            frame_ax2.set_facecolor('0.7')
@@ -257,7 +257,7 @@ class Plot_hydrostatic_deviation():
             ax2.set_ylabel('Shelf elevation [m]')
             ax2.set_xlim(-2000,2000)
             ax2.set_ylim([-350,-50])
-            ax2.set_yticks([-250,-150,-50])
+            ax2.set_yticks([-300,-200,-100])
             bottom, top = ax2.get_ylim()
             ax2.text(ymin_2,top,"A",ha = 'right', va='bottom')
             ax2.text(ymax_2,top,"A'",ha = 'left', va='bottom')
@@ -277,8 +277,8 @@ class Plot_hydrostatic_deviation():
             #ax3.plot (upper,'b')
             ax3.plot(original_3,linestyle = '--', color = blue)
            
-            im_3 = ax3.pcolormesh(cutted[2],cutted[3],cutted[4],shading='gouraud',cmap = "bwr",vmin=-0.005,vmax=0.005)
-            
+            im_3 = ax3.pcolormesh(cutted[2],cutted[3],cutted[4],shading='gouraud',cmap = "bwr")
+            print(np.max(cutted[4]))
                        
             ax3.set_xlim(-2000,2000)
             ax3.set_ylim([-350,-50])
@@ -302,7 +302,8 @@ class Plot_hydrostatic_deviation():
             ax4.plot(lower_4,'k-')
             #ax4.plot (upper,'b')
             ax4.plot(original_4,linestyle = '--', color = blue)
-            ax4.pcolormesh(cutted[2],cutted[3],cutted[4],shading='gouraud',cmap = "bwr",vmin=-0.005,vmax=0.005)
+            ax4.pcolormesh(cutted[2],cutted[3],cutted[4],shading='gouraud',cmap = "bwr")
+            print(np.max(cutted[4]))
             
             ax4.set_xlim(-2000,2000)
             ax4.set_ylim([-350,-50])
@@ -321,18 +322,24 @@ class Plot_hydrostatic_deviation():
             ax4_twin.set_ylim(-15,15)
             ax4_twin.set_yticks([-10,-5,0,5,10])
             ax4_twin.set_ylabel('HD [m]',color=red)
-            
+            ax4.axvline(0,linestyle='--',linewidth=0.5,color='grey')
+            ax4_twin.axhline(0,linestyle='--',linewidth=0.5,color='grey')
+                        
             ax3_twin = ax3.twinx()
             ax3_twin.plot(original_3-lower_3,color=red,linestyle=':')
             ax3_twin.set_yticks([-10,-5,0,5,10])
             ax3_twin.set_yticklabels([])
             ax3_twin.set_ylim(-15,15)
+            ax3.axvline(0,linestyle='--',linewidth=0.5,color='grey')
+            ax3_twin.axhline(0,linestyle='--',linewidth=0.5,color='grey')
             
             ax2_twin = ax2.twinx()
             ax2_twin.plot(original_2-lower_2,color=red,linestyle=':')
             ax2_twin.set_yticks([-10,-5,0,5,10])
             ax2_twin.set_yticklabels([])
             ax2_twin.set_ylim(-15,15)
+            ax2.axvline(0,linestyle='--',linewidth=0.5,color='grey')
+            ax2_twin.axhline(0,linestyle='--',linewidth=0.5,color='grey')
              
             plt.setp(ax4_twin.get_yticklabels(),color=red)
         
@@ -358,9 +365,9 @@ class Plot_hydrostatic_deviation():
         
         
         
-        cbar_4.set_label('$\sigma_{xy}$ [MPa]',labelpad=0)
-        cbar_3.set_label('$\sigma_{xy}$ [MPa]',labelpad=0)
-        cbar_2.set_label('$\sigma_{xy}$ [MPa]',labelpad=0)
+        cbar_4.set_label('$\sigma_{yz}$ [MPa]',labelpad=0)
+        cbar_3.set_label('$\sigma_{yz}$ [MPa]',labelpad=0)
+        cbar_2.set_label('$\sigma_{yz}$ [MPa]',labelpad=0)
         
         
         #3D colorbar
@@ -371,7 +378,7 @@ class Plot_hydrostatic_deviation():
         axin = inset_axes(ax1,width='100%',height='10%',loc=9,bbox_to_anchor=(0,0.15,1,1),bbox_transform=ax1.transAxes)    
         cbar = Colorbar(ax=axin, mappable = im, extend = 'both', \
         orientation = 'horizontal', ticklocation = 'top',ticks=MaxNLocator(3)) 
-        cbar.set_label(title_j2,labelpad=0.1)
+        cbar.set_label(title_ht,labelpad=0.1)
         cbar.ax.tick_params(direction='in',length=1,width=1,pad=0)
         
         
@@ -380,9 +387,9 @@ class Plot_hydrostatic_deviation():
         
         
         
-        path = str('plots/')
-        fname= str('3d_bridging_j2' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.png')
-        fname_pdf = str('3d_bridging_j2' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.pdf')
+        path = str('plots/03_results/07_3D/')
+        fname= str('3D_bridging_hd_' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.png')
+        fname_pdf = str('3d_bridging_hd_' + str(self.amp) + str(self.width)+ '_' + str(t1) + '.pdf')
         
         fig.savefig(path + fname, format = 'png', dpi=1000)
         fig.savefig(path + fname_pdf, format = 'pdf', dpi=1000)

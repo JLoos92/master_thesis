@@ -112,6 +112,8 @@ def profile_velos_2d(t1 = None,
         ax1.plot(x_mat[x_prof,:],scalar_mat_x[x_prof,:],color = colour,linestyle = '-',linewidth=1)
         ax2.plot(x_mat[x_prof,:],scalar_mat_y[x_prof,:],color = colour,linestyle = '-',linewidth=1)
         
+        
+        
         legend_ax1 = ax1.legend(['cw = ' + str(original_halfwidth_1*2) + 'm','cw = ' + str(original_halfwidth_2*2) + 'm'],loc="upper right", prop=dict(weight='bold'))
         frame_ax1 = legend_ax1.get_frame()
         frame_ax1.set_facecolor('0.7')
@@ -126,16 +128,13 @@ def profile_velos_2d(t1 = None,
         y1,y2 = ax1.get_ylim()
         y_1,y_2 = ax2.get_ylim()
         
+        ax1.grid(True)
+        ax2.grid(True)
+    # Save figures   
+    ax1.text(-2500,0.3,"A",ha = 'left', va='bottom',color = 'y',size=12)
+    ax1.text(2500,0.3,"A'",ha = 'right', va='bottom', color = 'y',size=12)
     
-            
-        ax1.vlines(-original_width,y1,y2,linewidth=0.5,color = red)
-        ax1.vlines(original_width,y1,y2,linewidth=0.5,color = red)
-        ax2.vlines(-original_width,y_1,y_2,linewidth=0.5,color = red)
-        ax2.vlines(original_width,y_1,y_2,linewidth=0.5,color = red)
-
-   
-    # Save figures    
-    path = str('plots/Final_plots/')
+    path = str('plots/03_results/02_velocities/')
        
     fname_png = str('profile_velos_2d_' + str(original_width*2) + '.png')
     fname_pdf = str('profile_velos_2d_' + str(original_width*2) + '.pdf')
