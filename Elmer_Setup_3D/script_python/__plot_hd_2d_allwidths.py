@@ -18,16 +18,30 @@ import os
 os.environ["PATH"] += os.pathsep + '/Library/TeX/texbin'
 
 
-def compute_allwidths_hd_2d(t1=None,
+def plot_rms_2d(t1=None,
                             t2=None,
                             t3=None,
-                            t4=None,
-                        **kwargs):
+                            t4=None):
 
     '''
-    Computes rms of the hydrostatic deviation. The hydrostatic de-
-    viation is saved in an 1d array for the 2d simulation case.       
-    '''    
+    Function: plot_profile_velos_2d
+    ---------------
+    Introduction figure for the deviation of hydrostatic equilibrium and bottom 
+    + top surface. Two subplots with two timesteps for a given width. 
+    Annotation and vertical lines for seperation are included.
+    
+    Parameters
+    ----------
+    t1 : int
+        first timestep for plot
+    t2 : int 
+        second timestep for plot
+    t3 : int 
+        third timestep for plot
+    t4 : int
+        fourth timestep for plot  
+        
+    ''' 
     
     
     # List of widths for extended and tight domain
@@ -195,8 +209,7 @@ def compute_allwidths_hd_2d(t1=None,
             
           
       
-        # Make plot
-                        
+        # Make plot                        
         rms_total = np.asarray(rms_total)
         rms_total_extent = np.asarray(rms_total_extent)
         
@@ -207,16 +220,8 @@ def compute_allwidths_hd_2d(t1=None,
         
         x_dist, y_dist = np.meshgrid(z_new, np.linspace(0,15,16))
         
-        
-        
-        levels = np.linspace(x_dist.min(), x_dist.max(), 100)
-        #cs = ax1.contourf(xv,yv,x_dist,levels = levels,cmap='Blues_r', extend = 'both')
-        
-        # Erase above the data by filling with white
-        ax1.fill_between(widths_new, rms_total, rms_total.min(), color='w')
-        ax1.fill_between(widths_new, rms_total_extent, rms_total.max(), color='w')
-        
-        # Make the line plot over the top
+       
+        # Make the line plot above top
         ax1.plot(widths_new, rms_total, 'k-', linewidth=1)
         ax1.plot(widths_new, rms_total_extent,'k--',linewidth=1)
         ax1.plot(widths_new, rms_total_wideextent,'k:',linewidth=1)
@@ -240,6 +245,7 @@ def compute_allwidths_hd_2d(t1=None,
         ax1.spines['left'].set_visible(True)
         ax1.tick_params(direction='in',length=3,width=1)
         ax1.xaxis.grid(True)
+        
         # twinx plot for peak deviation
         ax2 = ax1.twinx()
         
@@ -249,8 +255,7 @@ def compute_allwidths_hd_2d(t1=None,
         ax2.plot(widths_new, peak, 'r*', linewidth = 1)
        
         
-        # Set label and color for ax2 (second y-axis)
-        
+        # Set label and color for ax2 (second y-axis)        
         for tl in ax2.get_yticklabels():
             tl.set_color('r')
             

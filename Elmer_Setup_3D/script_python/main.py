@@ -1,4 +1,4 @@
-45# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
 Created on Fri Dec 21 12:57:13 2018
@@ -37,9 +37,10 @@ os.environ["PATH"] += os.pathsep + '/Library/TeX/texbin'
 # Mount Server where input data is located
 #==============================================================================
 
-
+# pre-path where data is located
 path_to_volume = '/Volumes/esd01'
 
+# mount file-server
 if os.path.ismount(path_to_volume)==True:
         print ('ESD01 fileserver is already mounted.')
 else:
@@ -54,14 +55,22 @@ else:
 class ModelRun():
     
     """
-    This class is build upon the VTK library. This class can extract data
-    from parallel .vtu file-format. The input is user-defined and describes 
-    the filename syntax. Multiple methods can be applied, such as cutting the
-    domain, compute hydrostatic thickness, extracting scalar-data or top and 
-    botton surface points of a concave hull.
+    This class is mainly built upon the VTK library. This class extracts data
+    from parallel .pvtu file-format. The input is user-defined and describes 
+    the filename syntax which can be found in "docs/jloos/data_small". The input
+    setting for 2-D and 3-D is slightly different.
     
-    Absolute path's, file-name syntax etc. can easily replaced and changed.
+    2-D example:
+    ModelRun(150,20000,0,0,20,'2')
     
+    3-D example:
+    ModelRun(250,200,200,0,20)
+  
+    On the obtained object (2-D or 3-D) methods can be applied. These are e.g.
+    cutting the domain, compute hydrostatic thickness, extracting scalar-data 
+    or top and botton surface points of a concave hull.
+    
+    Absolute path's, file-name syntax etc. can easily replaced and changed.    
     """
 
     
@@ -291,21 +300,14 @@ class ModelRun():
         (x, y, z))
         
         '''
-        
-        
-        
-        
+              
         self.scalar_name = scalar_name
          
         self.scalar = vtk_to_numpy(self.xmlReader.GetOutput().GetPointData().GetArray(str(self.scalar_name)))
-         
-
         
         return self.scalar
      
      
-        
-      
     def get_scalar_real(self,
                         scalar_name):
 

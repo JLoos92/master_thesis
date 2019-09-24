@@ -13,23 +13,20 @@ import matplotlib.pyplot as plt
 import numpy.ma as ma
 from scipy.interpolate import griddata,interpolate
 
-
-
-    
-    
- # List of widths for extended and tight domain
-#list_widths = list(np.arange(1000,10000,1000))
+ 
+# List of widths
 list_widths_1 = list(np.arange(10000,100000,10000))
 list_widths_2 = list(np.arange(200000,1000000,100000))
           
             
 list_widths_1.extend(list_widths_2)
-  
+
+# Define rc_params for figure
+plt.rcParams.update(params_horizontal)   
 
 fig, ax1 = plt.subplots()  
 for width in list_widths_1:
-    # Define rc_params for figure
-    plt.rcParams.update(params_horizontal)      
+       
     
     # Empty lists for plot
     hd_list_tight = []
@@ -67,6 +64,8 @@ for width in list_widths_1:
     plt.setp(ax1.get_yticklabels(),fontweight = 'bold')
 
 
-plt.savefig('plots/All.png', format = 'png',dpi=1000) 
-plt.savefig('plots/All.pdf', format = 'pdf',dpi=1000)   
+
+# save figures
+plt.savefig('plots/02_methods/all_channels.png', format = 'png',dpi=1000) 
+plt.savefig('plots/02_methods/all_channels.pdf', format = 'pdf',dpi=1000)   
 plt.show()  

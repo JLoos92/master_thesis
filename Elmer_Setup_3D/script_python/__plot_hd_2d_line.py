@@ -22,58 +22,67 @@ from scipy.interpolate import griddata,interpolate
 
    
 
-def hd_line_plot_2d(t1 = None,
+def plot_hd_line_2d(t1 = None,
                     t2 = None,
-                    t3 = None,
-                    t4 = None,
                     width = None,
                     prop = None):
                 
-
+    '''
+    Function: plot_hd_line_2d
+    ---------------
+    Introduction figure for the deviation of hydrostatic equilibrium and bottom 
+    + top surface. Two subplots with two timesteps for a given width. 
+    Annotation and vertical lines for seperation are included.
     
+    Parameters
+    ----------
+    t1 : int
+        first timestep for plot
+    t2 : int
+        second timestep for plot
+    width : int (w_mod)
+        timestep for plot
+    prop : int (0 for regular domain)
+        timestep for plot    
+    '''
+       
     
-    
-        # Choose default timesteps if timesteps are not given
-    if (t1,t2,t3,t4) is None:
-            t1 = 50
-            t2 = 100
-            t3 = 150
-            t4 = 200
+    # Choose default timesteps if timesteps are not given    
+    if (t1,t2) is None:
+        t1 = 50
+        t2 = 100
          
                     
-        
-        
     if prop is None:
         prop = 0        
-        
+      
+    # Custom color definition    
     orange = '#D55E00'
     blue = '#396AB1'    
     red = '#CC2529'
     wheat = '#948B3D' 
     
     
-    
+    # Calculate original width
     original_halfwidth = int(round(np.sqrt(width)*2))
     original_width = original_halfwidth
     
-    print(original_width)
-    nums = ["(a)","(b)","(c)","(d)"]
+    # Numeration and timesteps
+    nums = ["(a)","(b)"]
     times = [t1, t2]
     
 
-
+    # Set figure layout
     nrow = 2; ncol = 1;
     fig, ax1 = plt.subplots(nrows=nrow, ncols=ncol, sharex = True, squeeze = False, constrained_layout=True)
-    
-    # Make space for title
 
-    
     # For common axis add subplot
     ax_common = fig.add_subplot(111,frameon=False)   
-
+    
+    
     plt.tick_params(labelcolor=False,top=False,bottom=False,left=False,right=False)
 
-     # Custom params load from __plot_params
+    # Custom params load from __plot_params
     plt.rcParams.update(params_horizontal) 
     
     
@@ -100,15 +109,9 @@ def hd_line_plot_2d(t1 = None,
             points = points.transpose()
 
             
-
             # Set labels
-            #ax.set_xlabel('Channel width [m]', visible = False)
-            
-
-
             ax.set_xticks([-original_width,0,original_width])
             ax.set_yticks([-250,-200,-100,-50,0,50])
-            #ax.set_yticks([10,20,30,40])
             plt.setp(ax.get_xticklabels(),fontweight = 'bold')
             plt.setp(ax.get_yticklabels(),fontweight = 'bold')
             
@@ -121,7 +124,7 @@ def hd_line_plot_2d(t1 = None,
             ax.plot(x_line,lower,'k-',linewidth=1.5)
             ax.plot(x_line,upper,'k-',linewidth=1.5,label='_nolegend_')
             ax.fill_between(x_line, lower, lower.min(), color='w')
-            #ax.plot(x_line,upper,'b-',linewidth=1)
+
             ax.fill_between(x_line, upper, upper.max(), color='w')
             ax.tick_params(direction='in',length=4,width=2)
             ax.set_xlim(-1500,1500)
@@ -138,22 +141,17 @@ def hd_line_plot_2d(t1 = None,
             frame_ax2 = legend_ax2.get_frame()
             frame_ax2.set_facecolor('0.7')
             frame_ax2.set_edgecolor('0.7')
-            
-            
+                        
             
             # compute deviation regular
             lower = ht[3]
             calc_thickness_bs = ht[1]
-
-
             
             hydrostatic_deviation = calc_thickness_bs - lower
             
             # place text box in upper left in axes coords      
             props = dict(boxstyle='round', facecolor='wheat')
-            
-            
-            
+          
             # Second axis
             axs = ax.twinx()
             axs.tick_params(direction='in',length=4,width=2)
@@ -191,12 +189,11 @@ def hd_line_plot_2d(t1 = None,
     # Set legend downer off
     ax1[1][0].get_legend().remove()    
     
-    #fig.suptitle(title + ' @ cw = ' + str(original_width*2) + 'm', y = 1.01)
-    
-    
+    #Annotation
     ax1[1][0].annotate('Channel peak deviation',xy=(0,-242),xytext=(0,-50),va='bottom',ha='center',
                         arrowprops=dict(facecolor='black',shrink=0.01,width=0.5,headwidth=4,headlength=3.2))
     
+    # Vertical lines
     ax1[1][0].vlines(-original_width,-290,-50,linewidth=0.5)
     ax1[1][0].vlines(original_width,-290,-50,linewidth=0.5)
     ax1[1][0].vlines(-original_width,-20,0,linewidth=0.5)
@@ -208,6 +205,8 @@ def hd_line_plot_2d(t1 = None,
     ax1[0][0].vlines(original_width,-30,0,linewidth=0.5)
     
     
+    
+    # Annotations, labels etc.
     ax1[0][0].text(0,-120,'ICD',ha='center')
     ax1[1][0].text(-1000,-200,'OCD',ha='center')
     ax1[1][0].text(1000,-200,'OCD',ha='center')
@@ -224,6 +223,7 @@ def hd_line_plot_2d(t1 = None,
     y_twinx.set_ylabel('Hydrostatic dev. [m]', color= red ,labelpad=23)
     y_twinx.set_yticks([])
     
+    
     # Spines for axis
     ax_common.tick_params(labelcolor='None',top=False,bottom=False,left=False,right=False)
     y_twinx.spines['right'].set_visible(False)
@@ -234,19 +234,14 @@ def hd_line_plot_2d(t1 = None,
     plt.subplots_adjust(top=0.95,hspace=0)
     
     
+  
     
-    
-    
-    
-    
-    
-    # Save figures  and paths   
-    path = str('plots/Final_plots/hd_line_2d/')
+    # Save figures 
+    path = str('plots/03_results/01_hydrostaticdeviation')
        
-    fname_png = str('wideline_dev_2d_' + str(original_width*2) + '.png')
-    fname_pdf = str('wideline_dev_2d_' + str(original_width*2) + '.pdf')
-
-#    
+    fname_png = str('hydrostatic_dev_2d_' + str(original_width*2) + '.png')
+    fname_pdf = str('hydrostatic_dev_2d_' + str(original_width*2) + '.pdf')
+   
     plt.savefig(path + fname_png, format = 'png',dpi=1000,bbox_inches = 'tight')
     plt.savefig(path + fname_pdf, format = 'pdf',dpi=1000,bbox_inches = 'tight')       
         

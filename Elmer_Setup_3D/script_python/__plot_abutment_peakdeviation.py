@@ -9,7 +9,6 @@ Created on Thu Aug 22 17:08:06 2019
 # Custom modules
 from main import ModelRun
 from __plot_params import params_horizontal
-from local_minimum import local_minimum_1d
 #
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,17 +22,21 @@ os.environ["PATH"] += os.pathsep + '/Library/TeX/texbin'
 
 
 
-def compute_abutment_peakdeviation(t_end=None,
-                                   **kwargs):   
+def plot_abutment_peakdeviation(t_end=None
+                                ):   
     
     '''
       
-    Function: compute_maxpeak_dev 
+    Function: plot_abutment_peakdeviation
+    -----------------------------
+    This functions calculates and plots the relative channel peak deviation
+    [%] and the relative channel abutment deviation [%] for width_1 and 
+    width_2.
     
     Parameters
     ----------
-    t : int
-        timestep        
+    t_end : int
+        number of timesteps       
     
     width : kwarg
         width of a channel
@@ -48,6 +51,7 @@ def compute_abutment_peakdeviation(t_end=None,
     x = points[:,0]
     width_1 = 50000
     width_2 = 100000
+    
     # Time + numbers for ax
     nums = ["(a)","(b)","(c)","(d)","(e)","(f)"]
     
@@ -95,7 +99,7 @@ def compute_abutment_peakdeviation(t_end=None,
         
     
     
-    
+    # Plot first axis
     axs.plot(times,peak_narrow,'k-')
     axs.plot(times,peak_wide,'k:')
     axs.set_ylim(0,22)
@@ -107,6 +111,7 @@ def compute_abutment_peakdeviation(t_end=None,
     frame.set_facecolor('0.7')
     frame.set_edgecolor('0.7')   
     
+    # Make twin axis and plot second axis
     ax1 = axs.twinx()
     ax1.plot(times,abutment_narrow,'r-')
     ax1.plot(times,abutment_wide,'r:')
@@ -119,12 +124,12 @@ def compute_abutment_peakdeviation(t_end=None,
     frame.set_edgecolor('0.7')   
         
       
+    # Save figures
+    path = str('plots/03_results/04_abutment_channel_peak')
+    fname_pdf = str('relativepeak_abutment_2d_' + str(original_width(width_1))+ str(original_width(width_2)) + '_' + str(t_end*5) + 'a' + '.pdf')
+    fname_png = str('relativepeak_abutment_2d_'+ str(original_width(width_1))+ str(original_width(width_2)) + '_' + str(t_end*5) + 'a' + '.png')
     
-    path = str('plots/Final_plots/')
-    fname_eps = str('peak_abutment_2d_' + str(width_1)+ str(width_2) + '_' + str(t_end*5) + 'a' + '.pdf')
-    fname_png = str('peak_abutment_2d_'+ str(width_1)+ str(width_2) + '_' + str(t_end*5) + 'a' + '.png')
-    
-    fig.savefig(path + fname_eps, format = 'pdf',dpi=1000,bbox_inches = 'tight') 
+    fig.savefig(path + fname_pdf, format = 'pdf',dpi=1000,bbox_inches = 'tight') 
     fig.savefig(path + fname_png, format = 'png',dpi=1000,bbox_inches = 'tight') 
     
     

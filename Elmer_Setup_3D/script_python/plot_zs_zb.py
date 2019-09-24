@@ -23,13 +23,31 @@ os.environ["PATH"] += os.pathsep + '/Library/TeX/texbin'
 def plot_zs_zb(t1 = None,
               prop = None):
                 
-
+                
+    '''
+    Function: plot_zs_zb
+    ---------------
+    Two subplots. Upper subplots contains all top surfaces zs. The lower sub-
+    plot shows all lower surfaces zb. Timestep can be chosen.
+    
+    Parameters
+    ----------
+    t1 : int
+        timestep for plot
+    prop : int (0 for regular domain)
+        timestep for plot  
+    x_prof : int
+        transect of the ice-shelf for the 'n'th column (15 layers)
+        default is 7, which is approximately -124 m, closely above the channel 
+        apex
+        
+    '''
     
     
     
     # Choose default timesteps if timesteps are not given
     if t1 is None:
-        t1 = 50
+        t1 = 40
      
     if prop is None:
         prop=0
@@ -129,4 +147,4 @@ def plot_zs_zb(t1 = None,
     plt.savefig(path + fname_png, format = 'png',dpi=1000,bbox_inches='tight')
     plt.savefig(path + fname_pdf, format = 'pdf',dpi=1000,bbox_inches='tight')       
         
-    plt.show()  
+    plt.show() 

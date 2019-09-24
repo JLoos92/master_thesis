@@ -15,9 +15,6 @@ print('Plot folder synced.')
 # plot params
 # load plot properties as a module
 
-# Color palette for plots
-
-
 params = {
                         'legend.fontsize' : 8,
                         'xtick.labelsize': 9,

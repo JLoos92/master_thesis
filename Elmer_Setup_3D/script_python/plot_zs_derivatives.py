@@ -23,17 +23,37 @@ def plot_zs_derivative(t1 = None,
                      prop = None,
                      x_prof= None):
                 
-
+    '''
+    Function: plot_zs_derivative
+    ---------------
+    Additional plot function. Shows in the upper subplot the first derivative
+    of the top surface zs. The lower subplot is a line plot of a bridging 
+    profile at x_prof position (default is -124 m; x_prof = 7).
+    
+    Parameters
+    ----------
+    t1 : int
+        timestep for plot
+    prop : int (0 for regular domain)
+        timestep for plot  
+    x_prof : int
+        transect of the ice-shelf for the 'n'th column (15 layers)
+        default is 7, which is approximately -124 m, closely above the channel 
+        apex
+        
+    '''
     
     
     
     # Choose default timesteps if timesteps are not given
     if t1 is None:
         t1 = 50
-     
+        
+    # Default is zero for regular domain size
     if prop is None:
         prop=0
     
+    # Transect of profile
     if x_prof is None:
         x_prof = 7
          
@@ -43,8 +63,6 @@ def plot_zs_derivative(t1 = None,
 
     # Colors
     orange = '#D55E00'  
-    red = '#CC2529'
-    wheat = '#948B3D'
     
     nrow = 2; ncol = 1;
     fig, axsi = plt.subplots(nrow,ncol,sharex = True, squeeze = False, constrained_layout=True)
@@ -120,7 +138,7 @@ def plot_zs_derivative(t1 = None,
 
         
         
-        legend_ax1 = ax1.legend(['First derivative of $z_{s}$'],loc="upper right", prop=dict(weight='bold'))
+        legend_ax1 = ax1.legend(['Second derivative of $z_{s}$'],loc="upper right", prop=dict(weight='bold'))
         frame_ax1 = legend_ax1.get_frame()
         frame_ax1.set_facecolor('0.7')
         frame_ax1.set_edgecolor('0.7')
@@ -145,10 +163,10 @@ def plot_zs_derivative(t1 = None,
         fig.add_subplot(ax1)
         fig.add_subplot(ax2)
     
-    path = str('plots/04_discussion/')
+    path = str('plots/06_appendix/')
        
-    fname_png = str('zs_derivatives_2d_all' + str(t1*5) +'a'+ '.png')
-    fname_pdf = str('zs_derivatives_2d_all' + str(t1*5) +'a'+'.pdf')
+    fname_png = str('zs_firstderivatives_2d_all' + str(t1*5) +'a'+ '.png')
+    fname_pdf = str('zs_firstderivatives_2d_all' + str(t1*5) +'a'+'.pdf')
 
     
     plt.savefig(path + fname_png, format = 'png',dpi=1000,bbox_inches='tight')
